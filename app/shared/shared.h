@@ -20,7 +20,6 @@ namespace shared_data
 {
     /**
      * @brief Shared data definition
-     *
      */
     struct SharedData_t
     {
