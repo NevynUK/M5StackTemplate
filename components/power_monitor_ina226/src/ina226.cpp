@@ -27,13 +27,14 @@ SOFTWARE.
 #include <math.h>
 #include "ina226.hpp"
 
-#define I2C_MASTER_TIMEOUT_MS 50 // 超时时间
+#define I2C_MASTER_TIMEOUT_MS 50
 
 bool INA226::begin(i2c_master_bus_handle_t bus_handle, uint8_t address)
 {
     inaAddress = address;
 
-    i2c_device_config_t dev_cfg = {
+    i2c_device_config_t dev_cfg =
+    {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = address,
         .scl_speed_hz = 400000,
