@@ -147,8 +147,8 @@ static void _rec_test_task(void *param)
     }
 
     const size_t sample_rate = 48000;
-    const size_t total_samples = sample_rate * 4 * 3; // 4通道，3秒
-    const size_t chunk_samples = 4096 * 4;            // 4通道一帧
+    const size_t total_samples = sample_rate * 4 * 3; // 4 channels, 3 seconds
+    const size_t chunk_samples = 4096 * 4;            // 4 channels per frame
     const size_t chunk_bytes = chunk_samples * sizeof(int16_t);
 
     size_t total_read_samples = 0;
@@ -158,7 +158,7 @@ static void _rec_test_task(void *param)
     codec_handle->set_in_gain(240);
 
     int16_t *read_buf = _rec_test_data.read_buffer;
-    memset(read_buf, 0, total_samples * sizeof(int16_t)); // 清零
+    memset(read_buf, 0, total_samples * sizeof(int16_t)); // Clear buffer
 
     mclog::tagInfo(TAG, "start record");
 
@@ -182,7 +182,7 @@ static void _rec_test_task(void *param)
     mclog::tagInfo(TAG, "record done");
 
     // Create audio data  [MIC-L, AEC, MIC-R, MIC-HP]
-    int num_frames = audio_buffer_size / 2; // 每帧一组 stereo 输出
+    int num_frames = audio_buffer_size / 2; // Each frame is a stereo output pair
     for (int i = 0; i < num_frames; ++i)
     {
         int16_t *in = _rec_test_data.read_buffer;

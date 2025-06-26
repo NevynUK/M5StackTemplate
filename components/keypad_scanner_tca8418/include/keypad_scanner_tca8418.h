@@ -11,7 +11,7 @@ extern "C"
 
     // #define TAB5_EXT_I2C_SCL_PIN 1  //
     // #define TAB5_EXT_I2C_SDA_PIN 0  //
-    // #define TAB5_TCA8418_INT_PIN 50 // 中断输入
+    // #define TAB5_TCA8418_INT_PIN 50 // Interrupt input
 
     void app_keypad_scanner_test(void *pvParam);
 

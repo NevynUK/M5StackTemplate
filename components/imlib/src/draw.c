@@ -393,7 +393,7 @@ void imlib_draw_rectangle(image_t *img, int rx, int ry, int rw, int rh, int c, i
 
 // https://gist.github.com/randvoorhies/807ce6e20840ab5314eb7c547899de68#file-bresenham-js-L404
 /**
- * 画园
+ * Draw circle
  */
 static void imlib_draw_circle_thin(image_t *img, int cx, int cy, int r, int c, bool fill)
 {
@@ -533,7 +533,7 @@ void imlib_draw_circle(image_t *img, int cx, int cy, int r, int c, int thickness
 }
 
 // https://scratch.mit.edu/projects/50039326/
-// 效果 https://scratch.mit.edu/projects/50039326/editor/
+// Effect https://scratch.mit.edu/projects/50039326/editor/
 /**
  * Draw a pixel with a distortion effect. Its design can be used to achieve a certain tilt or perspective effect.
  * @param img: target image for drawing.
@@ -973,19 +973,19 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
 //    }
 
 // /**
-//  * 在指定的帧缓冲区上画8x16大小的字符。
+//  * Draw 8x16 sized characters on the specified frame buffer.
 //  */
 // void imlib_draw_char_8x16(image_t *img, int32_t start_x, int32_t start_y, uint8_t ch, uint32_t color)
 // {
 //     uint8_t bytes_per_pixel = get_bytes_per_pixel(img->pixfmt);
 
-//     // 从字库中加载点阵字符数据
+//     // Load bitmap character data from font library
 //     uint8_t font_data[16];
 //     for (uint8_t i = 0; i < 16; i++) {
 //         font_data[i] = font_ascii_8x16[(ch - 0x20) * 16 + i];
 //     }
 
-//     // 定位到帧缓冲区的开始位置。
+//     // Position to the starting location of the frame buffer.
 //     uint8_t *dst_ptr = img->pixels + (start_y * img->w + start_x) * bytes_per_pixel;
 
 //     uint8_t row_index, col_index, current_byte;
@@ -997,12 +997,12 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
 //             }
 //             current_byte <<= 1;
 //         }
-//         dst_ptr += img->w * bytes_per_pixel; // 移动到帧缓冲区的下一行。
+//         dst_ptr += img->w * bytes_per_pixel; // Move to the next line of the frame buffer.
 //     }
 // }
 
 // /**
-//  * 在指定的帧缓冲区上画16x16大小的字符。
+//  * Draw 16x16 sized characters on the specified frame buffer.
 //  */
 // void imlib_draw_char_16x16(image_t *img, int32_t start_x, int32_t start_y, uint32_t code, uint32_t color)
 // {
@@ -1012,16 +1012,16 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
 
 //     uint8_t bytes_per_pixel = get_bytes_per_pixel(img->pixfmt);
 
-//     /* 获取点阵字符数据。字符为 16x16，单个字符占用 32 字节。 */
+//     /* Get bitmap character data. Character is 16x16, single character takes 32 bytes. */
 //     memcpy(font_data, &unicode_font16x16_start[code*32], 32);
 
-//     /* 定位到帧缓冲区的开始位置。 */
+//     /* Position to the starting location of the frame buffer. */
 //     uint8_t *dst_ptr = img->pixels + (start_y * img->w + start_x) * bytes_per_pixel;
 
-//     /* 字库扫描方式：先上下后左右 */
+//     /* Font scanning method: top-down first, then left-right */
 //     for (row = 0; row < 16; row++) {
-//         data1 = font_data[row];      // 左半部分
-//         data2 = font_data[16 + row]; // 右半部分
+//         data1 = font_data[row];      // Left half
+//         data2 = font_data[16 + row]; // Right half
 //         for (col = 0; col < 8; col++) {
 //             mask = 0x80 >> col;
 //             if (data1 & mask)
@@ -1029,12 +1029,12 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
 //             if (data2 & mask)
 //                 set_pixel_color(dst_ptr + (col + 8) * bytes_per_pixel, bytes_per_pixel, color);
 //         }
-//         dst_ptr += img->w * bytes_per_pixel; // 移动到帧缓冲区的下一行。
+//         dst_ptr += img->w * bytes_per_pixel; // Move to the next line of the frame buffer.
 //     }
 // }
 
 // /**
-//  * 在指定的帧缓冲区上画字符串。
+//  * Draw string on the specified frame buffer.
 //  */
 // void imlib_draw_string(image_t *img, uint16_t x, uint16_t y, const char *str, uint32_t color)
 // {

@@ -119,7 +119,7 @@ int image_jpg_read(image_t **img_out, char *path)
 
     // ESP_LOGI(TAG, "jpeg read spend time %lld ms.", (esp_timer_get_time() - last_time) / 1000);
     // last_time = esp_timer_get_time();
-    *img_out = app_jpeg_decode(img_jpg, img_jpg->size); // img 内存由 app_jpeg_decode() 内部分配
+    *img_out = app_jpeg_decode(img_jpg, img_jpg->size); // img memory allocated internally by app_jpeg_decode()
     // ESP_LOGI(TAG, "jpeg decode spend time %lld ms.", (esp_timer_get_time() - last_time) / 1000);
 
     heap_caps_free(img_jpg->data);

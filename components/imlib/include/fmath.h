@@ -19,33 +19,33 @@ float fast_log2(float x);
 float fast_powf(float a, float b);
 void fast_get_min_max(float *data, size_t data_len, float *p_min, float *p_max);
 
-// 快速平方根函数
+// Fast square root function
 static inline float fast_sqrtf(float x)
 {
     return sqrtf(x);
 }
 
-// 快速 floor 函数
+// Fast floor function
 static inline int fast_floorf(float x)
 {
     int i = (int) x;
     return (x < 0 && x != i) ? i - 1 : i;
 }
 
-// 快速 ceil 函数
+// Fast ceil function
 static inline int fast_ceilf(float x)
 {
     int i = (int) x;
     return (x > 0 && x != i) ? i + 1 : i;
 }
 
-// 快速 round 函数
+// Fast round function
 static inline int fast_roundf(float x)
 {
     return (int) (x + (x >= 0 ? 0.5f : -0.5f));
 }
 
-// 快速 fabs 函数
+// Fast fabs function
 static inline float fast_fabsf(float x)
 {
     return (x >= 0) ? x : -x;

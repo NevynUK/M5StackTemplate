@@ -53,20 +53,20 @@
 #define BSP_EXT_I2C_SDA (GPIO_NUM_53)
 
 // /* Ext Keyboard */
-// #define TAB5_TCA8418_INT_PIN 50 // 中断输入
+// #define TAB5_TCA8418_INT_PIN 50 // Interrupt input
 
 /* Audio */
-#define BSP_I2S_SCLK (GPIO_NUM_27)     // 位时钟         BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
-#define BSP_I2S_MCLK (GPIO_NUM_30)     // 主时钟         BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
-#define BSP_I2S_LCLK (GPIO_NUM_29)     // 字(声道)选择   BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
-#define BSP_I2S_DOUT (GPIO_NUM_26)     // 数据输出       BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
-#define BSP_I2S_DSIN (GPIO_NUM_28)     // 数据输入       BSP_I2S_DIN   <--- ES7210        I2S_DOUT
+#define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
+#define BSP_I2S_MCLK (GPIO_NUM_30)     // Master clock   BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
+#define BSP_I2S_LCLK (GPIO_NUM_29)     // Word select    BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
+#define BSP_I2S_DOUT (GPIO_NUM_26)     // Data output    BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
+#define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
 #define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
 
 /* Display */
 #define BSP_LCD_BACKLIGHT (GPIO_NUM_22)
 #define BSP_LCD_RST (GPIO_NUM_NC)       //
-#define BSP_LCD_TOUCH_RST (GPIO_NUM_NC) // IO Exanpder 控制
+#define BSP_LCD_TOUCH_RST (GPIO_NUM_NC) // IO Expander control
 #define BSP_LCD_TOUCH_INT (GPIO_NUM_NC) // 23
 
 /* uSD card */
