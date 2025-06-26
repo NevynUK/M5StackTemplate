@@ -110,5 +110,5 @@ void HalEsp32::rs485_init()
     // Set read timeout of UART TOUT feature
     ESP_ERROR_CHECK(uart_set_rx_timeout(tab5_rs485_uart_num, TAB5_RS485_READ_TOUT));
 
-    xTaskCreate(_rs485_test_task, "rs485", 2000, NULL, 5, NULL);
+    xTaskCreate(_rs485_test_task, "rs485", 4096, NULL, 5, NULL);
 }
