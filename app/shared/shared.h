@@ -14,14 +14,12 @@
 #include <smooth_ui_toolkit.h>
 
 /**
- * @brief 共享数据层，提供一个带互斥锁的全局共享数据单例
- *
+ * @brief Shared data layer, provides a global shared data singleton with mutex
  */
 namespace shared_data
 {
-
     /**
-     * @brief 共享数据定义
+     * @brief Shared data definition
      *
      */
     struct SharedData_t
@@ -31,22 +29,21 @@ namespace shared_data
     };
 
     /**
-     * @brief 获取共享数据实例
+     * @brief Get shared data instance
      *
      * @return SharedData_t&
      */
     SharedData_t *Get();
 
     /**
-     * @brief 销毁共享数据实例
-     *
+     * @brief Destroy shared data instance
      */
     void Destroy();
 
 } // namespace shared_data
 
 /**
- * @brief 获取共享数据实例
+ * @brief Get shared data instance
  *
  * @return SharedData_t&
  */
