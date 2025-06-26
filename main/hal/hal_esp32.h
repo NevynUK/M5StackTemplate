@@ -9,7 +9,8 @@
 #include <lvgl.h>
 #include "utils/rx8130/rx8130.h"
 
-class HalEsp32 : public hal::HalBase {
+class HalEsp32 : public hal::HalBase
+{
 public:
     std::string type() override
     {
@@ -24,8 +25,8 @@ public:
 
     INA226 ina226;
     RX8130_Class rx8130;
-    lv_disp_t* lvDisp      = nullptr;
-    lv_indev_t* lvKeyboard = nullptr;
+    lv_disp_t *lvDisp = nullptr;
+    lv_indev_t *lvKeyboard = nullptr;
 
     void setDisplayBrightness(uint8_t brightness) override;
     uint8_t getDisplayBrightness() override;
@@ -53,14 +54,14 @@ public:
     void sleepAndShakeWakeup() override;
     void sleepAndRtcWakeup() override;
 
-    void startCameraCapture(lv_obj_t* imgCanvas) override;
+    void startCameraCapture(lv_obj_t *imgCanvas) override;
     void stopCameraCapture() override;
     bool isCameraCapturing() override;
 
     void setSpeakerVolume(uint8_t volume) override;
     uint8_t getSpeakerVolume() override;
-    void audioRecord(std::vector<int16_t>& data, uint16_t durationMs, float gain = 80.0f) override;
-    void audioPlay(std::vector<int16_t>& data, bool async = true) override;
+    void audioRecord(std::vector<int16_t> &data, uint16_t durationMs, float gain = 80.0f) override;
+    void audioPlay(std::vector<int16_t> &data, bool async = true) override;
     void startDualMicRecordTest() override;
     MicTestState_t getDualMicRecordTestState() override;
     void startHeadphoneMicRecordTest() override;
@@ -76,7 +77,7 @@ public:
     void startWifiAp() override;
 
     bool isSdCardMounted() override;
-    std::vector<FileEntry_t> scanSdCard(const std::string& dirPath) override;
+    std::vector<FileEntry_t> scanSdCard(const std::string &dirPath) override;
 
     bool usbCDetect() override;
     bool usbADetect() override;
@@ -97,10 +98,10 @@ private:
     void update_system_time();
 
     uint8_t _current_lcd_brightness = 100;
-    bool _charge_qc_enable          = false;
-    bool _charge_enable             = true;
-    bool _ext_5v_enable             = true;
-    bool _usba_5v_enable            = true;
-    bool _ext_antenna_enable        = false;
-    bool _sd_card_mounted           = false;
+    bool _charge_qc_enable = false;
+    bool _charge_enable = true;
+    bool _ext_5v_enable = true;
+    bool _usba_5v_enable = true;
+    bool _ext_antenna_enable = false;
+    bool _sd_card_mounted = false;
 };
