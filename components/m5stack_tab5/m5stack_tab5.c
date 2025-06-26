@@ -808,26 +808,28 @@ esp_err_t bsp_audio_init(const i2s_std_config_t *i2s_config)
     i2s_tdm_config_t tdm_cfg =
     {
         .clk_cfg =
-            {
-                .sample_rate_hz = (uint32_t) 48000,
-                .clk_src = I2S_CLK_SRC_DEFAULT,
-                .ext_clk_freq_hz = 0,
-                .mclk_multiple = I2S_MCLK_MULTIPLE_256,
-                .bclk_div = 8,
-            },
+        {
+            .sample_rate_hz = (uint32_t) 48000,
+            .clk_src = I2S_CLK_SRC_DEFAULT,
+            .ext_clk_freq_hz = 0,
+            .mclk_multiple = I2S_MCLK_MULTIPLE_256,
+            .bclk_div = 8,
+        },
         .slot_cfg =
-            {.data_bit_width = I2S_DATA_BIT_WIDTH_16BIT,
-             .slot_bit_width = I2S_SLOT_BIT_WIDTH_AUTO,
-             .slot_mode = I2S_SLOT_MODE_STEREO,
-             .slot_mask = (I2S_TDM_SLOT0 | I2S_TDM_SLOT1 | I2S_TDM_SLOT2 | I2S_TDM_SLOT3),
-             .ws_width = I2S_TDM_AUTO_WS_WIDTH,
-             .ws_pol = false,
-             .bit_shift = true,
-             .left_align = false,
-             .big_endian = false,
-             .bit_order_lsb = false,
-             .skip_mask = false,
-             .total_slot = I2S_TDM_AUTO_SLOT_NUM},
+        {
+            .data_bit_width = I2S_DATA_BIT_WIDTH_16BIT,
+            .slot_bit_width = I2S_SLOT_BIT_WIDTH_AUTO,
+            .slot_mode = I2S_SLOT_MODE_STEREO,
+            .slot_mask = (I2S_TDM_SLOT0 | I2S_TDM_SLOT1 | I2S_TDM_SLOT2 | I2S_TDM_SLOT3),
+            .ws_width = I2S_TDM_AUTO_WS_WIDTH,
+            .ws_pol = false,
+            .bit_shift = true,
+            .left_align = false,
+            .big_endian = false,
+            .bit_order_lsb = false,
+            .skip_mask = false,
+            .total_slot = I2S_TDM_AUTO_SLOT_NUM
+        },
         .gpio_cfg = BSP_I2S_GPIO_CFG,
     };
 
