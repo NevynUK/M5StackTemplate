@@ -21,24 +21,38 @@
 
 static std::mutex _usba_detect_mutex;
 static bool _is_usba_connected = false;
-static lv_obj_t* _cursor_img;
+static lv_obj_t *_cursor_img;
 
 QueueHandle_t app_event_queue = NULL;
-typedef enum { APP_EVENT = 0, APP_EVENT_HID_HOST } app_event_group_t;
 
-typedef struct {
+typedef enum
+{
+    APP_EVENT = 0,
+    APP_EVENT_HID_HOST
+} app_event_group_t;
+
+typedef struct
+{
     app_event_group_t event_group;
-    struct {
+
+    struct
+    {
         hid_host_device_handle_t handle;
         hid_host_driver_event_t event;
-        void* arg;
+        void *arg;
     } hid_host_device;
 } app_event_queue_t;
 
-static const char* hid_proto_name_str[] = {"NONE", "KEYBOARD", "MOUSE"};
+static const char *hid_proto_name_str[] = {"NONE", "KEYBOARD", "MOUSE"};
 
-typedef struct {
-    enum key_state { KEY_STATE_PRESSED = 0x00, KEY_STATE_RELEASED = 0x01 } state;
+typedef struct
+{
+    enum key_state
+    {
+        KEY_STATE_PRESSED = 0x00,
+        KEY_STATE_RELEASED = 0x01
+    } state;
+
     uint8_t modifier;
     uint8_t key_code;
 } key_event_t;
@@ -50,25 +64,32 @@ static void hid_print_new_device_report_header(hid_protocol_t proto)
 {
     static hid_protocol_t prev_proto_output;
 
-    if (prev_proto_output != proto) {
+    if (prev_proto_output != proto)
+    {
         prev_proto_output = proto;
         printf("\r\n");
-        if (proto == HID_PROTOCOL_MOUSE) {
+        if (proto == HID_PROTOCOL_MOUSE)
+        {
             printf("Mouse\r\n");
-        } else if (proto == HID_PROTOCOL_KEYBOARD) {
+        }
+        else if (proto == HID_PROTOCOL_KEYBOARD)
+        {
             printf("Keyboard\r\n");
-        } else {
+        }
+        else
+        {
             printf("Generic\r\n");
         }
         fflush(stdout);
     }
 }
 
-static void hid_host_mouse_report_callback(const uint8_t* const data, const int length)
+static void hid_host_mouse_report_callback(const uint8_t *const data, const int length)
 {
-    hid_mouse_input_report_boot_t* mouse_report = (hid_mouse_input_report_boot_t*)data;
+    hid_mouse_input_report_boot_t *mouse_report = (hid_mouse_input_report_boot_t *) data;
 
-    if (length < sizeof(hid_mouse_input_report_boot_t)) {
+    if (length < sizeof(hid_mouse_input_report_boot_t))
+    {
         return;
     }
 
@@ -88,34 +109,40 @@ static void hid_host_mouse_report_callback(const uint8_t* const data, const int 
     //        (mouse_report->buttons.button2 ? 'o' : ' '));
 
     GetHAL()->hidMouseData.mutex.lock();
-    GetHAL()->hidMouseData.x        = x_pos;
-    GetHAL()->hidMouseData.y        = y_pos;
-    GetHAL()->hidMouseData.btnLeft  = mouse_report->buttons.button1;
+    GetHAL()->hidMouseData.x = x_pos;
+    GetHAL()->hidMouseData.y = y_pos;
+    GetHAL()->hidMouseData.btnLeft = mouse_report->buttons.button1;
     GetHAL()->hidMouseData.btnRight = mouse_report->buttons.button2;
     GetHAL()->hidMouseData.mutex.unlock();
 
     fflush(stdout);
 }
 
-void hid_host_interface_callback(hid_host_device_handle_t hid_device_handle, const hid_host_interface_event_t event,
-                                 void* arg)
+void hid_host_interface_callback(hid_host_device_handle_t hid_device_handle, const hid_host_interface_event_t event, void *arg)
 {
-    uint8_t data[64]   = {0};
+    uint8_t data[64] = {0};
     size_t data_length = 0;
     hid_host_dev_params_t dev_params;
     ESP_ERROR_CHECK(hid_host_device_get_params(hid_device_handle, &dev_params));
 
-    switch (event) {
+    switch (event)
+    {
         case HID_HOST_INTERFACE_EVENT_INPUT_REPORT:
             ESP_ERROR_CHECK(hid_host_device_get_raw_input_report_data(hid_device_handle, data, 64, &data_length));
 
-            if (HID_SUBCLASS_BOOT_INTERFACE == dev_params.sub_class) {
-                if (HID_PROTOCOL_KEYBOARD == dev_params.proto) {
+            if (HID_SUBCLASS_BOOT_INTERFACE == dev_params.sub_class)
+            {
+                if (HID_PROTOCOL_KEYBOARD == dev_params.proto)
+                {
                     // hid_host_keyboard_report_callback(data, data_length);
-                } else if (HID_PROTOCOL_MOUSE == dev_params.proto) {
+                }
+                else if (HID_PROTOCOL_MOUSE == dev_params.proto)
+                {
                     hid_host_mouse_report_callback(data, data_length);
                 }
-            } else {
+            }
+            else
+            {
                 // hid_host_generic_report_callback(data, data_length);
             }
 
@@ -138,50 +165,55 @@ void hid_host_interface_callback(hid_host_device_handle_t hid_device_handle, con
     }
 }
 
-void hid_host_device_event(hid_host_device_handle_t hid_device_handle, const hid_host_driver_event_t event, void* arg)
+void hid_host_device_event(hid_host_device_handle_t hid_device_handle, const hid_host_driver_event_t event, void *arg)
 {
     hid_host_dev_params_t dev_params;
     ESP_ERROR_CHECK(hid_host_device_get_params(hid_device_handle, &dev_params));
 
-    switch (event) {
-        case HID_HOST_DRIVER_EVENT_CONNECTED: {
-            ESP_LOGI(TAG, "HID Device, protocol '%s' CONNECTED", hid_proto_name_str[dev_params.proto]);
+    switch (event)
+    {
+        case HID_HOST_DRIVER_EVENT_CONNECTED:
+            {
+                ESP_LOGI(TAG, "HID Device, protocol '%s' CONNECTED", hid_proto_name_str[dev_params.proto]);
 
-            const hid_host_device_config_t dev_config = {.callback = hid_host_interface_callback, .callback_arg = NULL};
+                const hid_host_device_config_t dev_config = {.callback = hid_host_interface_callback, .callback_arg = NULL};
 
-            ESP_ERROR_CHECK(hid_host_device_open(hid_device_handle, &dev_config));
-            if (HID_SUBCLASS_BOOT_INTERFACE == dev_params.sub_class) {
-                ESP_ERROR_CHECK(hid_class_request_set_protocol(hid_device_handle, HID_REPORT_PROTOCOL_BOOT));
-                if (HID_PROTOCOL_KEYBOARD == dev_params.proto) {
-                    ESP_ERROR_CHECK(hid_class_request_set_idle(hid_device_handle, 0, 0));
+                ESP_ERROR_CHECK(hid_host_device_open(hid_device_handle, &dev_config));
+                if (HID_SUBCLASS_BOOT_INTERFACE == dev_params.sub_class)
+                {
+                    ESP_ERROR_CHECK(hid_class_request_set_protocol(hid_device_handle, HID_REPORT_PROTOCOL_BOOT));
+                    if (HID_PROTOCOL_KEYBOARD == dev_params.proto)
+                    {
+                        ESP_ERROR_CHECK(hid_class_request_set_idle(hid_device_handle, 0, 0));
+                    }
                 }
+                ESP_ERROR_CHECK(hid_host_device_start(hid_device_handle));
+
+                _usba_detect_mutex.lock();
+                _is_usba_connected = true;
+                _usba_detect_mutex.unlock();
+
+                break;
             }
-            ESP_ERROR_CHECK(hid_host_device_start(hid_device_handle));
-
-            _usba_detect_mutex.lock();
-            _is_usba_connected = true;
-            _usba_detect_mutex.unlock();
-
-            break;
-        }
         default:
             break;
     }
 }
 
-void hid_host_device_callback(hid_host_device_handle_t hid_device_handle, const hid_host_driver_event_t event,
-                              void* arg)
+void hid_host_device_callback(hid_host_device_handle_t hid_device_handle, const hid_host_driver_event_t event, void *arg)
 {
-    const app_event_queue_t evt_queue = {.event_group = APP_EVENT_HID_HOST,
-                                         // HID Host Device related info
-                                         .hid_host_device = {.handle = hid_device_handle, .event = event, .arg = arg}};
+    const app_event_queue_t evt_queue = {
+        .event_group = APP_EVENT_HID_HOST,
+        // HID Host Device related info
+        .hid_host_device = {.handle = hid_device_handle, .event = event, .arg = arg}};
 
-    if (app_event_queue) {
+    if (app_event_queue)
+    {
         xQueueSend(app_event_queue, &evt_queue, 0);
     }
 }
 
-static void tab5_usb_host_task(void* pvParameters)
+static void tab5_usb_host_task(void *pvParameters)
 {
     // BaseType_t task_created;
     app_event_queue_t evt_queue;
@@ -190,12 +222,15 @@ static void tab5_usb_host_task(void* pvParameters)
     // 0); assert(task_created == pdTRUE);
 
     ulTaskNotifyTake(false, 1000);
-    const hid_host_driver_config_t hid_host_driver_config = {.create_background_task = true,
-                                                             .task_priority          = 5,
-                                                             .stack_size             = 4096,
-                                                             .core_id                = 0,
-                                                             .callback               = hid_host_device_callback,
-                                                             .callback_arg           = NULL};
+    const hid_host_driver_config_t hid_host_driver_config =
+    {
+        .create_background_task = true,
+        .task_priority = 5,
+        .stack_size = 4096,
+        .core_id = 0,
+        .callback = hid_host_device_callback,
+        .callback_arg = NULL
+    };
 
     ESP_ERROR_CHECK(hid_host_install(&hid_host_driver_config));
 
@@ -204,50 +239,59 @@ static void tab5_usb_host_task(void* pvParameters)
 
     ESP_LOGI(TAG, "Waiting for HID Device to be connected");
 
-    while (1) {
+    while (1)
+    {
         // Wait queue
-        if (xQueueReceive(app_event_queue, &evt_queue, portMAX_DELAY)) {
-            if (APP_EVENT == evt_queue.event_group) {
+        if (xQueueReceive(app_event_queue, &evt_queue, portMAX_DELAY))
+        {
+            if (APP_EVENT == evt_queue.event_group)
+            {
                 // User pressed button
                 usb_host_lib_info_t lib_info;
                 ESP_ERROR_CHECK(usb_host_lib_info(&lib_info));
-                if (lib_info.num_devices == 0) {
+                if (lib_info.num_devices == 0)
+                {
                     // End while cycle
                     break;
-                } else {
+                }
+                else
+                {
                     ESP_LOGW(TAG, "To shutdown example, remove all USB devices and press button again.");
                     // Keep polling
                 }
             }
 
-            if (APP_EVENT_HID_HOST == evt_queue.event_group) {
-                hid_host_device_event(evt_queue.hid_host_device.handle, evt_queue.hid_host_device.event,
-                                      evt_queue.hid_host_device.arg);
+            if (APP_EVENT_HID_HOST == evt_queue.event_group)
+            {
+                hid_host_device_event(evt_queue.hid_host_device.handle, evt_queue.hid_host_device.event, evt_queue.hid_host_device.arg);
             }
         }
     }
 }
 
-static void lvgl_mouse_read_cb(lv_indev_t* indev, lv_indev_data_t* data)
+static void lvgl_mouse_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 {
     _usba_detect_mutex.lock();
-    if (!_is_usba_connected) {
+    if (!_is_usba_connected)
+    {
         _usba_detect_mutex.unlock();
         data->state = LV_INDEV_STATE_REL;
-        if (lv_obj_get_style_opa(_cursor_img, LV_PART_MAIN) == LV_OPA_COVER) {
+        if (lv_obj_get_style_opa(_cursor_img, LV_PART_MAIN) == LV_OPA_COVER)
+        {
             lv_obj_set_style_opa(_cursor_img, LV_OPA_TRANSP, LV_PART_MAIN);
         }
         return;
     }
     _usba_detect_mutex.unlock();
-    if (lv_obj_get_style_opa(_cursor_img, LV_PART_MAIN) == LV_OPA_TRANSP) {
+    if (lv_obj_get_style_opa(_cursor_img, LV_PART_MAIN) == LV_OPA_TRANSP)
+    {
         lv_obj_set_style_opa(_cursor_img, LV_OPA_COVER, LV_PART_MAIN);
     }
 
     std::lock_guard<std::mutex> lock(GetHAL()->hidMouseData.mutex);
     data->point.x = GetHAL()->hidMouseData.x;
     data->point.y = GetHAL()->hidMouseData.y;
-    data->state   = GetHAL()->hidMouseData.btnLeft ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
+    data->state = GetHAL()->hidMouseData.btnLeft ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
 }
 
 void HalEsp32::hid_init()
