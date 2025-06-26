@@ -1,7 +1,7 @@
 /***************************************************
 
 
- Tab5 tca8418 采用 8x9 矩阵(matrix)按键 + 1个通用(GPI)输入
+ Tab5 tca8418 uses 8x9 matrix keys + 1 general purpose (GPI) input
 
 ***************************************************/
 #include "keypad_scanner_tca8418.h"
@@ -40,7 +40,7 @@ void app_keypad_scanner_test(void *pvParam)
     // //keypad_scanner_tca8418_init();
     // keypad_scanner_tca8418_matrix(8, 9); // 8x9 + col9 (GPI)
     // keypad_scanner_tca8418_flush();
-    // // 配置外部中断
+    // // Configure external interrupt
     // //keypad_scanner_tca8418_irq_init();
     // //
     // keypad_scanner_tca8418_enable_int();
@@ -103,7 +103,8 @@ void app_keypad_scanner_test(void *pvParam)
 
 esp_err_t keypad_scanner_tca8418_init(i2c_master_bus_handle_t bus_handle)
 {
-    i2c_device_config_t dev_cfg = {
+    i2c_device_config_t dev_cfg =
+    {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = I2C_DEV_ADDR_TCA8418,
         .scl_speed_hz = 400000,
@@ -142,7 +143,8 @@ static void IRAM_ATTR tca8418_isr_handler(void *arg)
 
 esp_err_t keypad_scanner_tca8418_irq_init(int int_pin)
 {
-    gpio_config_t io_conf = {
+    gpio_config_t io_conf =
+    {
         .intr_type = GPIO_INTR_ANYEDGE, // interrupt of falling edge
         .mode = GPIO_MODE_INPUT,
         .pin_bit_mask = (1ULL << int_pin),
@@ -407,23 +409,27 @@ static led_strip_handle_t led_strip;
 esp_err_t bsp_rgb_led_init(void)
 {
     // LED strip general initialization, according to your led board design
-    led_strip_config_t strip_config = {
+    led_strip_config_t strip_config =
+    {
         .strip_gpio_num = TAB5_STRIP_LED_PIN,                        // The GPIO that connected to the LED strip's data line
         .max_leds = TAB5_STRIP_LED_COUNT,                            // The number of LEDs in the strip,
         .led_model = LED_MODEL_WS2812,                               // LED strip model
         .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB, // The color order of the strip: GRB
         .flags = {
             .invert_out = false,                                     // don't invert the output signal
-        }};
+        }
+    };
 
     // LED strip backend configuration: RMT
-    led_strip_rmt_config_t rmt_config = {
+    led_strip_rmt_config_t rmt_config =
+    {
         .clk_src = RMT_CLK_SRC_DEFAULT,        // different clock source can lead to different power consumption
         .resolution_hz = LED_STRIP_RMT_RES_HZ, // RMT counter clock frequency
         .mem_block_symbols = 64,               // the memory size of each RMT channel, in words (4 bytes)
         .flags = {
             .with_dma = false,                 // DMA feature is available on chips like ESP32-S3/P4
-        }};
+        }
+    };
 
     // LED Strip object handle
     ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
