@@ -10,7 +10,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define I2C_MASTER_TIMEOUT_MS 50 // 超时时间
+#define I2C_MASTER_TIMEOUT_MS 50 // Timeout duration
 
 #define I2C_DEV_ADDR_ICM20602 0x68
 #define ICM_REG_ACCEL_XOUT_H 0x3B
@@ -19,7 +19,7 @@
 static i2c_master_dev_handle_t i2c_dev_handle_icm20602;
 
 /**
- * 初始化
+ * Initialize
  */
 esp_err_t accel_gyro_sensor_icm20602_init(i2c_master_bus_handle_t bus_handle)
 {
@@ -56,13 +56,13 @@ esp_err_t accel_gyro_sensor_icm20602_init(i2c_master_bus_handle_t bus_handle)
     i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // accel +-4g --> 8192 LSB/g
     write_buf[0] = 0x24;
     write_buf[1] = 0x13;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 400khz
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 400kHz
 
     return ESP_OK;
 }
 
 /**
- * 读取加速度(unit: m/s^2)
+ * Read acceleration (unit: m/s^2)
  */
 esp_err_t accel_gyro_sensor_icm20602_read_accel(float *x, float *y, float *z)
 {
@@ -70,7 +70,7 @@ esp_err_t accel_gyro_sensor_icm20602_read_accel(float *x, float *y, float *z)
     uint8_t read_buf[6];
     int accel_x, accel_y, accel_z;
 
-    /* 读取数据 */
+    /* Read data */
     // i2c_master_write_read_device(_i2c_port, I2C_ADDR_ICM20602, write_buf, 1, read_buf, 6,
     // pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
     i2c_master_transmit_receive(i2c_dev_handle_icm20602, write_buf, 1, read_buf, 6, I2C_MASTER_TIMEOUT_MS);
@@ -78,7 +78,7 @@ esp_err_t accel_gyro_sensor_icm20602_read_accel(float *x, float *y, float *z)
     accel_y = (int16_t) ((read_buf[2] << 8) | read_buf[3]);
     accel_z = (int16_t) ((read_buf[4] << 8) | read_buf[5]);
 
-    /* 根据设置量程转换单位 */
+    /* Convert units based on configured range */
     *x = accel_x / 8192.0 * 9.8;
     *y = accel_y / 8192.0 * 9.8;
     *z = accel_z / 8192.0 * 9.8;
@@ -87,7 +87,7 @@ esp_err_t accel_gyro_sensor_icm20602_read_accel(float *x, float *y, float *z)
 }
 
 /**
- * 读取角速度(unit: °/s)
+ * Read angular velocity (unit: °/s)
  */
 esp_err_t accel_gyro_sensor_icm20602_read_gyro(float *x, float *y, float *z)
 {
@@ -95,7 +95,7 @@ esp_err_t accel_gyro_sensor_icm20602_read_gyro(float *x, float *y, float *z)
     uint8_t read_buf[6];
     int gyro_x, gyro_y, gyro_z;
 
-    /* 读取数据 */
+    /* Read data */
     // i2c_master_write_read_device(_i2c_port, I2C_ADDR_ICM20602, write_buf, 1, read_buf, 6,
     // pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
     i2c_master_transmit_receive(i2c_dev_handle_icm20602, write_buf, 1, read_buf, 6, I2C_MASTER_TIMEOUT_MS);
@@ -103,7 +103,7 @@ esp_err_t accel_gyro_sensor_icm20602_read_gyro(float *x, float *y, float *z)
     gyro_y = (int16_t) ((read_buf[2] << 8) | read_buf[3]);
     gyro_z = (int16_t) ((read_buf[4] << 8) | read_buf[5]);
 
-    /* 根据设置量程转换单位 */
+    /* Convert units based on configured range */
     *x = gyro_x / 32.8;
     *y = gyro_y / 32.8;
     *z = gyro_z / 32.8;
