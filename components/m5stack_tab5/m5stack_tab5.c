@@ -102,7 +102,8 @@ esp_err_t bsp_i2c_init(void)
         return ESP_OK;
     }
 
-    i2c_master_bus_config_t i2c_bus_conf = {
+    i2c_master_bus_config_t i2c_bus_conf =
+    {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .sda_io_num = BSP_I2C_SDA,
         .scl_io_num = BSP_I2C_SCL,
@@ -135,7 +136,8 @@ esp_err_t bsp_ext_i2c_init(void)
         return ESP_OK;
     }
 
-    i2c_master_bus_config_t i2c_mst_config = {
+    i2c_master_bus_config_t i2c_mst_config =
+    {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = BSP_EXT_I2C_NUM,
         .scl_io_num = BSP_EXT_I2C_SCL,
@@ -167,7 +169,8 @@ esp_err_t bsp_grove_i2c_init(void)
         return ESP_OK;
     }
 
-    i2c_master_bus_config_t i2c_mst_config = {
+    i2c_master_bus_config_t i2c_mst_config =
+    {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = BSP_EXT_I2C_NUM,
         .scl_io_num = 54, // BSP_EXT_I2C_SCL,
@@ -258,7 +261,8 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     uint8_t read_buf[1] = {0};
 
     /* */
-    i2c_device_config_t dev_cfg1 = {
+    i2c_device_config_t dev_cfg1 =
+    {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = I2C_DEV_ADDR_PI4IOE1,
         .scl_speed_hz = 400000,
@@ -292,7 +296,8 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
 
     /* */
-    i2c_device_config_t dev_cfg2 = {
+    i2c_device_config_t dev_cfg2 =
+    {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = I2C_DEV_ADDR_PI4IOE2,
         .scl_speed_hz = 400000,
@@ -601,7 +606,8 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
     host.slot = SDMMC_HOST_SLOT_0; //
     // host.slot = SDMMC_HOST_SLOT_1; //
     host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
-    sd_pwr_ctrl_ldo_config_t ldo_config = {
+    sd_pwr_ctrl_ldo_config_t ldo_config =
+    {
         .ldo_chan_id = BSP_LDO_PROBE_SD_CHAN, // `LDO_VO4` is used as the SDMMC IO power
     };
     static sd_pwr_ctrl_handle_t pwr_ctrl_handle = NULL;
@@ -638,7 +644,12 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
      *   If format_if_mount_failed is set to true, SD card will be partitioned and
      *   formatted in case when mounting fails.
      */
-    esp_vfs_fat_sdmmc_mount_config_t mount_config = {.format_if_mount_failed = false, .max_files = max_files, .allocation_unit_size = 16 * 1024};
+    esp_vfs_fat_sdmmc_mount_config_t mount_config =
+    {
+        .format_if_mount_failed = false,
+        .max_files = max_files,
+        .allocation_unit_size = 16 * 1024
+    };
 
     ret_val = esp_vfs_fat_sdmmc_mount(mount_point, &host, &slot_config, &mount_config, &card);
 
@@ -694,7 +705,8 @@ esp_err_t bsp_sdcard_deinit(char *mount_point)
 //==================================================================================
 esp_err_t bsp_spiffs_mount(void)
 {
-    esp_vfs_spiffs_conf_t conf = {
+    esp_vfs_spiffs_conf_t conf =
+    {
         .base_path = CONFIG_BSP_SPIFFS_MOUNT_POINT,
         .partition_label = CONFIG_BSP_SPIFFS_PARTITION_LABEL,
         .max_files = CONFIG_BSP_SPIFFS_MAX_FILES,
@@ -769,7 +781,7 @@ esp_err_t bsp_audio_init(const i2s_std_config_t *i2s_config)
     }
 
     /* Setup I2S peripheral */
-    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(CONFIG_BSP_I2S_NUM, I2S_ROLE_MASTER);
+    i2c_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(CONFIG_BSP_I2S_NUM, I2S_ROLE_MASTER);
     chan_cfg.auto_clear = true; // Auto clear the legacy data in the DMA buffer
     ESP_ERROR_CHECK(i2s_new_channel(&chan_cfg, &i2s_tx_chan, &i2s_rx_chan));
 
@@ -793,7 +805,8 @@ esp_err_t bsp_audio_init(const i2s_std_config_t *i2s_config)
     //     ESP_ERROR_CHECK(i2s_channel_enable(i2s_rx_chan));
     // }
 
-    i2s_tdm_config_t tdm_cfg = {
+    i2s_tdm_config_t tdm_cfg =
+    {
         .clk_cfg =
             {
                 .sample_rate_hz = (uint32_t) 48000,
@@ -824,7 +837,8 @@ esp_err_t bsp_audio_init(const i2s_std_config_t *i2s_config)
         ESP_ERROR_CHECK(i2s_channel_enable(i2s_rx_chan));
     }
 
-    audio_codec_i2s_cfg_t i2s_cfg = {
+    audio_codec_i2s_cfg_t i2s_cfg =
+    {
         .port = CONFIG_BSP_I2S_NUM,
         .tx_handle = i2s_tx_chan,
         .rx_handle = i2s_rx_chan,
@@ -854,7 +868,8 @@ esp_codec_dev_handle_t bsp_audio_codec_speaker_init(void)
     const audio_codec_gpio_if_t *gpio_if = audio_codec_new_gpio();
 
     i2c_master_bus_handle_t i2c_bus_handle = bsp_i2c_get_handle();
-    audio_codec_i2c_cfg_t i2c_cfg = {
+    audio_codec_i2c_cfg_t i2c_cfg =
+    {
         .port = BSP_I2C_NUM,
         .addr = ES8388_CODEC_DEFAULT_ADDR,
         .bus_handle = i2c_bus_handle,
@@ -862,12 +877,14 @@ esp_codec_dev_handle_t bsp_audio_codec_speaker_init(void)
     const audio_codec_ctrl_if_t *i2c_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_cfg);
     BSP_NULL_CHECK(i2c_ctrl_if, NULL);
 
-    esp_codec_dev_hw_gain_t gain = {
+    esp_codec_dev_hw_gain_t gain =
+    {
         .pa_voltage = 5.0,
         .codec_dac_voltage = 3.3,
     };
 
-    es8388_codec_cfg_t es8388_cfg = {
+    es8388_codec_cfg_t es8388_cfg =
+    {
         .codec_mode = ESP_CODEC_DEV_WORK_MODE_DAC,
         .master_mode = false,
         .ctrl_if = i2c_ctrl_if,
@@ -876,7 +893,8 @@ esp_codec_dev_handle_t bsp_audio_codec_speaker_init(void)
     const audio_codec_if_t *es8388_dev = es8388_codec_new(&es8388_cfg);
     BSP_NULL_CHECK(es8388_dev, NULL);
 
-    esp_codec_dev_cfg_t codec_dev_cfg = {
+    esp_codec_dev_cfg_t codec_dev_cfg =
+    {
         .dev_type = ESP_CODEC_DEV_TYPE_OUT,
         .codec_if = es8388_dev,
         .data_if = i2s_data_if,
@@ -900,7 +918,8 @@ esp_codec_dev_handle_t bsp_audio_codec_microphone_init(void)
     assert(i2s_data_if);
 
     i2c_master_bus_handle_t i2c_bus_handle = bsp_i2c_get_handle();
-    audio_codec_i2c_cfg_t i2c_cfg = {
+    audio_codec_i2c_cfg_t i2c_cfg =
+    {
         .port = BSP_I2C_NUM,
         .addr = ES7210_CODEC_DEFAULT_ADDR,
         .bus_handle = i2c_bus_handle,
@@ -908,14 +927,16 @@ esp_codec_dev_handle_t bsp_audio_codec_microphone_init(void)
     const audio_codec_ctrl_if_t *i2c_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_cfg);
     BSP_NULL_CHECK(i2c_ctrl_if, NULL);
 
-    es7210_codec_cfg_t es7210_cfg = {
+    es7210_codec_cfg_t es7210_cfg =
+    {
         .ctrl_if = i2c_ctrl_if, // Codec Control interface
     };
     es7210_cfg.mic_selected = ES7120_SEL_MIC1 | ES7120_SEL_MIC2 | ES7120_SEL_MIC3 | ES7120_SEL_MIC4;
     const audio_codec_if_t *es7210_dev = es7210_codec_new(&es7210_cfg);
     BSP_NULL_CHECK(es7210_dev, NULL);
 
-    esp_codec_dev_cfg_t codec_es7210_dev_cfg = {
+    esp_codec_dev_cfg_t codec_es7210_dev_cfg =
+    {
         .dev_type = ESP_CODEC_DEV_TYPE_IN, // Codec device type: Codec input device like ADC (capture data from microphone)
         .codec_if = es7210_dev,            // Codec interface
         .data_if = i2s_data_if,            // Codec data interface
@@ -985,7 +1006,8 @@ static esp_err_t bsp_codec_es8388_set(uint32_t rate, uint32_t bps, i2s_slot_mode
 {
     esp_err_t ret = ESP_OK;
 
-    esp_codec_dev_sample_info_t fs = {
+    esp_codec_dev_sample_info_t fs =
+    {
         .sample_rate = rate,
         .channel = ch,
         .bits_per_sample = bps,
@@ -1004,7 +1026,8 @@ static esp_err_t bsp_codec_es7210_set(uint32_t rate, uint32_t bps, i2s_slot_mode
 {
     esp_err_t ret = ESP_OK;
 
-    esp_codec_dev_sample_info_t fs = {
+    esp_codec_dev_sample_info_t fs =
+    {
         .sample_rate = rate,
         .channel = ch,
         .bits_per_sample = bps,
@@ -1074,17 +1097,28 @@ esp_err_t bsp_display_brightness_init(void)
     // gpio_set_level(BSP_LCD_BACKLIGHT, 1);
 
     // Setup LEDC peripheral for PWM backlight control
-    const ledc_timer_config_t lcd_backlight_timer = {
+    const ledc_timer_config_t lcd_backlight_timer =
+    {
         .speed_mode = LEDC_LOW_SPEED_MODE,
         //  .duty_resolution = LEDC_TIMER_10_BIT,
         .duty_resolution = LEDC_TIMER_12_BIT,
         .timer_num = LEDC_TIMER_0,
         .freq_hz = 5000,
         // .freq_hz = 20000,
-        .clk_cfg = LEDC_AUTO_CLK};
+        .clk_cfg = LEDC_AUTO_CLK
+    };
     ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
 
-    const ledc_channel_config_t lcd_backlight_channel = {.gpio_num = BSP_LCD_BACKLIGHT, .speed_mode = LEDC_LOW_SPEED_MODE, .channel = LCD_LEDC_CH, .intr_type = LEDC_INTR_DISABLE, .timer_sel = LEDC_TIMER_0, .duty = 0, .hpoint = 0};
+    const ledc_channel_config_t lcd_backlight_channel =
+    {
+        .gpio_num = BSP_LCD_BACKLIGHT,
+        .speed_mode = LEDC_LOW_SPEED_MODE,
+        .channel = LCD_LEDC_CH,
+        .intr_type = LEDC_INTR_DISABLE,
+        .timer_sel = LEDC_TIMER_0,
+        .duty = 0,
+        .hpoint = 0
+    };
 
     ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
 
@@ -1125,7 +1159,8 @@ static esp_err_t bsp_enable_dsi_phy_power(void)
 #if BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
     // Turn on the power for MIPI DSI PHY, so it can go from "No Power" state to "Shutdown" state
     static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
-    esp_ldo_channel_config_t ldo_cfg = {
+    esp_ldo_channel_config_t ldo_cfg =
+    {
         .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
         .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
     };
@@ -1165,7 +1200,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
     esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
-    esp_lcd_dsi_bus_config_t bus_config = {
+    esp_lcd_dsi_bus_config_t bus_config =
+    {
         .bus_id = 0,
         .num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM,
         .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
@@ -1175,7 +1211,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
 
     ESP_LOGI(TAG, "Install MIPI DSI LCD control panel");
     // we use DBI interface to send LCD commands and parameters
-    esp_lcd_dbi_io_config_t dbi_config = {
+    esp_lcd_dbi_io_config_t dbi_config =
+    {
         .virtual_channel = 0,
         .lcd_cmd_bits = 8,   // according to the LCD spec
         .lcd_param_bits = 8, // according to the LCD spec
@@ -1184,7 +1221,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
 
 #if defined(LCD_MIPI_DSI_USE_ILI9881C) && !defined(LCD_MIPI_DSI_USE_ST7703)
     ESP_LOGI(TAG, "Install LCD driver of ili9881c");
-    esp_lcd_dpi_panel_config_t dpi_config = {
+    esp_lcd_dpi_panel_config_t dpi_config =
+    {
         .virtual_channel = 0,
         .dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT,
         .dpi_clock_freq_mhz = 60, // 720*1280 RGB24 60Hz RGB24 // 80,
@@ -1204,7 +1242,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .flags.use_dma2d = true,
     };
 
-    ili9881c_vendor_config_t vendor_config = {
+    ili9881c_vendor_config_t vendor_config =
+    {
         .init_cmds = tab5_lcd_ili9881c_specific_init_code_default,
         .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
         .mipi_config =
@@ -1215,7 +1254,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
             },
     };
 
-    const esp_lcd_panel_dev_config_t lcd_dev_config = {
+    const esp_lcd_panel_dev_config_t lcd_dev_config =
+    {
         .bits_per_pixel = 16,
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
         .reset_gpio_num = -1,
@@ -1299,7 +1339,8 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     BSP_ERROR_CHECK_RETURN_ERR(bsp_i2c_init());
 
     /* Initialize touch */
-    const esp_lcd_touch_config_t tp_cfg = {
+    const esp_lcd_touch_config_t tp_cfg =
+    {
         .x_max = BSP_LCD_H_RES,
         .y_max = BSP_LCD_V_RES,
         .rst_gpio_num = -1, // BSP_LCD_TOUCH_RST, // NC
@@ -1492,7 +1533,8 @@ esp_err_t bsp_usb_host_start(bsp_usb_host_power_mode_t mode, bool limit_500mA)
 {
     // Install USB Host driver. Should only be called once in entire application
     ESP_LOGI(TAG, "Installing USB Host");
-    const usb_host_config_t host_config = {
+    const usb_host_config_t host_config =
+    {
         .skip_phy_setup = false,
         .intr_flags = ESP_INTR_FLAG_LEVEL1,
     };
