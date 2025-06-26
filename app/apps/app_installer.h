@@ -31,13 +31,13 @@ inline void on_startup_anim()
 }
 
 /**
- * @brief App 安装回调
+ * @brief App installation callback
  *
  * @param mooncake
  */
 inline void on_install_apps()
 {
-    // 安装 App
+    // Install App
     // mooncake::GetMooncake().installApp(std::make_unique<AppTemplate>());
     mooncake::GetMooncake().installApp(std::make_unique<AppLauncher>());
     /* Install app locator (Don't remove) */
