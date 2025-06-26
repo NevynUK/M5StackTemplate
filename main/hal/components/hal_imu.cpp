@@ -24,7 +24,8 @@ void HalEsp32::clearImuIrq()
 {
     mclog::tagInfo(_tag, "clear imu irq");
     accel_gyro_bmi270_init(bsp_i2c_get_handle());
-    if (accel_gyro_bmi270_check_irq()) {
+    if (accel_gyro_bmi270_check_irq())
+    {
         accel_gyro_bmi270_clear_irq_int();
         mclog::tagInfo(_tag, "imu irq detected! clear it!");
     }
@@ -35,7 +36,8 @@ void HalEsp32::imu_init()
     mclog::tagInfo(_tag, "imu init");
 
     accel_gyro_bmi270_init(bsp_i2c_get_handle());
-    if (accel_gyro_bmi270_check_irq()) {
+    if (accel_gyro_bmi270_check_irq())
+    {
         accel_gyro_bmi270_clear_irq_int();
         mclog::tagInfo(_tag, "imu irq detected! clear it!");
     }
@@ -48,12 +50,12 @@ void HalEsp32::updateImuData()
     accel_gyro_bmi270_get_data(&bmi_sensor_data);
 
     /* Convert according to set range */
-    imuData.accelX = bmi_sensor_data.acc.y / 835.92 / 10.0f;  // m/s^2
+    imuData.accelX = bmi_sensor_data.acc.y / 835.92 / 10.0f; // m/s^2
     imuData.accelY = -bmi_sensor_data.acc.x / 835.92 / 10.0f;
     imuData.accelZ = -bmi_sensor_data.acc.z / 835.92 / 10.0f;
-    imuData.gyroX  = bmi_sensor_data.gyr.y / 32.768 / 10.0f;  // °/s   gyro_raw*2*1000/2^16 --> 0.0305
-    imuData.gyroY  = bmi_sensor_data.gyr.x / 32.768 / 10.0f;
-    imuData.gyroZ  = -bmi_sensor_data.gyr.z / 32.768 / 10.0f;
+    imuData.gyroX = bmi_sensor_data.gyr.y / 32.768 / 10.0f;  // °/s   gyro_raw*2*1000/2^16 --> 0.0305
+    imuData.gyroY = bmi_sensor_data.gyr.x / 32.768 / 10.0f;
+    imuData.gyroZ = -bmi_sensor_data.gyr.z / 32.768 / 10.0f;
 }
 
 void HalEsp32::sleepAndShakeWakeup()
@@ -70,7 +72,8 @@ void HalEsp32::sleepAndShakeWakeup()
 
     // delay(800);
     powerOff();
-    while (1) {
+    while (1)
+    {
         delay(100);
     }
 }

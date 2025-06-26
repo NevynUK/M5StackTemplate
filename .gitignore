@@ -36,4 +36,3 @@ gdb.log
 build/**
 managed_components/**
 sdkconfig
-*.bin
