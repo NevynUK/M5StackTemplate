@@ -10,11 +10,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define I2C_MASTER_TIMEOUT_MS 50  // 超时时间
+#define I2C_MASTER_TIMEOUT_MS 50 // 超时时间
 
 #define I2C_DEV_ADDR_ICM20602 0x68
-#define ICM_REG_ACCEL_XOUT_H  0x3B
-#define ICM_REG_GYRO_XOUT_H   0x43
+#define ICM_REG_ACCEL_XOUT_H 0x3B
+#define ICM_REG_GYRO_XOUT_H 0x43
 
 static i2c_master_dev_handle_t i2c_dev_handle_icm20602;
 
@@ -27,36 +27,36 @@ esp_err_t accel_gyro_sensor_icm20602_init(i2c_master_bus_handle_t bus_handle)
 
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address  = I2C_DEV_ADDR_ICM20602,
-        .scl_speed_hz    = 400000,
+        .device_address = I2C_DEV_ADDR_ICM20602,
+        .scl_speed_hz = 400000,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &i2c_dev_handle_icm20602));
 
     write_buf[0] = 0x6B;
     write_buf[1] = 0x00;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // sleep=0
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // sleep=0
     write_buf[0] = 0x6A;
     write_buf[1] = 0x00;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // mst_en=0
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // mst_en=0
     write_buf[0] = 0x38;
     write_buf[1] = 0x00;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // interrupt off
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // interrupt off
     write_buf[0] = 0x19;
     write_buf[1] = 0x07;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // 1KHz
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 1KHz
     write_buf[0] = 0x1A;
     write_buf[1] = 0x03;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // 44Hz filter
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 44Hz filter
     write_buf[0] = 0x1B;
     write_buf[1] = 0x10;
     i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS);  // gyro +-1000dps --> 32.8 LSB/°/S
+                        I2C_MASTER_TIMEOUT_MS);                                        // gyro +-1000dps --> 32.8 LSB/°/S
     write_buf[0] = 0x1C;
     write_buf[1] = 0x08;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // accel +-4g --> 8192 LSB/g
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // accel +-4g --> 8192 LSB/g
     write_buf[0] = 0x24;
     write_buf[1] = 0x13;
-    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS);  // 400khz
+    i2c_master_transmit(i2c_dev_handle_icm20602, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 400khz
 
     return ESP_OK;
 }
@@ -74,9 +74,9 @@ esp_err_t accel_gyro_sensor_icm20602_read_accel(float *x, float *y, float *z)
     // i2c_master_write_read_device(_i2c_port, I2C_ADDR_ICM20602, write_buf, 1, read_buf, 6,
     // pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
     i2c_master_transmit_receive(i2c_dev_handle_icm20602, write_buf, 1, read_buf, 6, I2C_MASTER_TIMEOUT_MS);
-    accel_x = (int16_t)((read_buf[0] << 8) | read_buf[1]);
-    accel_y = (int16_t)((read_buf[2] << 8) | read_buf[3]);
-    accel_z = (int16_t)((read_buf[4] << 8) | read_buf[5]);
+    accel_x = (int16_t) ((read_buf[0] << 8) | read_buf[1]);
+    accel_y = (int16_t) ((read_buf[2] << 8) | read_buf[3]);
+    accel_z = (int16_t) ((read_buf[4] << 8) | read_buf[5]);
 
     /* 根据设置量程转换单位 */
     *x = accel_x / 8192.0 * 9.8;
@@ -99,9 +99,9 @@ esp_err_t accel_gyro_sensor_icm20602_read_gyro(float *x, float *y, float *z)
     // i2c_master_write_read_device(_i2c_port, I2C_ADDR_ICM20602, write_buf, 1, read_buf, 6,
     // pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
     i2c_master_transmit_receive(i2c_dev_handle_icm20602, write_buf, 1, read_buf, 6, I2C_MASTER_TIMEOUT_MS);
-    gyro_x = (int16_t)((read_buf[0] << 8) | read_buf[1]);
-    gyro_y = (int16_t)((read_buf[2] << 8) | read_buf[3]);
-    gyro_z = (int16_t)((read_buf[4] << 8) | read_buf[5]);
+    gyro_x = (int16_t) ((read_buf[0] << 8) | read_buf[1]);
+    gyro_y = (int16_t) ((read_buf[2] << 8) | read_buf[3]);
+    gyro_z = (int16_t) ((read_buf[4] << 8) | read_buf[5]);
 
     /* 根据设置量程转换单位 */
     *x = gyro_x / 32.8;

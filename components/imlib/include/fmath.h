@@ -28,21 +28,21 @@ static inline float fast_sqrtf(float x)
 // 快速 floor 函数
 static inline int fast_floorf(float x)
 {
-    int i = (int)x;
+    int i = (int) x;
     return (x < 0 && x != i) ? i - 1 : i;
 }
 
 // 快速 ceil 函数
 static inline int fast_ceilf(float x)
 {
-    int i = (int)x;
+    int i = (int) x;
     return (x > 0 && x != i) ? i + 1 : i;
 }
 
 // 快速 round 函数
 static inline int fast_roundf(float x)
 {
-    return (int)(x + (x >= 0 ? 0.5f : -0.5f));
+    return (int) (x + (x >= 0 ? 0.5f : -0.5f));
 }
 
 // 快速 fabs 函数
@@ -51,4 +51,4 @@ static inline float fast_fabsf(float x)
     return (x >= 0) ? x : -x;
 }
 
-#endif  // __FMATH_H__
+#endif // __FMATH_H__

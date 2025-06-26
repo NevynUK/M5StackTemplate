@@ -47,7 +47,8 @@
 
 /*! CPP guard */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************/
@@ -73,39 +74,39 @@ extern "C" {
 /*! @name Defines maximum number of feature outputs */
 #define BMI270_MAXIMUM_FIFO_MAX_FEAT_OUT UINT8_C(0)
 
-/*! @name Mask definitions for feature interrupt status bits */
+    /*! @name Mask definitions for feature interrupt status bits */
 
-/***************************************************************************/
+    /***************************************************************************/
 
-/*!     BMI270 User Interface function prototypes
- ****************************************************************************/
+    /*!     BMI270 User Interface function prototypes
+     ****************************************************************************/
 
-/**
- * \ingroup bmi270_maximum_fifo
- * \defgroup bmi270_maximum_fifoApiInit Initialization
- * @brief Initialize the sensor and device structure
- */
+    /**
+     * \ingroup bmi270_maximum_fifo
+     * \defgroup bmi270_maximum_fifoApiInit Initialization
+     * @brief Initialize the sensor and device structure
+     */
 
-/*!
- * \ingroup bmi270_maximum_fifoApiInit
- * \page bmi270_maximum_fifo_api_bmi270_maximum_fifo_init bmi270_maximum_fifo_init
- * \code
- * int8_t bmi270_maximum_fifo_init(struct bmi2_dev *dev);
- * \endcode
- * @details This API:
- *  1) updates the device structure with address of the configuration file.
- *  2) Initializes BMI270 sensor.
- *  3) Writes the configuration file.
- *  4) Updates the feature offset parameters in the device structure.
- *  5) Updates the maximum number of pages, in the device structure.
- *
- * @param[in, out] dev      : Structure instance of bmi2_dev.
- *
- * @return Result of API execution status
- * @retval 0 -> Success
- * @retval < 0 -> Fail
- */
-int8_t bmi270_maximum_fifo_init(struct bmi2_dev *dev);
+    /*!
+     * \ingroup bmi270_maximum_fifoApiInit
+     * \page bmi270_maximum_fifo_api_bmi270_maximum_fifo_init bmi270_maximum_fifo_init
+     * \code
+     * int8_t bmi270_maximum_fifo_init(struct bmi2_dev *dev);
+     * \endcode
+     * @details This API:
+     *  1) updates the device structure with address of the configuration file.
+     *  2) Initializes BMI270 sensor.
+     *  3) Writes the configuration file.
+     *  4) Updates the feature offset parameters in the device structure.
+     *  5) Updates the maximum number of pages, in the device structure.
+     *
+     * @param[in, out] dev      : Structure instance of bmi2_dev.
+     *
+     * @return Result of API execution status
+     * @retval 0 -> Success
+     * @retval < 0 -> Fail
+     */
+    int8_t bmi270_maximum_fifo_init(struct bmi2_dev *dev);
 
 /******************************************************************************/
 /*! @name       C++ Guard Macros                                      */

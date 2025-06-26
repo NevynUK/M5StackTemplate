@@ -27,7 +27,7 @@ SOFTWARE.
 #include <math.h>
 #include "ina226.hpp"
 
-#define I2C_MASTER_TIMEOUT_MS 50  // 超时时间
+#define I2C_MASTER_TIMEOUT_MS 50 // 超时时间
 
 bool INA226::begin(i2c_master_bus_handle_t bus_handle, uint8_t address)
 {
@@ -35,26 +35,26 @@ bool INA226::begin(i2c_master_bus_handle_t bus_handle, uint8_t address)
 
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address  = address,
-        .scl_speed_hz    = 400000,
+        .device_address = address,
+        .scl_speed_hz = 400000,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &i2c_dev_handle_ina226));
 
-    if (i2c_dev_handle_ina226 == NULL) {
+    if (i2c_dev_handle_ina226 == NULL)
+    {
         return false;
     }
 
     return true;
 }
 
-bool INA226::configure(ina226_averages_t avg, ina226_busConvTime_t busConvTime, ina226_shuntConvTime_t shuntConvTime,
-                       ina226_mode_t mode)
+bool INA226::configure(ina226_averages_t avg, ina226_busConvTime_t busConvTime, ina226_shuntConvTime_t shuntConvTime, ina226_mode_t mode)
 {
     uint16_t config = 0;
 
     config |= (avg << 9 | busConvTime << 6 | shuntConvTime << 3 | mode);
 
-    vBusMax   = 36;
+    vBusMax = 36;
     vShuntMax = 0.08192f;
 
     writeRegister16(INA226_REG_CONFIG, config);
@@ -74,7 +74,7 @@ bool INA226::calibrate(float rShuntValue, float iMaxExpected)
 
     minimumLSB = iMaxExpected / 32767;
 
-    currentLSB = (uint32_t)(minimumLSB * 100000000);
+    currentLSB = (uint32_t) (minimumLSB * 100000000);
     currentLSB /= 100000000;
     currentLSB /= 0.0001;
     currentLSB = ceil(currentLSB);
@@ -82,7 +82,7 @@ bool INA226::calibrate(float rShuntValue, float iMaxExpected)
 
     powerLSB = currentLSB * 25;
 
-    calibrationValue = (uint16_t)((0.00512) / (currentLSB * rShunt));
+    calibrationValue = (uint16_t) ((0.00512) / (currentLSB * rShunt));
 
     writeRegister16(INA226_REG_CALIBRATION, calibrationValue);
 
@@ -96,12 +96,15 @@ float INA226::getMaxPossibleCurrent(void)
 
 float INA226::getMaxCurrent(void)
 {
-    float maxCurrent  = (currentLSB * 32767);
+    float maxCurrent = (currentLSB * 32767);
     float maxPossible = getMaxPossibleCurrent();
 
-    if (maxCurrent > maxPossible) {
+    if (maxCurrent > maxPossible)
+    {
         return maxPossible;
-    } else {
+    }
+    else
+    {
         return maxCurrent;
     }
 }
@@ -110,9 +113,12 @@ float INA226::getMaxShuntVoltage(void)
 {
     float maxVoltage = getMaxCurrent() * rShunt;
 
-    if (maxVoltage >= vShuntMax) {
+    if (maxVoltage >= vShuntMax)
+    {
         return vShuntMax;
-    } else {
+    }
+    else
+    {
         return maxVoltage;
     }
 }
@@ -163,7 +169,7 @@ ina226_averages_t INA226::getAverages(void)
     value &= 0b0000111000000000;
     value >>= 9;
 
-    return (ina226_averages_t)value;
+    return (ina226_averages_t) value;
 }
 
 ina226_busConvTime_t INA226::getBusConversionTime(void)
@@ -174,7 +180,7 @@ ina226_busConvTime_t INA226::getBusConversionTime(void)
     value &= 0b0000000111000000;
     value >>= 6;
 
-    return (ina226_busConvTime_t)value;
+    return (ina226_busConvTime_t) value;
 }
 
 ina226_shuntConvTime_t INA226::getShuntConversionTime(void)
@@ -185,7 +191,7 @@ ina226_shuntConvTime_t INA226::getShuntConversionTime(void)
     value &= 0b0000000000111000;
     value >>= 3;
 
-    return (ina226_shuntConvTime_t)value;
+    return (ina226_shuntConvTime_t) value;
 }
 
 ina226_mode_t INA226::getMode(void)
@@ -195,7 +201,7 @@ ina226_mode_t INA226::getMode(void)
     value = readRegister16(INA226_REG_CONFIG);
     value &= 0b0000000000000111;
 
-    return (ina226_mode_t)value;
+    return (ina226_mode_t) value;
 }
 
 void INA226::setMaskEnable(uint16_t mask)
@@ -265,9 +271,12 @@ void INA226::setAlertInvertedPolarity(bool inverted)
 {
     uint16_t temp = getMaskEnable();
 
-    if (inverted) {
+    if (inverted)
+    {
         temp |= INA226_BIT_APOL;
-    } else {
+    }
+    else
+    {
         temp &= ~INA226_BIT_APOL;
     }
 
@@ -278,9 +287,12 @@ void INA226::setAlertLatch(bool latch)
 {
     uint16_t temp = getMaskEnable();
 
-    if (latch) {
+    if (latch)
+    {
         temp |= INA226_BIT_LEN;
-    } else {
+    }
+    else
+    {
         temp &= ~INA226_BIT_LEN;
     }
 
@@ -307,8 +319,8 @@ int16_t INA226::readRegister16(uint8_t reg)
 void INA226::writeRegister16(uint8_t reg, uint16_t val)
 {
     uint8_t w_buffer[3] = {0};
-    w_buffer[0]         = reg;
-    w_buffer[1]         = (val >> 8) & 0xFF;
-    w_buffer[2]         = val & 0xFF;
+    w_buffer[0] = reg;
+    w_buffer[1] = (val >> 8) & 0xFF;
+    w_buffer[2] = val & 0xFF;
     i2c_master_transmit(i2c_dev_handle_ina226, w_buffer, 3, I2C_MASTER_TIMEOUT_MS);
 }

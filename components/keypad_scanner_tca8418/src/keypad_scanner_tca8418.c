@@ -15,26 +15,26 @@
 #include "driver/gpio.h"
 #include "bsp/esp-bsp.h"
 
-static const char* TAG = "tca8418";
+static const char *TAG = "tca8418";
 
 static i2c_master_dev_handle_t i2c_dev_handle_tca8418;
 #define I2C_MASTER_TIMEOUT_MS 100
-#define I2C_DEV_ADDR_TCA8418  0x34
+#define I2C_DEV_ADDR_TCA8418 0x34
 
 QueueHandle_t keypad_evt_queue = NULL;
 static void write_reg(uint8_t reg, uint8_t val);
 static uint8_t read_reg(uint8_t reg);
 
-void app_keypad_scanner_test(void* pvParam)
+void app_keypad_scanner_test(void *pvParam)
 {
     uint32_t io_num = 0;
 
     bsp_ext_i2c_init();
     i2c_master_bus_handle_t ext_i2c_bus_handle = bsp_ext_i2c_get_handle();
     keypad_scanner_tca8418_init(ext_i2c_bus_handle);
-    keypad_scanner_tca8418_matrix(8, 9);  // 8x9 + col9 (GPI)
+    keypad_scanner_tca8418_matrix(8, 9); // 8x9 + col9 (GPI)
     keypad_scanner_tca8418_flush();
-    keypad_scanner_tca8418_irq_init(50);  // TAB5_TCA8418_INT_PIN
+    keypad_scanner_tca8418_irq_init(50); // TAB5_TCA8418_INT_PIN
     keypad_scanner_tca8418_enable_int();
 
     // //keypad_scanner_tca8418_init();
@@ -45,15 +45,18 @@ void app_keypad_scanner_test(void* pvParam)
     // //
     // keypad_scanner_tca8418_enable_int();
 
-    while (1) {
-        if (xQueueReceive(keypad_evt_queue, &io_num, portMAX_DELAY)) {
+    while (1)
+    {
+        if (xQueueReceive(keypad_evt_queue, &io_num, portMAX_DELAY))
+        {
             // ESP_LOGI(TAG, "GPIO[%ld] interrupt detected\n", io_num);
 
             uint8_t int_stat = read_reg(TCA8418_REG_INT_STAT);
             // printf("int stat: %#x\n", int_stat);
 
             // GPI interrupt
-            if (int_stat & 0x02) {
+            if (int_stat & 0x02)
+            {
                 // reading the registers is mandatory to clear IRQ flag
                 // can also be used to find the GPIO changed
                 // as these registers are a bitmap of the gpio pins.
@@ -66,17 +69,24 @@ void app_keypad_scanner_test(void* pvParam)
             }
 
             // Key events interrupt
-            if (int_stat & 0x01) {
+            if (int_stat & 0x01)
+            {
                 uint8_t keycode = keypad_scanner_tca8418_get_event();
-                if (keycode & 0x80) {
+                if (keycode & 0x80)
+                {
                     printf("Press ");
                     uint8_t key = keycode & 0x7F;
-                    if (key <= 81) {  // matrix
+                    if (key <= 81)
+                    { // matrix
                         printf("%d key: %s\n", keycode & 0x7F, key_value_map_str[(keycode & 0x7F) - 1]);
-                    } else if (key == 114) {  // GPI
+                    }
+                    else if (key == 114)
+                    { // GPI
                         printf("%d Fn\n", 114);
                     }
-                } else {
+                }
+                else
+                {
                     printf("Release\n");
                 }
 
@@ -95,8 +105,8 @@ esp_err_t keypad_scanner_tca8418_init(i2c_master_bus_handle_t bus_handle)
 {
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address  = I2C_DEV_ADDR_TCA8418,
-        .scl_speed_hz    = 400000,
+        .device_address = I2C_DEV_ADDR_TCA8418,
+        .scl_speed_hz = 400000,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &i2c_dev_handle_tca8418));
 
@@ -124,27 +134,27 @@ esp_err_t keypad_scanner_tca8418_init(i2c_master_bus_handle_t bus_handle)
     return ESP_OK;
 }
 
-static void IRAM_ATTR tca8418_isr_handler(void* arg)
+static void IRAM_ATTR tca8418_isr_handler(void *arg)
 {
-    uint32_t gpio_num = (uint32_t)arg;
+    uint32_t gpio_num = (uint32_t) arg;
     xQueueSendFromISR(keypad_evt_queue, &gpio_num, NULL);
 }
 
 esp_err_t keypad_scanner_tca8418_irq_init(int int_pin)
 {
     gpio_config_t io_conf = {
-        .intr_type    = GPIO_INTR_ANYEDGE,  // interrupt of falling edge
-        .mode         = GPIO_MODE_INPUT,
+        .intr_type = GPIO_INTR_ANYEDGE, // interrupt of falling edge
+        .mode = GPIO_MODE_INPUT,
         .pin_bit_mask = (1ULL << int_pin),
         .pull_down_en = 0,
-        .pull_up_en   = GPIO_PULLUP_ENABLE,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
     };
     gpio_config(&io_conf);
 
     keypad_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
     gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
-    gpio_isr_handler_add(int_pin, tca8418_isr_handler, (void*)int_pin);
+    gpio_isr_handler_add(int_pin, tca8418_isr_handler, (void *) int_pin);
 
     return ESP_OK;
 }
@@ -161,32 +171,40 @@ esp_err_t keypad_scanner_tca8418_irq_init(int int_pin)
  */
 bool keypad_scanner_tca8418_matrix(uint8_t rows, uint8_t columns)
 {
-    if ((rows > 8) || (columns > 10)) {
+    if ((rows > 8) || (columns > 10))
+    {
         return false;
     }
 
     // MATRIX
     // skip zero size matrix
-    if ((rows != 0) && (columns != 0)) {
+    if ((rows != 0) && (columns != 0))
+    {
         // setup the keypad matrix.
         uint8_t mask = 0x00;
-        for (int r = 0; r < rows; r++) {
+        for (int r = 0; r < rows; r++)
+        {
             mask <<= 1;
             mask |= 1;
         }
         write_reg(TCA8418_REG_KP_GPIO_1, mask);
 
         mask = 0x00;
-        for (int c = 0; c < columns && c < 8; c++) {
+        for (int c = 0; c < columns && c < 8; c++)
+        {
             mask <<= 1;
             mask |= 1;
         }
         write_reg(TCA8418_REG_KP_GPIO_2, mask);
 
-        if (columns > 8) {
-            if (columns == 9) {
+        if (columns > 8)
+        {
+            if (columns == 9)
+            {
                 mask = 0x01;
-            } else {
+            }
+            else
+            {
                 mask = 0x03;
             }
             write_reg(TCA8418_REG_KP_GPIO_3, mask);
@@ -205,7 +223,8 @@ uint8_t keypad_scanner_tca8418_flush()
     //  flush key events
     uint8_t count = 0;
 
-    while (keypad_scanner_tca8418_get_event() != 0) {
+    while (keypad_scanner_tca8418_get_event() != 0)
+    {
         count++;
     }
 
@@ -228,7 +247,7 @@ uint8_t keypad_scanner_tca8418_flush()
 uint8_t keypad_scanner_tca8418_available()
 {
     uint8_t eventCount = read_reg(TCA8418_REG_KEY_LCK_EC);
-    eventCount &= 0x0F;  // lower 4 bits only
+    eventCount &= 0x0F; // lower 4 bits only
     return eventCount;
 }
 
@@ -289,54 +308,54 @@ static uint8_t read_reg(uint8_t reg)
 
 const char key_value_map[81] = {
     '0', '8',  ':', 'c', 'k', 's',
-    ' ',  // SHIFT
-    ' ',  // NONE
-    ' ',  // NONE
-    ' ',  // NONE
+    ' ', // SHIFT
+    ' ', // NONE
+    ' ', // NONE
+    ' ', // NONE
     '1', '9',  ']', 'd', 'l', 't',
-    ' ',  // CTRL
-    ' ',  // NONE
-    ' ',  // NONE
-    ' ',  // NONE
+    ' ', // CTRL
+    ' ', // NONE
+    ' ', // NONE
+    ' ', // NONE
     '2', ' ',  ',', 'e', 'm', 'u',
-    ' ',  // CRPH
-    ' ',  // ESC
-    ' ',  // NONE
-    ' ',  // NONE
+    ' ', // CRPH
+    ' ', // ESC
+    ' ', // NONE
+    ' ', // NONE
     '3', '^',  '.', 'f', 'n', 'v',
-    ' ',  // CAPS
-    ' ',  // TAB
-    ' ',  // NONE
-    ' ',  // NONE
+    ' ', // CAPS
+    ' ', // TAB
+    ' ', // NONE
+    ' ', // NONE
     '4', '￥', '/', 'g', 'o', 'w',
-    ' ',  // KANA
-    ' ',  // STOP
-    '<',  // <-
-    ' ',  // NONE
+    ' ', // KANA
+    ' ', // STOP
+    '<', // <-
+    ' ', // NONE
     '5', '@',  '-', 'h', 'p', 'x',
-    ' ',  // NONE
-    ' ',  // BS
-    ' ',  // UP
-    ' ',  // NONE
+    ' ', // NONE
+    ' ', // BS
+    ' ', // UP
+    ' ', // NONE
     '6', '[',  'a', 'i', 'q', 'y',
-    ' ',  // NONE
-    ' ',  // SEL
-    ' ',  // DOWN
-    ' ',  // NONE
+    ' ', // NONE
+    ' ', // SEL
+    ' ', // DOWN
+    ' ', // NONE
     '7', ';',  'b', 'j', 'r', 'z',
-    ' ',  // NONE
-    ' ',  // RET
-    '>',  // ->
-    ' ',  // NONE
-    ' ',  // CTRL
+    ' ', // NONE
+    ' ', // RET
+    '>', // ->
+    ' ', // NONE
+    ' ', // CTRL
 };
 
 const char key_value_map_str[81][10] = {
     "0",       "8", ":", "C", "K", "S",
-    " SHIFT ",  // SHIFT
-    "NONE",     // NONE
-    " ",        // NONE
-    "NONE",     // NONE
+    " SHIFT ", // SHIFT
+    "NONE",    // NONE
+    " ",       // NONE
+    "NONE",    // NONE
     "1",       "9", "]", "D", "L", "T",
     " CTRL ",  // CTRL
     "NONE",    // NONE
@@ -358,26 +377,26 @@ const char key_value_map_str[81][10] = {
     "<-",      // <-
     "NONE",    // NONE
     "5",       "@", "_", "H", "P", "X",
-    "NONE",  // NONE
-    " BS ",  // BS
-    "UP",    // UP
-    "NONE",  // NONE
+    "NONE",    // NONE
+    " BS ",    // BS
+    "UP",      // UP
+    "NONE",    // NONE
     "6",       "[", "A", "I", "Q", "Y",
     "NONE",    // NONE
     " SEL ",   // SEL
     " DOWN ",  // DOWN
     "NONE",    // NONE
     "7",       ";", "B", "J", "R", "Z",
-    "NONE",   // NONE
-    " RET ",  // RET
-    "->",     // ->
-    "NONE",   // NONE
-    " FN ",   // CTRL
+    "NONE",    // NONE
+    " RET ",   // RET
+    "->",      // ->
+    "NONE",    // NONE
+    " FN ",    // CTRL
 };
 
 #include "led_strip.h"
 
-#define TAB5_STRIP_LED_PIN   49
+#define TAB5_STRIP_LED_PIN 49
 #define TAB5_STRIP_LED_COUNT 2
 
 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
@@ -389,21 +408,21 @@ esp_err_t bsp_rgb_led_init(void)
 {
     // LED strip general initialization, according to your led board design
     led_strip_config_t strip_config = {
-        .strip_gpio_num         = TAB5_STRIP_LED_PIN,    // The GPIO that connected to the LED strip's data line
-        .max_leds               = TAB5_STRIP_LED_COUNT,  // The number of LEDs in the strip,
-        .led_model              = LED_MODEL_WS2812,      // LED strip model
-        .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,  // The color order of the strip: GRB
-        .flags                  = {
-            .invert_out = false,  // don't invert the output signal
+        .strip_gpio_num = TAB5_STRIP_LED_PIN,                        // The GPIO that connected to the LED strip's data line
+        .max_leds = TAB5_STRIP_LED_COUNT,                            // The number of LEDs in the strip,
+        .led_model = LED_MODEL_WS2812,                               // LED strip model
+        .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB, // The color order of the strip: GRB
+        .flags = {
+            .invert_out = false,                                     // don't invert the output signal
         }};
 
     // LED strip backend configuration: RMT
     led_strip_rmt_config_t rmt_config = {
-        .clk_src           = RMT_CLK_SRC_DEFAULT,   // different clock source can lead to different power consumption
-        .resolution_hz     = LED_STRIP_RMT_RES_HZ,  // RMT counter clock frequency
-        .mem_block_symbols = 64,                    // the memory size of each RMT channel, in words (4 bytes)
-        .flags             = {
-            .with_dma = false,  // DMA feature is available on chips like ESP32-S3/P4
+        .clk_src = RMT_CLK_SRC_DEFAULT,        // different clock source can lead to different power consumption
+        .resolution_hz = LED_STRIP_RMT_RES_HZ, // RMT counter clock frequency
+        .mem_block_symbols = 64,               // the memory size of each RMT channel, in words (4 bytes)
+        .flags = {
+            .with_dma = false,                 // DMA feature is available on chips like ESP32-S3/P4
         }};
 
     // LED Strip object handle

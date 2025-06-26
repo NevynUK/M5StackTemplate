@@ -2,27 +2,30 @@
 #include <string.h>
 
 const float __atanf_lut[4] = {
-    -0.0443265554792128f,  // p7
-    -0.3258083974640975f,  // p3
-    +0.1555786518463281f,  // p5
-    +0.9997878412794807f   // p1
+    -0.0443265554792128f, // p7
+    -0.3258083974640975f, // p3
+    +0.1555786518463281f, // p5
+    +0.9997878412794807f  // p1
 };
 
-typedef union {
+typedef union
+{
     uint32_t l;
-    struct {
-        uint32_t m : 20;
-        uint32_t e : 11;
-        uint32_t s : 1;
+
+    struct
+    {
+        uint32_t m:20;
+        uint32_t e:11;
+        uint32_t s:1;
     };
 } exp_t;
 
 float fast_expf(float x)
 {
     uint32_t packed = 0;
-    exp_t e         = {0};
+    exp_t e = {0};
 
-    e.l = (uint32_t)(1512775 * x + 1072632447);
+    e.l = (uint32_t) (1512775 * x + 1072632447);
 
     // 修正指数基准
     e.e = (e.e - 1023 + 127) & 0xFF;
@@ -50,15 +53,17 @@ float fast_expf(float x)
  */
 float fast_cbrtf(float x)
 {
-    union {
+    union
+    {
         int ix;
         float x;
     } v;
-    v.x  = x;                     // x can be viewed as int.
-    v.ix = v.ix / 4 + v.ix / 16;  // Approximate divide by 3.
+
+    v.x = x;                     // x can be viewed as int.
+    v.ix = v.ix / 4 + v.ix / 16; // Approximate divide by 3.
     v.ix = v.ix + v.ix / 16;
     v.ix = v.ix + v.ix / 256;
-    v.ix = 0x2a511cd0 + v.ix;  // Initial guess.
+    v.ix = 0x2a511cd0 + v.ix;    // Initial guess.
     return v.x;
 }
 
@@ -70,30 +75,39 @@ inline float fast_atanf(float xx)
     x = xx;
 
     /* make argument positive and save the sign */
-    if (xx < 0.0f) {
+    if (xx < 0.0f)
+    {
         sign = -1;
-        x    = -xx;
-    } else {
+        x = -xx;
+    }
+    else
+    {
         sign = 1;
-        x    = xx;
+        x = xx;
     }
     /* range reduction */
-    if (x > 2.414213562373095f) {
+    if (x > 2.414213562373095f)
+    {
         /* tan 3pi/8 */
         y = M_PI_2;
         x = -(1.0f / x);
-    } else if (x > 0.4142135623730950f) {
+    }
+    else if (x > 0.4142135623730950f)
+    {
         /* tan pi/8 */
         y = M_PI_4;
         x = (x - 1.0f) / (x + 1.0f);
-    } else {
+    }
+    else
+    {
         y = 0.0f;
     }
 
     z = x * x;
     y += (((8.05374449538e-2f * z - 1.38776856032E-1f) * z + 1.99777106478E-1f) * z - 3.33329491539E-1f) * z * x + x;
 
-    if (sign < 0) {
+    if (sign < 0)
+    {
         y = -y;
     }
 
@@ -102,19 +116,23 @@ inline float fast_atanf(float xx)
 
 float fast_atan2f(float y, float x)
 {
-    if (x > 0 && y >= 0) {
+    if (x > 0 && y >= 0)
+    {
         return fast_atanf(y / x);
     }
 
-    if (x < 0 && y >= 0) {
+    if (x < 0 && y >= 0)
+    {
         return M_PI - fast_atanf(-y / x);
     }
 
-    if (x < 0 && y < 0) {
+    if (x < 0 && y < 0)
+    {
         return M_PI + fast_atanf(y / x);
     }
 
-    if (x > 0 && y < 0) {
+    if (x > 0 && y < 0)
+    {
         return 2 * M_PI - fast_atanf(-y / x);
     }
 
@@ -123,14 +141,18 @@ float fast_atan2f(float y, float x)
 
 float fast_log2(float x)
 {
-    union {
+    union
+    {
         float f;
         uint32_t i;
     } vx = {x};
-    union {
+
+    union
+    {
         uint32_t i;
         float f;
-    } mx    = {(vx.i & 0x007FFFFF) | 0x3f000000};
+    } mx = {(vx.i & 0x007FFFFF) | 0x3f000000};
+
     float y = vx.i;
     y *= 1.1920928955078125e-7f;
 
@@ -144,11 +166,13 @@ float fast_log(float x)
 
 float fast_powf(float a, float b)
 {
-    union {
+    union
+    {
         float d;
         int x;
     } u = {a};
-    u.x = (int)((b * (u.x - 1064866805)) + 1064866805);
+
+    u.x = (int) ((b * (u.x - 1064866805)) + 1064866805);
     return u.d;
 }
 
@@ -156,14 +180,17 @@ void fast_get_min_max(float *data, size_t data_len, float *p_min, float *p_max)
 {
     float min = FLT_MAX, max = -FLT_MAX;
 
-    for (size_t i = 0; i < data_len; i++) {
+    for (size_t i = 0; i < data_len; i++)
+    {
         float temp = data[i];
 
-        if (temp < min) {
+        if (temp < min)
+        {
             min = temp;
         }
 
-        if (temp > max) {
+        if (temp > max)
+        {
             max = temp;
         }
     }

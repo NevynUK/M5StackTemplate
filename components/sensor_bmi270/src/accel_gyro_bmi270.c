@@ -19,7 +19,7 @@
 static const char *TAG = "bmi270";
 
 #define I2C_MASTER_TIMEOUT_MS 100
-#define I2C_DEV_ADDR_BMI270   0x68
+#define I2C_DEV_ADDR_BMI270 0x68
 
 void bmi2_error_codes_print_result(int8_t rslt);
 static int8_t bmi270_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr);
@@ -28,8 +28,8 @@ static void bmi270_delay_us(uint32_t period, void *intf_ptr);
 
 // BMI270
 #define ACCEL UINT8_C(0x00)
-#define GYRO  UINT8_C(0x01)
-#define AUX   UINT8_C(0x02)
+#define GYRO UINT8_C(0x01)
+#define AUX UINT8_C(0x02)
 static i2c_master_dev_handle_t i2c_dev_handle_bmi270;
 static struct bmi2_dev bmi270;
 
@@ -39,21 +39,22 @@ esp_err_t accel_gyro_bmi270_init(i2c_master_bus_handle_t bus_handle)
 
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address  = I2C_DEV_ADDR_BMI270,
-        .scl_speed_hz    = 400000,
+        .device_address = I2C_DEV_ADDR_BMI270,
+        .scl_speed_hz = 400000,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &i2c_dev_handle_bmi270));
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return ESP_FAIL;
     }
 
     /* To enable the i2c interface settings for bmi270. */
-    bmi270.intf            = BMI2_I2C_INTF;  // 使用 I2C 接口驱动
-    bmi270.read            = bmi270_i2c_read;
-    bmi270.write           = bmi270_i2c_write;
-    bmi270.delay_us        = bmi270_delay_us;
-    bmi270.read_write_len  = 30;
+    bmi270.intf = BMI2_I2C_INTF; // 使用 I2C 接口驱动
+    bmi270.read = bmi270_i2c_read;
+    bmi270.write = bmi270_i2c_write;
+    bmi270.delay_us = bmi270_delay_us;
+    bmi270.read_write_len = 30;
     bmi270.config_file_ptr = NULL;
 
     // rslt = bmi2_interface_init(&bmi270, BMI2_I2C_INTF);
@@ -67,7 +68,8 @@ esp_err_t accel_gyro_bmi270_init(i2c_master_bus_handle_t bus_handle)
 }
 
 #define ACCEL UINT8_C(0x00)
-#define GYRO  UINT8_C(0x01)
+#define GYRO UINT8_C(0x01)
+
 void accel_gyro_bmi270_enable_sensor(void)
 {
     int8_t rslt;
@@ -78,21 +80,23 @@ void accel_gyro_bmi270_enable_sensor(void)
     /* Structure to define the type of the sensor and its configurations */
     struct bmi2_sens_config config[2];
     config[ACCEL].type = BMI2_ACCEL;
-    config[GYRO].type  = BMI2_GYRO;
+    config[GYRO].type = BMI2_GYRO;
 
     /* Get default configurations for the type of feature selected. */
     rslt = bmi2_get_sensor_config(config, 2, &bmi270);
     bmi2_error_codes_print_result(rslt);
 
-    if (rslt == BMI2_OK) {
+    if (rslt == BMI2_OK)
+    {
         ESP_LOGI(TAG, "Set sensors odr and range");
-        config[ACCEL].cfg.acc.odr = BMI2_ACC_ODR_200HZ;  // 加速度数据输出速率 200Hz
+        config[ACCEL].cfg.acc.odr = BMI2_ACC_ODR_200HZ;   // 加速度数据输出速率 200Hz
         config[ACCEL].cfg.acc.range = BMI2_ACC_RANGE_4G;  // 加速度量程 +- 4g --> 2^16/(8*9.8) --> (1/835.92)LSB m/s^2
-        config[GYRO].cfg.gyr.odr    = BMI2_GYR_ODR_200HZ;  // 角速度速度数据输出速率 200Hz
-        config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_1000;  // 角速度量程 +- 1000dps --> 2^16/2000 --> (1/32.768)LSB °/S
-        rslt                       = bmi270_set_sensor_config(config, 2, &bmi270);
+        config[GYRO].cfg.gyr.odr = BMI2_GYR_ODR_200HZ;    // 角速度速度数据输出速率 200Hz
+        config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_1000; // 角速度量程 +- 1000dps --> 2^16/2000 --> (1/32.768)LSB °/S
+        rslt = bmi270_set_sensor_config(config, 2, &bmi270);
         bmi2_error_codes_print_result(rslt);
-        if (rslt == BMI2_OK) {
+        if (rslt == BMI2_OK)
+        {
             ESP_LOGI(TAG, "Enable the selected sensors");
             rslt = bmi270_sensor_enable(sens_list, 2, &bmi270);
             bmi2_error_codes_print_result(rslt);
@@ -102,66 +106,78 @@ void accel_gyro_bmi270_enable_sensor(void)
 
 void accel_gyro_bmi270_wrist_wear_irq(void)
 {
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return;
     }
 
     struct bmi2_remap remapped_axis = {0};
-    remapped_axis.x                 = BMI2_X;
-    remapped_axis.y                 = BMI2_Y;
-    remapped_axis.z                 = BMI2_Z;
+    remapped_axis.x = BMI2_X;
+    remapped_axis.y = BMI2_Y;
+    remapped_axis.z = BMI2_Z;
 
-    if (bmi2_set_remap_axes(&remapped_axis, &bmi270) == BMI2_OK) {
+    if (bmi2_set_remap_axes(&remapped_axis, &bmi270) == BMI2_OK)
+    {
         struct bmi2_sens_int_config sens_int = {.type = BMI2_WRIST_WEAR_WAKE_UP, .hw_int_pin = BMI2_INT1};
-        if (bmi270_map_feat_int(&sens_int, 1, &bmi270) != BMI2_OK) {
+        if (bmi270_map_feat_int(&sens_int, 1, &bmi270) != BMI2_OK)
+        {
             ESP_LOGE(TAG, "Wrist gesture mapping failed\n");
         }
         struct bmi2_int_pin_config int_pin_cfg;
-        int_pin_cfg.pin_type             = BMI2_INT1;
-        int_pin_cfg.int_latch            = BMI2_INT_LATCH;
-        int_pin_cfg.pin_cfg[0].lvl       = BMI2_INT_ACTIVE_HIGH;  // Active high
-        int_pin_cfg.pin_cfg[0].od        = BMI2_INT_PUSH_PULL;
+        int_pin_cfg.pin_type = BMI2_INT1;
+        int_pin_cfg.int_latch = BMI2_INT_LATCH;
+        int_pin_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_HIGH; // Active high
+        int_pin_cfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
         int_pin_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE;
-        int_pin_cfg.pin_cfg[0].input_en  = BMI2_INT_INPUT_DISABLE;
+        int_pin_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE;
 
-        if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK) {
+        if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK)
+        {
             ESP_LOGE(TAG, "Wrist gesture pin config failed");
         }
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "Wrist gesture remap failed");
     }
 }
 
 void accel_gyro_bmi270_wrist_wear_irq_without_int(void)
 {
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return;
     }
 
     struct bmi2_remap remapped_axis = {0};
-    remapped_axis.x                 = BMI2_X;
-    remapped_axis.y                 = BMI2_Y;
-    remapped_axis.z                 = BMI2_Z;
+    remapped_axis.x = BMI2_X;
+    remapped_axis.y = BMI2_Y;
+    remapped_axis.z = BMI2_Z;
 
-    if (bmi2_set_remap_axes(&remapped_axis, &bmi270) == BMI2_OK) {
+    if (bmi2_set_remap_axes(&remapped_axis, &bmi270) == BMI2_OK)
+    {
         struct bmi2_sens_int_config sens_int = {.type = BMI2_WRIST_WEAR_WAKE_UP, .hw_int_pin = BMI2_INT_BOTH};
-        if (bmi270_map_feat_int(&sens_int, 1, &bmi270) != BMI2_OK) {
+        if (bmi270_map_feat_int(&sens_int, 1, &bmi270) != BMI2_OK)
+        {
             ESP_LOGE(TAG, "Wrist gesture mapping failed\n");
         }
         struct bmi2_int_pin_config int_pin_cfg;
-        int_pin_cfg.pin_type             = BMI2_INT_BOTH;
-        int_pin_cfg.int_latch            = BMI2_INT_LATCH;
-        int_pin_cfg.pin_cfg[0].lvl       = BMI2_INT_ACTIVE_LOW;  // Active low
-        int_pin_cfg.pin_cfg[0].od        = BMI2_INT_OPEN_DRAIN;
+        int_pin_cfg.pin_type = BMI2_INT_BOTH;
+        int_pin_cfg.int_latch = BMI2_INT_LATCH;
+        int_pin_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW; // Active low
+        int_pin_cfg.pin_cfg[0].od = BMI2_INT_OPEN_DRAIN;
         int_pin_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_DISABLE;
-        int_pin_cfg.pin_cfg[0].input_en  = BMI2_INT_INPUT_DISABLE;
+        int_pin_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE;
 
-        if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK) {
+        if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK)
+        {
             ESP_LOGE(TAG, "Wrist gesture pin int disable config failed");
         }
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "Wrist gesture remap failed");
     }
 }
@@ -176,7 +192,8 @@ bool accel_gyro_bmi270_motion_irq(void)
     /* Enable the selected sensors. */
     rslt = bmi270_sensor_enable(sens_list, 2, &bmi270);
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) {
+    if (rslt != BMI2_OK)
+    {
         return false;
     }
 
@@ -192,11 +209,13 @@ bool accel_gyro_bmi270_motion_irq(void)
     /* Get default configurations for the type of feature selected. */
     rslt = bmi270_get_sensor_config(&config, 1, &bmi270);
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) return false;
+    if (rslt != BMI2_OK)
+        return false;
 
     rslt = bmi2_get_int_pin_config(&pin_config, &bmi270);
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) return false;
+    if (rslt != BMI2_OK)
+        return false;
 
     // /* NOTE: The user can change the following configuration parameters according to their requirement. */
     // /* 1LSB equals 20ms. Default is 100ms, settin68g to 80ms. */
@@ -206,16 +225,17 @@ bool accel_gyro_bmi270_motion_irq(void)
     // /* 1LSB equals to 0.48mg. Default is 83mg, setting to 50mg. */
     // config.cfg.any_motion.threshold = 0x68;
 
-    config.cfg.any_motion.duration  = 0x32;
+    config.cfg.any_motion.duration = 0x32;
     config.cfg.any_motion.threshold = 0xFF;
 
     /* Set new configurations. */
     rslt = bmi270_set_sensor_config(&config, 1, &bmi270);
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) return false;
+    if (rslt != BMI2_OK)
+        return false;
 
     /* Interrupt pin configuration */
-    pin_config.pin_type            = BMI2_INT1;
+    pin_config.pin_type = BMI2_INT1;
     pin_config.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE;
 
     // pin_config.pin_cfg[0].lvl       = BMI2_INT_ACTIVE_LOW;
@@ -232,21 +252,24 @@ bool accel_gyro_bmi270_motion_irq(void)
     rslt = bmi2_set_int_pin_config(&pin_config, &bmi270);
 
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) return false;
+    if (rslt != BMI2_OK)
+        return false;
 
     /* Map the feature interrupt for no-motion. */
     /* Select features and their pins to be mapped to. */
     struct bmi2_sens_int_config sens_int = {.type = BMI2_ANY_MOTION, .hw_int_pin = BMI2_INT1};
-    rslt                                 = bmi270_map_feat_int(&sens_int, 1, &bmi270);
+    rslt = bmi270_map_feat_int(&sens_int, 1, &bmi270);
     // bmi2_error_codes_print_result(rslt);
-    if (rslt != BMI2_OK) return false;
+    if (rslt != BMI2_OK)
+        return false;
 
     return true;
 }
 
 void accel_gyro_bmi270_get_data(struct bmi2_sens_data *data)
 {
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return;
     }
@@ -255,7 +278,8 @@ void accel_gyro_bmi270_get_data(struct bmi2_sens_data *data)
 
 bool accel_gyro_bmi270_check_irq(void)
 {
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return false;
     }
@@ -265,12 +289,14 @@ bool accel_gyro_bmi270_check_irq(void)
     int8_t rslt = bmi2_get_int_status(&int_status, &bmi270);
 
     /* To check the interrupt status of the wrist gesture */
-    if ((rslt == BMI2_OK) && (int_status & BMI270_WRIST_WAKE_UP_STATUS_MASK)) {
+    if ((rslt == BMI2_OK) && (int_status & BMI270_WRIST_WAKE_UP_STATUS_MASK))
+    {
         ESP_LOGW(TAG, "Wrist detected");
         return true;
     }
 
-    if ((rslt == BMI2_OK) && (int_status & BMI270_ANY_MOT_STATUS_MASK)) {
+    if ((rslt == BMI2_OK) && (int_status & BMI270_ANY_MOT_STATUS_MASK))
+    {
         ESP_LOGW(TAG, "Any motion detected");
     }
 
@@ -279,34 +305,37 @@ bool accel_gyro_bmi270_check_irq(void)
 
 void accel_gyro_bmi270_clear_irq_int(void)
 {
-    if (i2c_dev_handle_bmi270 == NULL) {
+    if (i2c_dev_handle_bmi270 == NULL)
+    {
         ESP_LOGE(TAG, "i2c_dev_handle_bmi270 is NULL");
         return;
     }
 
     struct bmi2_int_pin_config int_pin_cfg;
-    int_pin_cfg.pin_type             = BMI2_INT_BOTH;
-    int_pin_cfg.int_latch            = BMI2_INT_LATCH;
-    int_pin_cfg.pin_cfg[0].lvl       = BMI2_INT_ACTIVE_LOW;  // Active low
-    int_pin_cfg.pin_cfg[0].od        = BMI2_INT_OPEN_DRAIN;
+    int_pin_cfg.pin_type = BMI2_INT_BOTH;
+    int_pin_cfg.int_latch = BMI2_INT_LATCH;
+    int_pin_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW; // Active low
+    int_pin_cfg.pin_cfg[0].od = BMI2_INT_OPEN_DRAIN;
     int_pin_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE;
-    int_pin_cfg.pin_cfg[0].input_en  = BMI2_INT_INPUT_DISABLE;
+    int_pin_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE;
 
-    if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK) {
+    if (bmi2_set_int_pin_config(&int_pin_cfg, &bmi270) != BMI2_OK)
+    {
         ESP_LOGE(TAG, "Wrist gesture pin int disable config failed");
     }
 }
 
 static int8_t bmi270_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
 {
-    if ((reg_data == NULL) || (len == 0) || (len > 32)) {
+    if ((reg_data == NULL) || (len == 0) || (len > 32))
+    {
         return -1;
     }
 
     uint8_t write_buffer[1] = {reg_addr};
-    esp_err_t ret =
-        i2c_master_transmit_receive(i2c_dev_handle_bmi270, write_buffer, 1, reg_data, len, I2C_MASTER_TIMEOUT_MS);
-    if (ret != ESP_OK) {
+    esp_err_t ret = i2c_master_transmit_receive(i2c_dev_handle_bmi270, write_buffer, 1, reg_data, len, I2C_MASTER_TIMEOUT_MS);
+    if (ret != ESP_OK)
+    {
         ESP_LOGE("BMI270", "I2C read failed: %s", esp_err_to_name(ret));
         return -1;
     }
@@ -316,7 +345,8 @@ static int8_t bmi270_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
 
 static int8_t bmi270_i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
 {
-    if ((reg_data == NULL) || (len == 0) || (len > 32)) {
+    if ((reg_data == NULL) || (len == 0) || (len > 32))
+    {
         return -1;
     }
 
@@ -324,7 +354,8 @@ static int8_t bmi270_i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32
 
     // Prepare write buffer: first byte is the register address, followed by the data bytes
     uint8_t *write_buffer = malloc(len + 1);
-    if (write_buffer == NULL) {
+    if (write_buffer == NULL)
+    {
         ESP_LOGE("BMI270", "Memory allocation failed for write buffer");
         return -1;
     }
@@ -336,28 +367,33 @@ static int8_t bmi270_i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32
 
     // Perform I2C write operation
     ret = i2c_master_transmit(i2c_dev_handle_bmi270, write_buffer, len + 1, I2C_MASTER_TIMEOUT_MS);
-    if (ret != ESP_OK) {
+    if (ret != ESP_OK)
+    {
         ESP_LOGE("BMI270", "I2C write failed: %s", esp_err_to_name(ret));
         free(write_buffer);
         return -1;
     }
 
-    free(write_buffer);  // Clean up allocated memory
+    free(write_buffer); // Clean up allocated memory
 
     return 0;
 }
 
 static void bmi270_delay_us(uint32_t period, void *intf_ptr)
 {
-    uint64_t m = (uint64_t)esp_timer_get_time();
-    if (period) {
+    uint64_t m = (uint64_t) esp_timer_get_time();
+    if (period)
+    {
         uint64_t e = (m + period);
-        if (m > e) {  // overflow
-            while ((uint64_t)esp_timer_get_time() > e) {
+        if (m > e)
+        { // overflow
+            while ((uint64_t) esp_timer_get_time() > e)
+            {
                 asm volatile("nop");
             }
         }
-        while ((uint64_t)esp_timer_get_time() < e) {
+        while ((uint64_t) esp_timer_get_time() < e)
+        {
             asm volatile("nop");
         }
     }
@@ -368,7 +404,8 @@ static void bmi270_delay_us(uint32_t period, void *intf_ptr)
  */
 void bmi2_error_codes_print_result(int8_t rslt)
 {
-    switch (rslt) {
+    switch (rslt)
+    {
         case BMI2_OK:
 
             /* Do nothing */
@@ -396,8 +433,7 @@ void bmi2_error_codes_print_result(int8_t rslt)
             break;
 
         case BMI2_E_DEV_NOT_FOUND:
-            printf("Error [%d] : Device not found error. It occurs when the device chip id is incorrectly read\r\n",
-                   rslt);
+            printf("Error [%d] : Device not found error. It occurs when the device chip id is incorrectly read\r\n", rslt);
             break;
 
         case BMI2_E_INVALID_SENSOR:
@@ -540,9 +576,7 @@ void bmi2_error_codes_print_result(int8_t rslt)
             break;
 
         case BMI2_E_DL_ERROR:
-            printf(
-                "Error [%d] : Download error. It occurs when write length exceeds that of the maximum burst length\r\n",
-                rslt);
+            printf("Error [%d] : Download error. It occurs when write length exceeds that of the maximum burst length\r\n", rslt);
             break;
 
         case BMI2_E_PRECON_ERROR:
