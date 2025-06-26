@@ -290,7 +290,7 @@ dependencies:
     component_hash: b702d642e03e95928046d5c6726558e6444e112420c77efa5fdb6650b0a13c5d
     dependencies: []
     source:
-      registry_url: https://components.espressif.com
+      registry_url: https://components.espressif.com/
       type: service
     version: 9.3.0
 direct_dependencies:
@@ -310,6 +310,7 @@ direct_dependencies:
 - espressif/led_strip
 - espressif/usb_host_hid
 - idf
-manifest_hash: f57d16278c04823abf658aca5bb9bf001164a1a7b0790acf31862ee37475160a
+- lvgl/lvgl
+manifest_hash: d74942f6ff063810eee7a93928cd65dcd649c2115adbb7a0830e82d5cb8a3a96
 target: esp32p4
 version: 2.0.0
