@@ -52,7 +52,8 @@ void LauncherView::init()
     _panels.push_back(std::make_unique<PanelMusic>());
     _panels.push_back(std::make_unique<PanelComMonitor>());
 
-    for (auto& panel : _panels) {
+    for (auto &panel: _panels)
+    {
         panel->init();
     }
 }
@@ -61,7 +62,8 @@ void LauncherView::update()
 {
     LvglLockGuard lock;
 
-    for (auto& panel : _panels) {
+    for (auto &panel: _panels)
+    {
         panel->update(_is_stacked);
     }
 }

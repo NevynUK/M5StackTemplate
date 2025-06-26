@@ -23,9 +23,10 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-com";
 
 static const ui::Window::KeyFrame_t _kf_com_monitor_close = {497, 5, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_com_monitor_open  = {60, 0, 643, 435, 255};
+static const ui::Window::KeyFrame_t _kf_com_monitor_open = {60, 0, 643, 435, 255};
 
-class ComMonitorWindow : public ui::Window {
+class ComMonitorWindow : public ui::Window
+{
 public:
     ComMonitorWindow()
     {
@@ -72,12 +73,14 @@ public:
 
     void onUpdate() override
     {
-        if (_state != Opened) {
+        if (_state != Opened)
+        {
             return;
         }
 
         std::lock_guard<std::mutex> lock(GetHAL()->uartMonitorData.mutex);
-        while (!GetHAL()->uartMonitorData.rxQueue.empty()) {
+        while (!GetHAL()->uartMonitorData.rxQueue.empty())
+        {
             uint8_t c = GetHAL()->uartMonitorData.rxQueue.front();
             GetHAL()->uartMonitorData.rxQueue.pop();
             _msg_panel->addChar(c);
@@ -116,9 +119,11 @@ void PanelComMonitor::init()
 
 void PanelComMonitor::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

@@ -12,7 +12,8 @@
  * @brief 派生 App
  *
  */
-class AppLauncher : public mooncake::AppAbility {
+class AppLauncher : public mooncake::AppAbility
+{
 public:
     AppLauncher();
 

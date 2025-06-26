@@ -21,9 +21,10 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-hp";
 
 static const ui::Window::KeyFrame_t _kf_headphone_test_close = {-310, 301, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_headphone_test_open  = {-289, 130, 403, 208, 255};
+static const ui::Window::KeyFrame_t _kf_headphone_test_open = {-289, 130, 403, 208, 255};
 
-class HeadphoneTestWindow : public ui::Window {
+class HeadphoneTestWindow : public ui::Window
+{
 public:
     HeadphoneTestWindow()
     {
@@ -60,17 +61,20 @@ public:
 
     void onUpdate() override
     {
-        if (GetHAL()->millis() - _time_count > 200) {
+        if (GetHAL()->millis() - _time_count > 200)
+        {
             update_rec_button();
             update_hp_detect();
             _time_count = GetHAL()->millis();
         }
 
         // Record and plot
-        if (_chart_mic) {
-            GetHAL()->audioRecord(_record_data, 4);  // 48000 * 4 / 1000 = 192
+        if (_chart_mic)
+        {
+            GetHAL()->audioRecord(_record_data, 4); // 48000 * 4 / 1000 = 192
             // [MIC-L, AEC, MIC-R, MIC-HP]
-            for (int i = 0; i < _record_data.size(); i += 4) {
+            for (int i = 0; i < _record_data.size(); i += 4)
+            {
                 _chart_mic->setNextValue(0, _record_data[i + 3]);
             }
         }
@@ -90,7 +94,7 @@ private:
     std::unique_ptr<Spinner> _rec_btn_spinner;
     std::unique_ptr<Label> _label_hp_detect;
 
-    void apply_chart_style(Chart* chart, int16_t x, int16_t y)
+    void apply_chart_style(Chart *chart, int16_t x, int16_t y)
     {
         chart->align(LV_ALIGN_CENTER, x, y);
         chart->setBgColor(lv_color_hex(0x383838));
@@ -108,17 +112,22 @@ private:
 
     void update_rec_button()
     {
-        if (GetHAL()->getHeadphoneMicRecordTestState() == hal::HalBase::MIC_TEST_RECORDING) {
+        if (GetHAL()->getHeadphoneMicRecordTestState() == hal::HalBase::MIC_TEST_RECORDING)
+        {
             _rec_btn->setBgColor(lv_color_hex(0xE17822));
             _rec_btn->removeFlag(LV_OBJ_FLAG_CLICKABLE);
             _rec_btn->label().setText("REC");
             update_spinner(0xE17822);
-        } else if (GetHAL()->getHeadphoneMicRecordTestState() == hal::HalBase::MIC_TEST_PLAYING) {
+        }
+        else if (GetHAL()->getHeadphoneMicRecordTestState() == hal::HalBase::MIC_TEST_PLAYING)
+        {
             _rec_btn->setBgColor(lv_color_hex(0x32CC72));
             _rec_btn->removeFlag(LV_OBJ_FLAG_CLICKABLE);
             _rec_btn->label().setText("PLAY");
             update_spinner(0x32CC72);
-        } else {
+        }
+        else
+        {
             _rec_btn->setBgColor(lv_color_hex(0xD04848));
             _rec_btn->addFlag(LV_OBJ_FLAG_CLICKABLE);
             _rec_btn->label().setText("REC\n  3S");
@@ -128,7 +137,8 @@ private:
 
     void update_spinner(uint32_t color)
     {
-        if (!_rec_btn_spinner) {
+        if (!_rec_btn_spinner)
+        {
             _rec_btn_spinner = std::make_unique<Spinner>(_window->get());
             _rec_btn_spinner->align(LV_ALIGN_CENTER, 134, -26);
             _rec_btn_spinner->setSize(76, 76);
@@ -141,10 +151,13 @@ private:
 
     void update_hp_detect()
     {
-        if (GetHAL()->headPhoneDetect()) {
+        if (GetHAL()->headPhoneDetect())
+        {
             _label_hp_detect->setTextColor(lv_color_hex(0x2FC57B));
             _label_hp_detect->setText("Headphone Connected");
-        } else {
+        }
+        else
+        {
             _label_hp_detect->setTextColor(lv_color_hex(0xD04848));
             _label_hp_detect->setText("Headphone Disconnected");
         }
@@ -169,9 +182,11 @@ void PanelHeadphone::init()
 
 void PanelHeadphone::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

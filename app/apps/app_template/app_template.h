@@ -15,7 +15,8 @@
  * @brief 派生 App
  *
  */
-class AppTemplate : public mooncake::AppAbility {
+class AppTemplate : public mooncake::AppAbility
+{
 public:
     AppTemplate();
 

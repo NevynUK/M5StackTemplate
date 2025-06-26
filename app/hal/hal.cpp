@@ -16,9 +16,10 @@
 static std::unique_ptr<hal::HalBase> _hal_instance;
 static const std::string _tag = "hal";
 
-hal::HalBase* hal::Get()
+hal::HalBase *hal::Get()
 {
-    if (!_hal_instance) {
+    if (!_hal_instance)
+    {
         mclog::tagWarn(_tag, "getting null hal, auto inject base");
         _hal_instance = std::make_unique<HalBase>();
     }
@@ -27,7 +28,8 @@ hal::HalBase* hal::Get()
 
 void hal::Inject(std::unique_ptr<HalBase> hal)
 {
-    if (!hal) {
+    if (!hal)
+    {
         mclog::tagError(_tag, "pass null hal");
         return;
     }
@@ -52,7 +54,8 @@ void hal::Destroy()
 
 bool hal::Check()
 {
-    if (_hal_instance) {
+    if (_hal_instance)
+    {
         return true;
     }
     return false;

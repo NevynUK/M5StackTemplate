@@ -21,13 +21,14 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-rtc";
 
 static const ui::Window::KeyFrame_t _kf_rtc_setting_close = {436, -219, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_rtc_setting_open  = {214, 85, 800, 480, 255};
+static const ui::Window::KeyFrame_t _kf_rtc_setting_open = {214, 85, 800, 480, 255};
 
-class RtcSettingWindow : public ui::Window {
+class RtcSettingWindow : public ui::Window
+{
 public:
     RtcSettingWindow()
     {
-        config.title    = "RTC Setting";
+        config.title = "RTC Setting";
         config.kfClosed = _kf_rtc_setting_close;
         config.kfOpened = _kf_rtc_setting_open;
     }
@@ -45,12 +46,14 @@ public:
 
     void onUpdate() override
     {
-        if (_state == Opened) {
-            if (!_calendar) {
+        if (_state == Opened)
+        {
+            if (!_calendar)
+            {
                 _label_msg.reset();
 
-                std::time_t now     = std::time(nullptr);
-                std::tm* local_time = std::localtime(&now);
+                std::time_t now = std::time(nullptr);
+                std::tm *local_time = std::localtime(&now);
 
                 _calendar = std::make_unique<Calendar>(_window->get());
                 _calendar->setSize(740, 330);
@@ -60,8 +63,7 @@ public:
                 _calendar->headerDropdownCreate();
                 _calendar->setTodayDate(local_time->tm_year + 1900, local_time->tm_mon + 1, local_time->tm_mday);
                 _calendar->setShowedDate(local_time->tm_year + 1900, local_time->tm_mon + 1);
-                _calendar->onValueChanged().connect(
-                    [&](lv_calendar_date_t date) { _calendar->setTodayDate(date.year, date.month, date.day); });
+                _calendar->onValueChanged().connect([&](lv_calendar_date_t date) { _calendar->setTodayDate(date.year, date.month, date.day); });
 
                 _btn_apply = std::make_unique<Button>(_window->get());
                 _btn_apply->align(LV_ALIGN_CENTER, 280, 184);
@@ -72,20 +74,17 @@ public:
                 _btn_apply->setRadius(18);
                 _btn_apply->setBgColor(lv_color_hex(0xF26F42));
                 _btn_apply->onClick().connect([&]() {
-                    std::time_t now     = std::time(nullptr);
+                    std::time_t now = std::time(nullptr);
                     std::tm target_time = *std::localtime(&now);
 
                     target_time.tm_year = _calendar->getTodayDate()->year - 1900;
-                    target_time.tm_mon  = _calendar->getTodayDate()->month - 1;
+                    target_time.tm_mon = _calendar->getTodayDate()->month - 1;
                     target_time.tm_mday = _calendar->getTodayDate()->day;
                     target_time.tm_hour = _roller_h->getSelected();
-                    target_time.tm_min  = _roller_m->getSelected();
-                    target_time.tm_sec  = _roller_s->getSelected();
+                    target_time.tm_min = _roller_m->getSelected();
+                    target_time.tm_sec = _roller_s->getSelected();
 
-                    ui::pop_a_toast(fmt::format("Set RTC time to {}/{}/{} {}:{:02d}:{:02d}", target_time.tm_year + 1900,
-                                                target_time.tm_mon + 1, target_time.tm_mday, target_time.tm_hour,
-                                                target_time.tm_min, target_time.tm_sec),
-                                    ui::toast_type::success);
+                    ui::pop_a_toast(fmt::format("Set RTC time to {}/{}/{} {}:{:02d}:{:02d}", target_time.tm_year + 1900, target_time.tm_mon + 1, target_time.tm_mday, target_time.tm_hour, target_time.tm_min, target_time.tm_sec), ui::toast_type::success);
 
                     GetHAL()->setRtcTime(target_time);
                 });
@@ -137,13 +136,14 @@ private:
     std::vector<std::string> generate_options(int start, int end)
     {
         std::vector<std::string> options;
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++)
+        {
             options.push_back(fmt::format("{:02d}", i));
         }
         return options;
     }
 
-    void apply_roller_style(Roller* roller, int16_t x, int16_t y)
+    void apply_roller_style(Roller *roller, int16_t x, int16_t y)
     {
         roller->setVisibleRowCount(1);
         roller->align(LV_ALIGN_CENTER, x, y);
@@ -184,19 +184,22 @@ void PanelRtc::init()
 
 void PanelRtc::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }
 
-    if (GetHAL()->millis() - _time_count < 1000) {
+    if (GetHAL()->millis() - _time_count < 1000)
+    {
         return;
     }
 
-    std::time_t now    = std::time(nullptr);
-    std::tm* localTime = std::localtime(&now);
+    std::time_t now = std::time(nullptr);
+    std::tm *localTime = std::localtime(&now);
 
     _label_time->setText(fmt::format("{}:{:02d}:{:02d}", localTime->tm_hour, localTime->tm_min, localTime->tm_sec));
     _label_date->setText(fmt::format("{}/{}/{}", localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday));

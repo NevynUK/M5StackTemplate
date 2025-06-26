@@ -21,9 +21,10 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-music";
 
 static const ui::Window::KeyFrame_t _kf_music_test_close = {225, 279, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_music_test_open  = {236, 116, 413, 204, 255};
+static const ui::Window::KeyFrame_t _kf_music_test_open = {236, 116, 413, 204, 255};
 
-class MusicTestWindow : public ui::Window {
+class MusicTestWindow : public ui::Window
+{
 public:
     MusicTestWindow()
     {
@@ -60,9 +61,12 @@ public:
         _rec_btn->setBorderColor(lv_color_hex(0x383838));
         _rec_btn->setShadowWidth(0);
         _rec_btn->onClick().connect([&]() {
-            if (GetHAL()->getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_IDLE) {
+            if (GetHAL()->getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_IDLE)
+            {
                 GetHAL()->startPlayMusicTest();
-            } else {
+            }
+            else
+            {
                 GetHAL()->stopPlayMusicTest();
             }
             update_rec_button();
@@ -77,19 +81,23 @@ public:
     void onUpdate() override
     {
         // Record and plot
-        if (_chart_aec) {
-            GetHAL()->audioRecord(_record_data, 4, 20);  // 48000 * 4 / 1000 = 192
+        if (_chart_aec)
+        {
+            GetHAL()->audioRecord(_record_data, 4, 20); // 48000 * 4 / 1000 = 192
             // [MIC-L, AEC, MIC-R, MIC-HP]
-            for (int i = 0; i < _record_data.size(); i += 4) {
+            for (int i = 0; i < _record_data.size(); i += 4)
+            {
                 _chart_aec->setNextValue(0, _record_data[i + 1]);
             }
         }
 
-        if (_state != Opened) {
+        if (_state != Opened)
+        {
             return;
         }
 
-        if (GetHAL()->millis() - _time_count > 200) {
+        if (GetHAL()->millis() - _time_count > 200)
+        {
             update_rec_button();
             _time_count = GetHAL()->millis();
         }
@@ -114,10 +122,13 @@ private:
 
     void update_rec_button()
     {
-        if (GetHAL()->getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_PLAYING) {
+        if (GetHAL()->getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_PLAYING)
+        {
             _rec_btn->label().setText("STOP");
             update_spinner(0x31D584);
-        } else {
+        }
+        else
+        {
             _rec_btn->label().setText(" PLAY\nMUSIC");
             _rec_btn_spinner.reset();
         }
@@ -125,7 +136,8 @@ private:
 
     void update_spinner(uint32_t color)
     {
-        if (!_rec_btn_spinner) {
+        if (!_rec_btn_spinner)
+        {
             _rec_btn_spinner = std::make_unique<Spinner>(_window->get());
             _rec_btn_spinner->align(LV_ALIGN_CENTER, 135, 0);
             _rec_btn_spinner->setSize(90, 90);
@@ -136,7 +148,7 @@ private:
         _rec_btn_spinner->setArcColor(lv_color_hex(color), LV_PART_INDICATOR);
     }
 
-    void apply_chart_style(Chart* chart, int16_t x, int16_t y)
+    void apply_chart_style(Chart *chart, int16_t x, int16_t y)
     {
         chart->align(LV_ALIGN_CENTER, x, y);
         chart->setBgColor(lv_color_hex(0x383838));
@@ -171,9 +183,11 @@ void PanelMusic::init()
 
 void PanelMusic::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

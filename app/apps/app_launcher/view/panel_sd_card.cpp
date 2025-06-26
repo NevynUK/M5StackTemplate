@@ -23,13 +23,14 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-sd";
 
 static const ui::Window::KeyFrame_t _kf_sd_card_scan_close = {-46, 300, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_sd_card_scan_open  = {-40, 43, 566, 411, 255};
+static const ui::Window::KeyFrame_t _kf_sd_card_scan_open = {-40, 43, 566, 411, 255};
 
-class SdCardScanWindow : public ui::Window {
+class SdCardScanWindow : public ui::Window
+{
 public:
     SdCardScanWindow()
     {
-        config.title    = "SD-Card File Scan";
+        config.title = "SD-Card File Scan";
         config.kfClosed = _kf_sd_card_scan_close;
         config.kfOpened = _kf_sd_card_scan_open;
     }
@@ -48,9 +49,12 @@ public:
         _label_msg = std::make_unique<Label>(_window->get());
         _label_msg->align(LV_ALIGN_CENTER, 0, -24);
         _label_msg->setTextFont(&lv_font_montserrat_24);
-        if (GetHAL()->isSdCardMounted()) {
+        if (GetHAL()->isSdCardMounted())
+        {
             _label_msg->setText("Scanning SD Card ...");
-        } else {
+        }
+        else
+        {
             _label_msg->setTextColor(lv_color_hex(0xFD4444));
             _label_msg->setText("SD Card not mounted.\n\nPlease insert SD Card and reboot.");
         }
@@ -58,28 +62,35 @@ public:
 
     void onUpdate() override
     {
-        if (_state != Opened) {
+        if (_state != Opened)
+        {
             return;
         }
 
-        if (GetHAL()->isSdCardMounted() && !_is_scanned) {
-            _is_scanned       = true;
+        if (GetHAL()->isSdCardMounted() && !_is_scanned)
+        {
+            _is_scanned = true;
             auto file_entries = GetHAL()->scanSdCard("/");
-            if (file_entries.empty()) {
+            if (file_entries.empty())
+            {
                 _label_msg->setText("No files found on SD Card.");
                 return;
             }
 
             _label_file_entries.clear();
 
-            for (size_t i = 0; i < file_entries.size(); i++) {
+            for (size_t i = 0; i < file_entries.size(); i++)
+            {
                 _label_file_entries.push_back(std::make_unique<Label>(_panel_file_entries->get()));
                 _label_file_entries.back()->align(LV_ALIGN_TOP_LEFT, 0, i * 42);
                 _label_file_entries.back()->setTextFont(&lv_font_montserrat_24);
-                if (file_entries[i].isDir) {
+                if (file_entries[i].isDir)
+                {
                     _label_file_entries.back()->setTextColor(lv_color_hex(0xFDBE1A));
                     lv_label_set_text(_label_file_entries.back()->get(), LV_SYMBOL_DIRECTORY);
-                } else {
+                }
+                else
+                {
                     _label_file_entries.back()->setTextColor(lv_color_hex(0x43D2FF));
                     lv_label_set_text(_label_file_entries.back()->get(), LV_SYMBOL_FILE);
                 }
@@ -128,9 +139,11 @@ void PanelSdCard::init()
 
 void PanelSdCard::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

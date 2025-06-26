@@ -17,36 +17,37 @@ using namespace launcher_view;
 using namespace smooth_ui_toolkit;
 using namespace smooth_ui_toolkit::lvgl_cpp;
 
-static const std::string _tag                           = "panel-switches";
-static const std::string _toast_msg_charge_enable       = "Battery charging enabled";
-static const std::string _toast_msg_charge_disable      = "Battery charging disabled";
-static const std::string _toast_msg_charge_qc_enable    = "QC charging enabled";
-static const std::string _toast_msg_charge_qc_disable   = "QC charging disabled";
-static const std::string _toast_msg_ext_5v_enable       = " EXT 5V enabled";
-static const std::string _toast_msg_ext_5v_disable      = "EXT 5V disabled";
-static const std::string _toast_msg_usba_5v_enable      = "USB-A 5V enabled";
-static const std::string _toast_msg_usba_5v_disable     = "USB-A 5V disabled";
-static const std::string _toast_msg_ext_antenna_enable  = "Switched to external antenna";
+static const std::string _tag = "panel-switches";
+static const std::string _toast_msg_charge_enable = "Battery charging enabled";
+static const std::string _toast_msg_charge_disable = "Battery charging disabled";
+static const std::string _toast_msg_charge_qc_enable = "QC charging enabled";
+static const std::string _toast_msg_charge_qc_disable = "QC charging disabled";
+static const std::string _toast_msg_ext_5v_enable = " EXT 5V enabled";
+static const std::string _toast_msg_ext_5v_disable = "EXT 5V disabled";
+static const std::string _toast_msg_usba_5v_enable = "USB-A 5V enabled";
+static const std::string _toast_msg_usba_5v_disable = "USB-A 5V disabled";
+static const std::string _toast_msg_ext_antenna_enable = "Switched to external antenna";
 static const std::string _toast_msg_ext_antenna_disable = "Switched to internal antenna";
-static const std::string _toast_msg_usb_c_connected     = "USB-C connected";
-static const std::string _toast_msg_usb_c_disconnected  = "USB-C disconnected";
-static const std::string _toast_msg_usb_a_connected     = "USB-A connected";
-static const std::string _toast_msg_usb_a_disconnected  = "USB-A disconnected";
-static const std::string _toast_msg_hp_connected        = "Headphone connected";
-static const std::string _toast_msg_hp_disconnected     = "Headphone disconnected";
+static const std::string _toast_msg_usb_c_connected = "USB-C connected";
+static const std::string _toast_msg_usb_c_disconnected = "USB-C disconnected";
+static const std::string _toast_msg_usb_a_connected = "USB-A connected";
+static const std::string _toast_msg_usb_a_disconnected = "USB-A disconnected";
+static const std::string _toast_msg_hp_connected = "Headphone connected";
+static const std::string _toast_msg_hp_disconnected = "Headphone disconnected";
 
 static const ui::Window::KeyFrame_t _kf_ap_msp_close = {-309, -187, 60, 60, 0};
-static const ui::Window::KeyFrame_t _kf_ap_msg_open  = {34, -70, 602, 332, 255};
+static const ui::Window::KeyFrame_t _kf_ap_msg_open = {34, -70, 602, 332, 255};
 
-class WifiApMsgWindow : public ui::Window {
+class WifiApMsgWindow : public ui::Window
+{
 public:
     WifiApMsgWindow()
     {
-        config.kfClosed     = _kf_ap_msp_close;
-        config.kfOpened     = _kf_ap_msg_open;
-        config.bgColor      = 0x483333;
+        config.kfClosed = _kf_ap_msp_close;
+        config.kfOpened = _kf_ap_msg_open;
+        config.bgColor = 0x483333;
         config.clickBgClose = false;
-        config.closeBtn     = true;
+        config.closeBtn = true;
     }
 
     void onOpen() override
@@ -105,11 +106,13 @@ public:
 
     void onUpdate() override
     {
-        if (_state != Opened) {
+        if (_state != Opened)
+        {
             return;
         }
 
-        if (GetHAL()->millis() - _time_count > 200) {
+        if (GetHAL()->millis() - _time_count > 200)
+        {
             update_msg();
         }
     }
@@ -125,7 +128,7 @@ public:
     }
 
 private:
-    uint32_t _time_count          = 0;
+    uint32_t _time_count = 0;
     bool _last_ext_antenna_enable = false;
 
     std::unique_ptr<Label> _label_a;
@@ -140,12 +143,14 @@ private:
 
     void update_msg()
     {
-        if (_last_ext_antenna_enable == GetHAL()->getExtAntennaEnable()) {
+        if (_last_ext_antenna_enable == GetHAL()->getExtAntennaEnable())
+        {
             return;
         }
         _last_ext_antenna_enable = GetHAL()->getExtAntennaEnable();
 
-        if (GetHAL()->getExtAntennaEnable()) {
+        if (GetHAL()->getExtAntennaEnable())
+        {
             _label_msg_a = std::make_unique<Label>(_panel_msg->get());
             _label_msg_a->align(LV_ALIGN_CENTER, 0, -13);
             _label_msg_a->setTextFont(&lv_font_montserrat_22);
@@ -157,7 +162,9 @@ private:
             _label_msg_b->setTextFont(&lv_font_montserrat_22);
             _label_msg_b->setTextColor(lv_color_hex(0xFFFFFF));
             _label_msg_b->setText("please make sure it's connected.");
-        } else {
+        }
+        else
+        {
             _label_msg_a = std::make_unique<Label>(_panel_msg->get());
             _label_msg_a->align(LV_ALIGN_CENTER, 0, 0);
             _label_msg_a->setTextFont(&lv_font_montserrat_22);
@@ -193,8 +200,7 @@ void PanelSwitches::init()
     _btn_charge_en_sw->onClick().connect([&]() {
         audio::play_random_tone();
         GetHAL()->setChargeEnable(!GetHAL()->getChargeEnable());
-        ui::pop_a_toast(GetHAL()->getChargeEnable() ? _toast_msg_charge_enable : _toast_msg_charge_disable,
-                        GetHAL()->getChargeEnable() ? ui::toast_type::rose : ui::toast_type::gray);
+        ui::pop_a_toast(GetHAL()->getChargeEnable() ? _toast_msg_charge_enable : _toast_msg_charge_disable, GetHAL()->getChargeEnable() ? ui::toast_type::rose : ui::toast_type::gray);
         update_images();
     });
 
@@ -205,8 +211,7 @@ void PanelSwitches::init()
     _btn_charge_qc_en_sw->onClick().connect([&]() {
         audio::play_random_tone();
         GetHAL()->setChargeQcEnable(!GetHAL()->getChargeQcEnable());
-        ui::pop_a_toast(GetHAL()->getChargeQcEnable() ? _toast_msg_charge_qc_enable : _toast_msg_charge_qc_disable,
-                        GetHAL()->getChargeQcEnable() ? ui::toast_type::orange : ui::toast_type::info);
+        ui::pop_a_toast(GetHAL()->getChargeQcEnable() ? _toast_msg_charge_qc_enable : _toast_msg_charge_qc_disable, GetHAL()->getChargeQcEnable() ? ui::toast_type::orange : ui::toast_type::info);
         update_images();
     });
 
@@ -217,8 +222,7 @@ void PanelSwitches::init()
     _btn_ext_5v_en_sw->onClick().connect([&]() {
         audio::play_random_tone();
         GetHAL()->setExt5vEnable(!GetHAL()->getExt5vEnable());
-        ui::pop_a_toast(GetHAL()->getExt5vEnable() ? _toast_msg_ext_5v_enable : _toast_msg_ext_5v_disable,
-                        GetHAL()->getExt5vEnable() ? ui::toast_type::error : ui::toast_type::success);
+        ui::pop_a_toast(GetHAL()->getExt5vEnable() ? _toast_msg_ext_5v_enable : _toast_msg_ext_5v_disable, GetHAL()->getExt5vEnable() ? ui::toast_type::error : ui::toast_type::success);
         update_images();
     });
 
@@ -229,8 +233,7 @@ void PanelSwitches::init()
     _btn_usba_5v_en_sw->onClick().connect([&]() {
         audio::play_random_tone();
         GetHAL()->setUsb5vEnable(!GetHAL()->getUsb5vEnable());
-        ui::pop_a_toast(GetHAL()->getUsb5vEnable() ? _toast_msg_usba_5v_enable : _toast_msg_usba_5v_disable,
-                        GetHAL()->getUsb5vEnable() ? ui::toast_type::error : ui::toast_type::success);
+        ui::pop_a_toast(GetHAL()->getUsb5vEnable() ? _toast_msg_usba_5v_enable : _toast_msg_usba_5v_disable, GetHAL()->getUsb5vEnable() ? ui::toast_type::error : ui::toast_type::success);
         update_images();
     });
 
@@ -241,12 +244,11 @@ void PanelSwitches::init()
     _btn_ext_antenna_en_sw->onClick().connect([&]() {
         audio::play_random_tone();
         GetHAL()->setExtAntennaEnable(!GetHAL()->getExtAntennaEnable());
-        ui::pop_a_toast(
-            GetHAL()->getExtAntennaEnable() ? _toast_msg_ext_antenna_enable : _toast_msg_ext_antenna_disable,
-            ui::toast_type::info);
+        ui::pop_a_toast(GetHAL()->getExtAntennaEnable() ? _toast_msg_ext_antenna_enable : _toast_msg_ext_antenna_disable, ui::toast_type::info);
         update_images();
 
-        if (!_window) {
+        if (!_window)
+        {
             _window = std::make_unique<WifiApMsgWindow>();
             _window->init(lv_screen_active());
             _window->open();
@@ -260,7 +262,8 @@ void PanelSwitches::init()
     _btn_ap_msg->onClick().connect([&]() {
         audio::play_random_tone();
 
-        if (!_window) {
+        if (!_window)
+        {
             _window = std::make_unique<WifiApMsgWindow>();
             _window->init(lv_screen_active());
             _window->open();
@@ -283,21 +286,24 @@ void PanelSwitches::init()
 
     _last_usb_c_detect = GetHAL()->usbCDetect();
     _last_usb_a_detect = GetHAL()->usbADetect();
-    _last_hp_detect    = GetHAL()->headPhoneDetect();
+    _last_hp_detect = GetHAL()->headPhoneDetect();
 
     update_detect_images();
 }
 
 void PanelSwitches::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }
 
-    if (GetHAL()->millis() - _time_count > 200) {
+    if (GetHAL()->millis() - _time_count > 200)
+    {
         update_images();
         update_detect_images();
         _time_count = GetHAL()->millis();
@@ -326,25 +332,28 @@ void PanelSwitches::update_detect_images()
     //                     _last_usb_c_detect ? ui::toast_type::orange : ui::toast_type::gray);
     //     play_sfx(_last_usb_c_detect);
     // }
-    if (_last_usb_a_detect != GetHAL()->usbADetect()) {
+    if (_last_usb_a_detect != GetHAL()->usbADetect())
+    {
         _last_usb_a_detect = GetHAL()->usbADetect();
-        ui::pop_a_toast(_last_usb_a_detect ? _toast_msg_usb_a_connected : _toast_msg_usb_a_disconnected,
-                        _last_usb_a_detect ? ui::toast_type::orange : ui::toast_type::gray);
+        ui::pop_a_toast(_last_usb_a_detect ? _toast_msg_usb_a_connected : _toast_msg_usb_a_disconnected, _last_usb_a_detect ? ui::toast_type::orange : ui::toast_type::gray);
         play_sfx(_last_usb_a_detect);
     }
-    if (_last_hp_detect != GetHAL()->headPhoneDetect()) {
+    if (_last_hp_detect != GetHAL()->headPhoneDetect())
+    {
         _last_hp_detect = GetHAL()->headPhoneDetect();
-        ui::pop_a_toast(_last_hp_detect ? _toast_msg_hp_connected : _toast_msg_hp_disconnected,
-                        _last_hp_detect ? ui::toast_type::orange : ui::toast_type::gray);
+        ui::pop_a_toast(_last_hp_detect ? _toast_msg_hp_connected : _toast_msg_hp_disconnected, _last_hp_detect ? ui::toast_type::orange : ui::toast_type::gray);
         play_sfx(_last_hp_detect);
     }
 }
 
 void PanelSwitches::play_sfx(bool isPlugedIn)
 {
-    if (isPlugedIn) {
+    if (isPlugedIn)
+    {
         audio::play_melody({60 + 24, 64 + 24});
-    } else {
+    }
+    else
+    {
         audio::play_melody({64 + 24, 60 + 24});
     }
 }

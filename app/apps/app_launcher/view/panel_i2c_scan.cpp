@@ -21,20 +21,21 @@ using namespace launcher_view;
 using namespace smooth_ui_toolkit;
 using namespace smooth_ui_toolkit::lvgl_cpp;
 
-static const std::string _tag                      = "panel-i2c-scan";
-static const std::string _toast_msg_ext_5v_enable  = " EXT 5V enabled";
+static const std::string _tag = "panel-i2c-scan";
+static const std::string _toast_msg_ext_5v_enable = " EXT 5V enabled";
 static const std::string _toast_msg_ext_5v_disable = "EXT 5V disabled";
 
 static const ui::Window::KeyFrame_t _kf_rtc_setting_close = {-505, 229, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_rtc_setting_open  = {-356, -12, 512, 356, 255};
+static const ui::Window::KeyFrame_t _kf_rtc_setting_open = {-356, -12, 512, 356, 255};
 
-class I2cScanWindow : public ui::Window {
+class I2cScanWindow : public ui::Window
+{
 public:
     I2cScanWindow()
     {
         config.kfClosed = _kf_rtc_setting_close;
         config.kfOpened = _kf_rtc_setting_open;
-        config.bgColor  = 0x1A1A1A;
+        config.bgColor = 0x1A1A1A;
     }
 
     void onOpen() override
@@ -50,7 +51,7 @@ public:
         _btn_porta_scan->setOpa(0);
         _btn_porta_scan->onClick().connect([&] {
             _is_scanning_internal = false;
-            _scan_time_count      = 0;
+            _scan_time_count = 0;
             audio::play_tone_from_midi(60 + 24);
             update_i2c_dev_chart();
             update_btn_ext5v_on();
@@ -62,7 +63,7 @@ public:
         _btn_internal_scan->setOpa(0);
         _btn_internal_scan->onClick().connect([&] {
             _is_scanning_internal = true;
-            _scan_time_count      = 0;
+            _scan_time_count = 0;
             audio::play_tone_from_midi(63 + 24);
             update_i2c_dev_chart();
             update_btn_ext5v_on();
@@ -75,8 +76,7 @@ public:
         _btn_ext5v_on->onClick().connect([&] {
             GetHAL()->setExt5vEnable(!GetHAL()->getExt5vEnable());
             audio::play_tone_from_midi(GetHAL()->getExt5vEnable() ? (63 + 24) : (60 + 24));
-            ui::pop_a_toast(GetHAL()->getExt5vEnable() ? _toast_msg_ext_5v_enable : _toast_msg_ext_5v_disable,
-                            GetHAL()->getExt5vEnable() ? ui::toast_type::error : ui::toast_type::success);
+            ui::pop_a_toast(GetHAL()->getExt5vEnable() ? _toast_msg_ext_5v_enable : _toast_msg_ext_5v_disable, GetHAL()->getExt5vEnable() ? ui::toast_type::error : ui::toast_type::success);
             update_btn_ext5v_on();
         });
 
@@ -88,23 +88,29 @@ public:
 
     void onUpdate() override
     {
-        if (!(_state == Opening || _state == Opened)) {
+        if (!(_state == Opening || _state == Opened))
+        {
             return;
         }
 
-        if (GetHAL()->millis() - _scan_time_count < 300) {
+        if (GetHAL()->millis() - _scan_time_count < 300)
+        {
             return;
         }
 
         // Scan and create labels
         std::vector<uint8_t> addrs;
-        if (!_is_scanning_internal && !GetHAL()->getExt5vEnable()) {
+        if (!_is_scanning_internal && !GetHAL()->getExt5vEnable())
+        {
             // Scan without ext 5v cause no response blocking
-        } else {
+        }
+        else
+        {
             addrs = GetHAL()->i2cScan(_is_scanning_internal);
         }
         _label_addrs.clear();
-        for (auto addr : addrs) {
+        for (auto addr: addrs)
+        {
             _label_addrs.push_back(std::make_unique<Label>(_window->get()));
             apply_addr_label_style(_label_addrs.back().get(), addr);
         }
@@ -127,18 +133,21 @@ private:
     std::unique_ptr<Image> _btn_ext5v_on;
     std::vector<std::unique_ptr<Label>> _label_addrs;
     bool _is_scanning_internal = true;
-    uint32_t _scan_time_count  = 0;
+    uint32_t _scan_time_count = 0;
 
     void update_i2c_dev_chart()
     {
-        if (_is_scanning_internal) {
+        if (_is_scanning_internal)
+        {
             _img_i2c_dev_chart->setSrc(&internal_i2c_dev_chart);
-        } else {
+        }
+        else
+        {
             _img_i2c_dev_chart->setSrc(&porta_i2c_dev_chart);
         }
     }
 
-    void apply_addr_label_style(Label* label, uint8_t addr)
+    void apply_addr_label_style(Label *label, uint8_t addr)
     {
         int16_t row = addr >> 4;
         int16_t col = addr & 0x0F;
@@ -154,13 +163,19 @@ private:
 
     void update_btn_ext5v_on()
     {
-        if (_is_scanning_internal) {
+        if (_is_scanning_internal)
+        {
             _btn_ext5v_on->setOpa(0);
-        } else {
-            if (GetHAL()->getExt5vEnable()) {
+        }
+        else
+        {
+            if (GetHAL()->getExt5vEnable())
+            {
                 _btn_ext5v_on->setOpa(255);
                 _btn_ext5v_on->setSrc(&porta_i2c_ext5v_on);
-            } else {
+            }
+            else
+            {
                 _btn_ext5v_on->setOpa(0);
             }
         }
@@ -185,9 +200,11 @@ void PanelI2cScan::init()
 
 void PanelI2cScan::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

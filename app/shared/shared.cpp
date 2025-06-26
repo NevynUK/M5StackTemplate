@@ -5,11 +5,12 @@
  */
 #include "shared.h"
 
-static shared_data::SharedData_t* _shared_data_instance = nullptr;
+static shared_data::SharedData_t *_shared_data_instance = nullptr;
 
-shared_data::SharedData_t* shared_data::Get()
+shared_data::SharedData_t *shared_data::Get()
 {
-    if (!_shared_data_instance) {
+    if (!_shared_data_instance)
+    {
         _shared_data_instance = new shared_data::SharedData_t;
     }
     return _shared_data_instance;
@@ -17,7 +18,8 @@ shared_data::SharedData_t* shared_data::Get()
 
 void shared_data::Destroy()
 {
-    if (_shared_data_instance) {
+    if (_shared_data_instance)
+    {
         delete _shared_data_instance;
         _shared_data_instance = nullptr;
     }

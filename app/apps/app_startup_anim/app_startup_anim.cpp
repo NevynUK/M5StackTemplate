@@ -46,25 +46,27 @@ void AppStartupAnim::onOpen()
     _anim_logo_tab_y.pause();
     _anim_logo_tab_y.teleport(785);
     _anim_logo_tab_y.springOptions().visualDuration = 0.6;
-    _anim_logo_tab_y.springOptions().bounce         = 0.2;
+    _anim_logo_tab_y.springOptions().bounce = 0.2;
 
     _anim_logo_tab_opa.pause();
     _anim_logo_tab_opa.teleport(0);
     _anim_logo_tab_opa.easingOptions().easingFunction = ease::linear;
-    _anim_logo_tab_opa.easingOptions().duration       = 0.6;
+    _anim_logo_tab_opa.easingOptions().duration = 0.6;
 
     _anim_logo_5_x.pause();
     _anim_logo_5_x.teleport(700);
     _anim_logo_5_x.springOptions().visualDuration = 0.4;
-    _anim_logo_5_x.springOptions().bounce         = 0.2;
+    _anim_logo_5_x.springOptions().bounce = 0.2;
 
     _time_count = GetHAL()->millis();
 }
 
 void AppStartupAnim::onRunning()
 {
-    if (_anime_state == AnimState_StartupDelay) {
-        if (GetHAL()->millis() - _time_count > 400) {
+    if (_anime_state == AnimState_StartupDelay)
+    {
+        if (GetHAL()->millis() - _time_count > 400)
+        {
             _anime_state = AnimState_LogoTabMoveUp;
             _anim_logo_tab_y.play();
             _anim_logo_tab_y = 309;
@@ -74,30 +76,38 @@ void AppStartupAnim::onRunning()
         return;
     }
 
-    else if (_anime_state == AnimState_LogoTabMoveUp) {
-        if (_anim_logo_tab_y.done()) {
+    else if (_anime_state == AnimState_LogoTabMoveUp)
+    {
+        if (_anim_logo_tab_y.done())
+        {
             _anime_state = AnimState_Logo5MoveLeft;
             _anim_logo_5_x.play();
             _anim_logo_5_x = 82;
         }
     }
 
-    else if (_anime_state == AnimState_Logo5MoveLeft) {
-        if (_anim_logo_5_x.done()) {
+    else if (_anime_state == AnimState_Logo5MoveLeft)
+    {
+        if (_anim_logo_5_x.done())
+        {
             _anime_state = AnimState_FinalDelay;
-            _time_count  = GetHAL()->millis();
+            _time_count = GetHAL()->millis();
             GetHAL()->startWifiAp();
         }
-        if (!_is_sfx_played) {
-            if (_anim_logo_5_x.directValue() < 90) {
+        if (!_is_sfx_played)
+        {
+            if (_anim_logo_5_x.directValue() < 90)
+            {
                 GetHAL()->playStartupSfx();
                 _is_sfx_played = true;
             }
         }
     }
 
-    else if (_anime_state == AnimState_FinalDelay) {
-        if (GetHAL()->millis() - _time_count > 1000) {
+    else if (_anime_state == AnimState_FinalDelay)
+    {
+        if (GetHAL()->millis() - _time_count > 1000)
+        {
             close();
         }
         return;

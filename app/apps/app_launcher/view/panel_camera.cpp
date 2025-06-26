@@ -18,9 +18,10 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-camera";
 
 static const ui::Window::KeyFrame_t _kf_camera_close = {598, 0, 74, 74, 0};
-static const ui::Window::KeyFrame_t _kf_camera_open  = {141, 0, 800, 480, 255};
+static const ui::Window::KeyFrame_t _kf_camera_open = {141, 0, 800, 480, 255};
 
-class CameraWindow : public ui::Window {
+class CameraWindow : public ui::Window
+{
 public:
     CameraWindow()
     {
@@ -30,12 +31,14 @@ public:
 
     void close(bool teleport = false, bool triggerCallback = true) override
     {
-        if (!_is_camera_opened) {
+        if (!_is_camera_opened)
+        {
             ui::Window::close(teleport, triggerCallback);
             return;
         }
 
-        if (!_is_camera_closing) {
+        if (!_is_camera_closing)
+        {
             _is_camera_closing = true;
             _camera_canvas->setOpa(0);
             _label_msg->setText("Closing Camera ...");
@@ -66,8 +69,10 @@ public:
 
     void onUpdate() override
     {
-        if (_is_camera_closing) {
-            if (GetHAL()->isCameraCapturing()) {
+        if (_is_camera_closing)
+        {
+            if (GetHAL()->isCameraCapturing())
+            {
                 return;
             }
             _is_camera_closing = false;
@@ -75,11 +80,13 @@ public:
             ui::Window::close();
         }
 
-        if (_state != State_t::Opened) {
+        if (_state != State_t::Opened)
+        {
             return;
         }
 
-        if (!_is_camera_opened) {
+        if (!_is_camera_opened)
+        {
             GetHAL()->startCameraCapture(_camera_canvas->get());
             _is_camera_opened = true;
             _camera_canvas->setOpa(255);
@@ -94,17 +101,20 @@ public:
 private:
     std::unique_ptr<Label> _label_msg;
     std::unique_ptr<Canvas> _camera_canvas;
-    bool _is_camera_opened    = false;
+    bool _is_camera_opened = false;
     bool _is_camera_minimized = true;
-    bool _is_camera_closing   = false;
+    bool _is_camera_closing = false;
 
     void update_camera_canvas()
     {
-        if (_is_camera_minimized) {
+        if (_is_camera_minimized)
+        {
             _camera_canvas->setPos(141, 0);
             _camera_canvas->setSize(760, 440);
             _camera_canvas->setRadius(12);
-        } else {
+        }
+        else
+        {
             _camera_canvas->setPos(0, 0);
             _camera_canvas->setSize(1280, 720);
             _camera_canvas->setRadius(0);
@@ -130,9 +140,11 @@ void PanelCamera::init()
 
 void PanelCamera::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

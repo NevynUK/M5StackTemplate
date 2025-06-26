@@ -23,7 +23,7 @@ static constexpr int16_t _label_voltage_pos_x = -442;
 static constexpr int16_t _label_voltage_pos_y = -335;
 static constexpr int16_t _label_current_pos_x = -442;
 static constexpr int16_t _label_current_pos_y = -303;
-static constexpr uint32_t _label_color        = 0x333333;
+static constexpr uint32_t _label_color = 0x333333;
 
 void PanelPowerMonitor::init()
 {
@@ -56,16 +56,20 @@ void PanelPowerMonitor::init()
 
 void PanelPowerMonitor::update(bool isStacked)
 {
-    if (GetHAL()->millis() - _pm_data_update_time_count > 100) {
+    if (GetHAL()->millis() - _pm_data_update_time_count > 100)
+    {
         GetHAL()->updatePowerMonitorData();
 
         _label_voltage->setText(fmt::format("{:.2f}V", GetHAL()->powerMonitorData.busVoltage));
         _label_current->setText(fmt::format("{:.2f}A", GetHAL()->powerMonitorData.shuntCurrent));
 
-        if (GetHAL()->powerMonitorData.shuntCurrent < 0) {
+        if (GetHAL()->powerMonitorData.shuntCurrent < 0)
+        {
             _img_chg_arrow_up->setOpa(0);
             _img_chg_arrow_down->setOpa(0);
-        } else {
+        }
+        else
+        {
             _img_chg_arrow_up->setOpa(255);
             _img_chg_arrow_down->setOpa(255);
         }
@@ -73,7 +77,8 @@ void PanelPowerMonitor::update(bool isStacked)
         _pm_data_update_time_count = GetHAL()->millis();
     }
 
-    if (GetHAL()->millis() - _cpu_temp_update_time_count > 1000) {
+    if (GetHAL()->millis() - _cpu_temp_update_time_count > 1000)
+    {
         _label_cpu_temp->setText(fmt::format("{}", GetHAL()->getCpuTemp()));
         _cpu_temp_update_time_count = GetHAL()->millis();
     }

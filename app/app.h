@@ -11,37 +11,39 @@
  * @brief Application layer
  *
  */
-namespace app {
+namespace app
+{
 
-struct InitCallback_t {
-    std::function<void()> onHalInjection = nullptr;
-};
+    struct InitCallback_t
+    {
+        std::function<void()> onHalInjection = nullptr;
+    };
 
-/**
- * @brief
- *
- * @param callback
- */
-void Init(InitCallback_t callback);
+    /**
+     * @brief
+     *
+     * @param callback
+     */
+    void Init(InitCallback_t callback);
 
-/**
- * @brief
- *
- */
-void Update();
+    /**
+     * @brief
+     *
+     */
+    void Update();
 
-/**
- * @brief
- *
- * @return true
- * @return false
- */
-bool IsDone();
+    /**
+     * @brief
+     *
+     * @return true
+     * @return false
+     */
+    bool IsDone();
 
-/**
- * @brief
- *
- */
-void Destroy();
+    /**
+     * @brief
+     *
+     */
+    void Destroy();
 
-}  // namespace app
+} // namespace app

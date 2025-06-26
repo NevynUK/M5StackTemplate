@@ -18,26 +18,27 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 
 static const std::string _tag = "panel-power";
 
-static const ui::Window::KeyFrame_t _kf_power_off_close          = {562, -319, 146, 70, 0};
-static const ui::Window::KeyFrame_t _kf_power_off_open           = {123, -200, 703, 291, 255};
+static const ui::Window::KeyFrame_t _kf_power_off_close = {562, -319, 146, 70, 0};
+static const ui::Window::KeyFrame_t _kf_power_off_open = {123, -200, 703, 291, 255};
 static const ui::Window::KeyFrame_t _kf_sleep_touch_wakeup_close = {562, -245, 146, 70, 0};
-static const ui::Window::KeyFrame_t _kf_sleep_touch_wakeup_open  = {123, -200, 703, 291, 255};
+static const ui::Window::KeyFrame_t _kf_sleep_touch_wakeup_open = {123, -200, 703, 291, 255};
 static const ui::Window::KeyFrame_t _kf_sleep_shake_wakeup_close = {562, -172, 146, 70, 0};
-static const ui::Window::KeyFrame_t _kf_sleep_shake_wakeup_open  = {123, -163, 703, 291, 255};
-static const ui::Window::KeyFrame_t _kf_sleep_rtc_wakeup_close   = {562, -98, 146, 70, 0};
-static const ui::Window::KeyFrame_t _kf_sleep_rtc_wakeup_open    = {123, -116, 703, 291, 255};
+static const ui::Window::KeyFrame_t _kf_sleep_shake_wakeup_open = {123, -163, 703, 291, 255};
+static const ui::Window::KeyFrame_t _kf_sleep_rtc_wakeup_close = {562, -98, 146, 70, 0};
+static const ui::Window::KeyFrame_t _kf_sleep_rtc_wakeup_open = {123, -116, 703, 291, 255};
 
-class PowerWindowBase : public ui::Window {
+class PowerWindowBase : public ui::Window
+{
 public:
     void onInit() override
     {
         _label_header = std::make_unique<Label>(_window->get());
-        _label_msg    = std::make_unique<Label>(_window->get());
-        _btn_cancel   = std::make_unique<Button>(_window->get());
-        _btn_confirm  = std::make_unique<Button>(_window->get());
+        _label_msg = std::make_unique<Label>(_window->get());
+        _btn_cancel = std::make_unique<Button>(_window->get());
+        _btn_confirm = std::make_unique<Button>(_window->get());
     }
 
-    static void apply_label_header_style(Label* label, int16_t x, int16_t y, const std::string& text)
+    static void apply_label_header_style(Label *label, int16_t x, int16_t y, const std::string &text)
     {
         label->align(LV_ALIGN_LEFT_MID, x, y);
         label->setTextColor(lv_color_hex(0xFFFFFF));
@@ -45,7 +46,7 @@ public:
         label->setText(text);
     }
 
-    static void apply_label_msg_style(Label* label, int16_t x, int16_t y, const std::string& text)
+    static void apply_label_msg_style(Label *label, int16_t x, int16_t y, const std::string &text)
     {
         label->align(LV_ALIGN_LEFT_MID, x, y);
         label->setTextColor(lv_color_hex(0xFFFFFF));
@@ -53,7 +54,7 @@ public:
         label->setText(text);
     }
 
-    static void apply_button_style(Button* btn, int16_t x, int16_t y, uint32_t color, const std::string& label)
+    static void apply_button_style(Button *btn, int16_t x, int16_t y, uint32_t color, const std::string &label)
     {
         btn->align(LV_ALIGN_CENTER, x, y);
         btn->setSize(183, 58);
@@ -72,13 +73,14 @@ protected:
     std::unique_ptr<Button> _btn_confirm;
 };
 
-class PowerOffWindow : public PowerWindowBase {
+class PowerOffWindow : public PowerWindowBase
+{
 public:
     PowerOffWindow()
     {
-        config.kfClosed    = _kf_power_off_close;
-        config.kfOpened    = _kf_power_off_open;
-        config.bgColor     = 0xB14948;
+        config.kfClosed = _kf_power_off_close;
+        config.kfOpened = _kf_power_off_open;
+        config.bgColor = 0xB14948;
         config.borderColor = 0x783A39;
     }
 
@@ -86,8 +88,7 @@ public:
     {
         apply_label_header_style(_label_header.get(), 50, -92, "Your device will shut down.");
 
-        apply_label_msg_style(_label_msg.get(), 50, -21,
-                              fmt::format("Shut down automatically in {} seconds.", _countdown));
+        apply_label_msg_style(_label_msg.get(), 50, -21, fmt::format("Shut down automatically in {} seconds.", _countdown));
 
         _btn_cancel->onClick().connect([&]() { close(); });
         apply_button_style(_btn_cancel.get(), -24, 78, 0x783A39, "Cancel");
@@ -100,10 +101,12 @@ public:
 
     void onUpdate() override
     {
-        if (GetHAL()->millis() - _time_count > 1000) {
+        if (GetHAL()->millis() - _time_count > 1000)
+        {
             _countdown--;
 
-            if (_countdown < 0) {
+            if (_countdown < 0)
+            {
                 GetHAL()->powerOff();
             }
 
@@ -118,17 +121,18 @@ public:
     }
 
 private:
-    int _countdown       = 15;
+    int _countdown = 15;
     uint32_t _time_count = 0;
 };
 
-class SleepTouchWakeupWindow : public PowerWindowBase {
+class SleepTouchWakeupWindow : public PowerWindowBase
+{
 public:
     SleepTouchWakeupWindow()
     {
-        config.kfClosed    = _kf_sleep_touch_wakeup_close;
-        config.kfOpened    = _kf_sleep_touch_wakeup_open;
-        config.bgColor     = 0x6B6D48;
+        config.kfClosed = _kf_sleep_touch_wakeup_close;
+        config.kfOpened = _kf_sleep_touch_wakeup_open;
+        config.bgColor = 0x6B6D48;
         config.borderColor = 0x54553D;
     }
 
@@ -154,13 +158,14 @@ public:
     }
 };
 
-class SleepShakeWakeupWindow : public PowerWindowBase {
+class SleepShakeWakeupWindow : public PowerWindowBase
+{
 public:
     SleepShakeWakeupWindow()
     {
-        config.kfClosed    = _kf_sleep_shake_wakeup_close;
-        config.kfOpened    = _kf_sleep_shake_wakeup_open;
-        config.bgColor     = 0xB18F6C;
+        config.kfClosed = _kf_sleep_shake_wakeup_close;
+        config.kfOpened = _kf_sleep_shake_wakeup_open;
+        config.bgColor = 0xB18F6C;
         config.borderColor = 0x896B4D;
     }
 
@@ -168,8 +173,7 @@ public:
     {
         apply_label_header_style(_label_header.get(), 50, -92, "Your device will shut down.");
 
-        apply_label_msg_style(_label_msg.get(), 50, -21,
-                              "Please place it still before confirming.\nShake the device to wake it up.");
+        apply_label_msg_style(_label_msg.get(), 50, -21, "Please place it still before confirming.\nShake the device to wake it up.");
 
         _btn_cancel->onClick().connect([&]() { close(); });
         apply_button_style(_btn_cancel.get(), -24, 78, 0x896B4D, "Cancel");
@@ -184,13 +188,14 @@ public:
     }
 };
 
-class SleepRtcWakeupWindow : public PowerWindowBase {
+class SleepRtcWakeupWindow : public PowerWindowBase
+{
 public:
     SleepRtcWakeupWindow()
     {
-        config.kfClosed    = _kf_sleep_rtc_wakeup_close;
-        config.kfOpened    = _kf_sleep_rtc_wakeup_open;
-        config.bgColor     = 0x637991;
+        config.kfClosed = _kf_sleep_rtc_wakeup_close;
+        config.kfOpened = _kf_sleep_rtc_wakeup_open;
+        config.bgColor = 0x637991;
         config.borderColor = 0x435A73;
     }
 
@@ -265,9 +270,11 @@ void PanelPower::init()
 
 void PanelPower::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

@@ -23,14 +23,15 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 static const std::string _tag = "panel-gpio";
 
 static const ui::Window::KeyFrame_t _kf_ext_port_close = {413, -115, 75, 75, 0};
-static const ui::Window::KeyFrame_t _kf_ext_port_open  = {-438, 68, 273, 380, 255};
-static const ui::Window::KeyFrame_t _kf_mbus_open      = {183, -15, 520, 547, 255};
+static const ui::Window::KeyFrame_t _kf_ext_port_open = {-438, 68, 273, 380, 255};
+static const ui::Window::KeyFrame_t _kf_mbus_open = {183, -15, 520, 547, 255};
 
-class GpioOutputTestPanel {
+class GpioOutputTestPanel
+{
 public:
     std::function<void(uint8_t ioPin, bool level)> onToggle;
 
-    void init(lv_obj_t* parent, uint8_t ioPin)
+    void init(lv_obj_t *parent, uint8_t ioPin)
     {
         _io_pin = ioPin;
 
@@ -55,7 +56,8 @@ public:
         _btn_io_toggle->onClick().connect([&]() {
             _is_on = !_is_on;
             update_btn_style();
-            if (onToggle) {
+            if (onToggle)
+            {
                 onToggle(_io_pin, _is_on);
             }
         });
@@ -63,7 +65,7 @@ public:
         update_btn_style();
     }
 
-    std::unique_ptr<Container>& get()
+    std::unique_ptr<Container> &get()
     {
         return _panel;
     }
@@ -77,28 +79,32 @@ protected:
     std::unique_ptr<Container> _panel;
     std::unique_ptr<Label> _label_io_num;
     std::unique_ptr<Button> _btn_io_toggle;
-    bool _is_on     = false;
+    bool _is_on = false;
     uint8_t _io_pin = 0;
 
     void update_btn_style()
     {
-        if (_is_on) {
+        if (_is_on)
+        {
             _btn_io_toggle->setBgColor(lv_color_hex(0xDD380D));
             _btn_io_toggle->label().setText("HIGH");
-        } else {
+        }
+        else
+        {
             _btn_io_toggle->setBgColor(lv_color_hex(0x58B358));
             _btn_io_toggle->label().setText("LOW");
         }
     }
 };
 
-class MbusWindow : public ui::Window {
+class MbusWindow : public ui::Window
+{
 public:
     MbusWindow()
     {
-        config.title        = "MBUS";
-        config.kfClosed     = _kf_ext_port_close;
-        config.kfOpened     = _kf_mbus_open;
+        config.title = "MBUS";
+        config.kfClosed = _kf_ext_port_close;
+        config.kfOpened = _kf_mbus_open;
         config.clickBgClose = false;
     }
 
@@ -115,10 +121,13 @@ public:
 
     void onUpdate() override
     {
-        if (_state == Opened) {
-            if (_io_panels.empty()) {
+        if (_state == Opened)
+        {
+            if (_io_panels.empty())
+            {
                 _label_msg.reset();
-                for (int i = 0; i < _io_pins.size(); i++) {
+                for (int i = 0; i < _io_pins.size(); i++)
+                {
                     GetHAL()->gpioReset(_io_pins[i]);
                     GetHAL()->gpioInitOutput(_io_pins[i]);
                     GetHAL()->gpioSetLevel(_io_pins[i], false);
@@ -139,7 +148,8 @@ public:
     void onClose() override
     {
         _io_panels.clear();
-        for (const auto& io : _io_pins) {
+        for (const auto &io: _io_pins)
+        {
             GetHAL()->gpioReset(io);
         }
     }
@@ -150,11 +160,12 @@ private:
     const std::array<uint8_t, 18> _io_pins = {18, 19, 5, 38, 7, 3, 2, 47, 16, 17, 45, 52, 37, 6, 4, 48, 35, 51};
 };
 
-class ExtPortWindow : public ui::Window {
+class ExtPortWindow : public ui::Window
+{
 public:
     ExtPortWindow()
     {
-        config.title    = "Ext.Port1";
+        config.title = "Ext.Port1";
         config.kfClosed = _kf_ext_port_close;
         config.kfOpened = _kf_ext_port_open;
     }
@@ -178,14 +189,18 @@ public:
 
     void onUpdate() override
     {
-        if (_mbus_window) {
+        if (_mbus_window)
+        {
             _mbus_window->update();
         }
 
-        if (_state == Opened) {
-            if (_io_panels.empty()) {
+        if (_state == Opened)
+        {
+            if (_io_panels.empty())
+            {
                 _label_msg.reset();
-                for (int i = 0; i < _io_pins.size(); i++) {
+                for (int i = 0; i < _io_pins.size(); i++)
+                {
                     GetHAL()->gpioReset(_io_pins[i]);
                     GetHAL()->gpioInitOutput(_io_pins[i]);
                     GetHAL()->gpioSetLevel(_io_pins[i], false);
@@ -207,7 +222,8 @@ public:
     {
         audio::play_next_tone_progression();
         _io_panels.clear();
-        for (const auto& io : _io_pins) {
+        for (const auto &io: _io_pins)
+        {
             GetHAL()->gpioReset(io);
         }
         _mbus_window->close();
@@ -239,9 +255,11 @@ void PanelGpioTest::init()
 
 void PanelGpioTest::update(bool isStacked)
 {
-    if (_window) {
+    if (_window)
+    {
         _window->update();
-        if (_window->getState() == ui::Window::State_t::Closed) {
+        if (_window->getState() == ui::Window::State_t::Closed)
+        {
             _window.reset();
         }
     }

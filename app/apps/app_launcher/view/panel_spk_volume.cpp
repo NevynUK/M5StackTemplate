@@ -18,16 +18,16 @@ using namespace smooth_ui_toolkit::lvgl_cpp;
 
 static const std::string _tag = "panel-spk-vol";
 
-static constexpr int16_t _label_pos_x    = 605;
-static constexpr int16_t _label_pos_y    = 240;
-static constexpr int16_t _btn_up_pos_x   = 499;
-static constexpr int16_t _btn_up_pos_y   = 312;
+static constexpr int16_t _label_pos_x = 605;
+static constexpr int16_t _label_pos_y = 240;
+static constexpr int16_t _btn_up_pos_x = 499;
+static constexpr int16_t _btn_up_pos_y = 312;
 static constexpr int16_t _btn_down_pos_x = 593;
 static constexpr int16_t _btn_down_pos_y = 312;
 
-static constexpr int16_t _midi_up   = 64 + 24;
+static constexpr int16_t _midi_up = 64 + 24;
 static constexpr int16_t _midi_down = 60 + 24;
-static constexpr int16_t _midi_top  = 64 + 8 + 24;
+static constexpr int16_t _midi_top = 64 + 8 + 24;
 
 void PanelSpeakerVolume::init()
 {
@@ -47,14 +47,15 @@ void PanelSpeakerVolume::init()
         _label_y_anim = _label_pos_y;
 
         // SFX
-        if (GetHAL()->getSpeakerVolume() >= 100) {
+        if (GetHAL()->getSpeakerVolume() >= 100)
+        {
             audio::play_tone_from_midi(_midi_top);
             return;
         }
 
         // Update volume
         int target = GetHAL()->getSpeakerVolume();
-        target     = std::clamp(target + 20, 0, 100);
+        target = std::clamp(target + 20, 0, 100);
         GetHAL()->setSpeakerVolume(target);
         _label_volume->setText(fmt::format("{}", GetHAL()->getSpeakerVolume()));
 
@@ -71,14 +72,15 @@ void PanelSpeakerVolume::init()
         _label_y_anim = _label_pos_y;
 
         // SFX
-        if (GetHAL()->getSpeakerVolume() <= 0) {
+        if (GetHAL()->getSpeakerVolume() <= 0)
+        {
             return;
         }
         audio::play_tone_from_midi(_midi_down);
 
         // Update volume
         int target = GetHAL()->getSpeakerVolume();
-        target     = std::clamp(target - 20, 0, 100);
+        target = std::clamp(target - 20, 0, 100);
         GetHAL()->setSpeakerVolume(target);
         _label_volume->setText(fmt::format("{}", GetHAL()->getSpeakerVolume()));
     });
@@ -89,7 +91,8 @@ void PanelSpeakerVolume::init()
 
 void PanelSpeakerVolume::update(bool isStacked)
 {
-    if (!_label_y_anim.done()) {
+    if (!_label_y_anim.done())
+    {
         _label_volume->setY(_label_y_anim);
     }
 }
