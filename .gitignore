@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+gdblog.txt
+gdb.log
+build/**
+managed_components/**
+sdkconfig
+*.bin
