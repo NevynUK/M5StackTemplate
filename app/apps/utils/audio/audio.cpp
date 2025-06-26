@@ -13,7 +13,7 @@
 static constexpr int SAMPLE_RATE = 48000;
 static constexpr double PI = 3.14159265358979323846;
 
-// 简单线性包络：attack + decay
+// Simple linear envelope: attack + decay
 void generate_tone_with_linear_envelope(std::vector<int16_t> &buffer, double freq, double duration, double volume)
 {
     int samples = static_cast<int>(SAMPLE_RATE * duration);
@@ -41,7 +41,6 @@ void generate_tone_with_linear_envelope(std::vector<int16_t> &buffer, double fre
 
 namespace audio
 {
-
     void play_tone(int frequency, double durationSec)
     {
         if (GetHAL()->getSpeakerVolume() <= 0)
@@ -51,16 +50,16 @@ namespace audio
 
         const int sample_rate = 48000;
         const int samples = static_cast<int>(sample_rate * durationSec);
-        std::vector<int16_t> buffer(samples * 2); // 双声道
+        std::vector<int16_t> buffer(samples * 2); // Stereo
 
-        const int fade_len = 200;                 // 淡出长度（采样点）
+        const int fade_len = 200;                 // Fade-out length (samples)
         const float amplitude = 32767.0f / 5;
 
         for (int i = 0; i < samples; ++i)
         {
             float amp = amplitude;
 
-            // 应用结尾淡出（fade-out）
+            // Apply ending fade-out
             if (i >= samples - fade_len)
             {
                 float fade_factor = static_cast<float>(samples - i) / fade_len;
@@ -68,8 +67,8 @@ namespace audio
             }
 
             int16_t value = static_cast<int16_t>(amp * sin(2.0 * M_PI * frequency * i / sample_rate));
-            buffer[i * 2] = value;     // 左声道
-            buffer[i * 2 + 1] = value; // 右声道
+            buffer[i * 2] = value;     // Left channel
+            buffer[i * 2 + 1] = value; // Right channel
         }
 
         GetHAL()->audioPlay(buffer);
@@ -84,11 +83,11 @@ namespace audio
 
         const int sample_rate = 48000;
         const int samples_per_note = static_cast<int>(sample_rate * durationSec);
-        const int fade_len = 200;                               // 每个音符结尾的淡出长度
+        const int fade_len = 200;                               // Fade-out length at the end of each note
         const float amplitude = 32767.0f / 5;
 
-        std::vector<int16_t> buffer;                            // 大 buffer 存放整首旋律
-        buffer.reserve(midiList.size() * samples_per_note * 2); // 双声道预留空间
+        std::vector<int16_t> buffer;                            // Large buffer to store the entire melody
+        buffer.reserve(midiList.size() * samples_per_note * 2); // Reserve space for stereo
 
         for (int midiNote: midiList)
         {
@@ -96,7 +95,7 @@ namespace audio
             {
                 float amp = amplitude;
 
-                // 应用淡出（仅每个音符的结尾）
+                // Apply fade-out (only at the end of each note)
                 if (i >= samples_per_note - fade_len)
                 {
                     float fade_factor = static_cast<float>(samples_per_note - i) / fade_len;
@@ -110,8 +109,8 @@ namespace audio
                     sample = static_cast<int16_t>(amp * sin(2.0 * M_PI * freq * i / sample_rate));
                 }
 
-                buffer.push_back(sample); // 左声道
-                buffer.push_back(sample); // 右声道
+                buffer.push_back(sample); // Left channel
+                buffer.push_back(sample); // Right channel
             }
         }
 
@@ -136,7 +135,7 @@ namespace audio
             return;
         }
 
-        std::vector<int> scale = {60, 62, 64, 65, 67, 69, 71}; // C大调音阶（C D E F G A B）
+        std::vector<int> scale = {60, 62, 64, 65, 67, 69, 71}; // C major scale (C D E F G A B)
 
         int index = rand() % scale.size();
         int midi = scale[index] + semitoneShift;
@@ -215,11 +214,11 @@ namespace audio
             return;
         }
 
-        // C大调音阶
+        // C major scale
         std::vector<int> scale = {60, 62, 64, 65, 67, 69, 71}; // C D E F G A B
 
-        // 随机 root 和和弦结构
-        int root_index = rand() % 4; // 留出空间给三度五度
+        // Random root and chord structure
+        int root_index = rand() % 4; // Leave space for third and fifth
         int root = scale[root_index] + semitoneShift;
         int third = scale[root_index + 2] + semitoneShift;
         int fifth = scale[root_index + 4] + semitoneShift;
@@ -254,8 +253,8 @@ namespace audio
 
         int root = chord_roots[current_chord_index % chord_roots.size()] + SEMITONE_SHIFT;
 
-        // 判断是否为小和弦（只处理 Am）
-        bool is_minor = (root % 12 == 9); // MIDI 69, 81, 等都是 A
+        // Determine if it's a minor chord (only handle Am)
+        bool is_minor = (root % 12 == 9); // MIDI 69, 81, etc. are all A
 
         std::vector<int> chord_midi = {root, root + (is_minor ? 3 : 4), root + 7};
 

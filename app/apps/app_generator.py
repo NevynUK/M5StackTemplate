@@ -9,8 +9,8 @@ script_directory = os.path.dirname(os.path.abspath(sys.argv[0])) + "/"
 
 
 def toSnakeCase(sentence):
-    # 用空格替换连字符，然后应用正则表达式替换以实现标题大小写转换，
-    # 并在单词之间添加下划线，最后将结果转换为小写
+    # Replace hyphens with spaces, then apply regex replacement for title case conversion,
+    # add underscores between words, and finally convert the result to lowercase
     return '_'.join(
         sub('([A-Z][a-z]+)', r' \1',
             sub('([A-Z]+)', r' \1',
