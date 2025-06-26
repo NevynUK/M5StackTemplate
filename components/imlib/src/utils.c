@@ -8,13 +8,13 @@
 #include "driver/jpeg_encode.h"
 
 /**
- * 获取 utf-8 字符的字节长度
- * @param input_byte: 输入的 utf-8 字符的第一个字节
- * @return: 字符的字节长度
+ * Get the byte length of a utf-8 character
+ * @param input_byte: the first byte of the input utf-8 character
+ * @return: the byte length of the character
  */
 static int get_utf8_byte_size(const char input_byte)
 {
-    // 根据 utf-8 编码的首字节判断该字符的长度
+    // Determine the length of the character based on the first byte of the utf-8 encoding
     if (input_byte < 0x80)
         return 1;
     if (input_byte < 0xC0)
@@ -31,10 +31,10 @@ static int get_utf8_byte_size(const char input_byte)
 }
 
 /**
- * 将 utf-8 编码转换为 unicode 编码
- * @param utf8_input: 输入的 utf-8 字符串
- * @param unicode_output: 输出的 unicode 字符
- * @return: utf-8 字符的字节长度
+ * Convert utf-8 encoding to unicode encoding
+ * @param utf8_input: input utf-8 string
+ * @param unicode_output: output unicode character
+ * @return: byte length of the utf-8 character
  */
 int utf8_to_unicode(const char *utf8_input, uint64_t *unicode_output)
 {

@@ -27,20 +27,20 @@ float fast_expf(float x)
 
     e.l = (uint32_t) (1512775 * x + 1072632447);
 
-    // 修正指数基准
+    // Correct the exponent benchmark
     e.e = (e.e - 1023 + 127) & 0xFF;
 
-    // 重新封装 IEEE 754 格式
+    // Repackage the IEEE 754 format
     packed = (e.s << 31) | (e.e << 23) | (e.m << 3);
 
-    // 使用 memcpy 避免 strict aliasing 问题
+    // Use memcpy to avoid strict aliasing issues
     float result;
     memcpy(&result, &packed, sizeof(result));
 
-    // 返回重新封装的浮点数
+    // Return the repackaged floating-point number
     return result;
 
-    // 返回结果
+    // Return the result
     //    return *((float *)&packed);
 }
 

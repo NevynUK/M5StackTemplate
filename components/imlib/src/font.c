@@ -45,7 +45,7 @@
 #include "font.h"
 
 /**
- * ASCII 8x16 点阵数据
+ * ASCII 8x16 dot matrix data
  * 0x20~0x7E
  */
 // const glyph816_t font_ascii_8x16[] =

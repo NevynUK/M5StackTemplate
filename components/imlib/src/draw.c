@@ -14,7 +14,7 @@
 #include "fmath.h"
 
 /**
- * 计算图像的指定行起始地址
+ * Calculate the starting address of the specified row of the image
  */
 void *imlib_compute_row_ptr(const image_t *img, int y)
 {
@@ -41,7 +41,7 @@ void *imlib_compute_row_ptr(const image_t *img, int y)
 }
 
 /**
- * 获取图像指定像素点数据
+ * Get the data of the specified pixel of the image
  */
 inline int imlib_get_pixel_fast(image_t *img, const void *row_ptr, int x)
 {
@@ -68,7 +68,7 @@ inline int imlib_get_pixel_fast(image_t *img, const void *row_ptr, int x)
 
 // Set pixel (handles boundary check and image type check).
 /**
- * 设置图像指定像素的值
+ * Set the value of the specified pixel of the image
  */
 void imlib_set_pixel(image_t *img, int x, int y, int p)
 {
@@ -101,11 +101,11 @@ void imlib_set_pixel(image_t *img, int x, int y, int p)
 
 // https://stackoverflow.com/questions/1201200/fast-algorithm-for-drawing-filled-circles
 /**
- * 填充一个圆形区域
- * @param img：目标图像。
- * @param cx, cy：圆心坐标。
- * @param r0, r1：圆的半径范围。
- * @param c：填充颜色。
+ * Fill a circular area
+ * @param img: target image.
+ * @param cx, cy: center coordinates of the circle.
+ * @param r0, r1: radius range of the circle.
+ * @param c: fill color.
  */
 static void point_fill(image_t *img, int cx, int cy, int r0, int r1, int c)
 {
@@ -122,11 +122,11 @@ static void point_fill(image_t *img, int cx, int cy, int r0, int r1, int c)
 }
 
 /**
- * 设置图像中的单个像素点的颜色，支持抗锯齿(anti-aliasing)效果。
- * @param img：目标图像，类型为 image_t，包含图像宽度、高度、像素格式等信息。
- * @param x, y：待设置的像素位置。
- * @param err：混合系数，范围从 0 到 255，表示新颜色 c 所占的比例。较大的 err 值表示原始颜色占的比重较大。
- * @param c：新颜色值，其具体含义因像素格式而异。
+ * Set the color of a single pixel in the image, supporting anti-aliasing effect.
+ * @param img: target image, type image_t, contains image width, height, pixel format and other information.
+ * @param x, y: the pixel position to be set.
+ * @param err: blending coefficient, ranging from 0 to 255, indicating the proportion of the new color c. A larger err value indicates that the original color occupies a larger proportion.
+ * @param c: new color value, its specific meaning varies with the pixel format.
  */
 static void imlib_set_pixel_aa(image_t *img, int x, int y, int err, int c)
 {
@@ -179,7 +179,7 @@ static void imlib_set_pixel_aa(image_t *img, int x, int y, int err, int c)
 
 // https://gist.github.com/randvoorhies/807ce6e20840ab5314eb7c547899de68#file-bresenham-js-L381
 /**
- * 画线
+ * Draw a line
  */
 static void imlib_draw_thin_line(image_t *img, int x0, int y0, int x1, int y1, int c)
 {
@@ -230,7 +230,7 @@ static void imlib_draw_thin_line(image_t *img, int x0, int y0, int x1, int y1, i
 
 // https://gist.github.com/randvoorhies/807ce6e20840ab5314eb7c547899de68#file-bresenham-js-L813
 /**
- * 画线
+ * Draw a line
  */
 void imlib_draw_line(image_t *img, int x0, int y0, int x1, int y1, int c, int th)
 {
@@ -318,7 +318,7 @@ void imlib_draw_line(image_t *img, int x0, int y0, int x1, int y1, int c, int th
 }
 
 /**
- * 画线
+ * Draw a line
  */
 void imlib_draw_arrow(image_t *img, int x0, int y0, int x1, int y1, int c, int th, int size)
 {
@@ -358,7 +358,7 @@ static void yLine(image_t *img, int x, int y1, int y2, int c)
 }
 
 /**
- * 画矩形
+ * Draw a rectangle
  */
 void imlib_draw_rectangle(image_t *img, int rx, int ry, int rw, int rh, int c, int thickness, bool fill)
 {
@@ -455,7 +455,7 @@ static void imlib_draw_circle_thin(image_t *img, int cx, int cy, int r, int c, b
 
 // https://stackoverflow.com/questions/27755514/circle-with-thickness-drawing-algorithm
 /**
- * 画圆
+ * Draw a circle
  */
 void imlib_draw_circle(image_t *img, int cx, int cy, int r, int c, int thickness, bool fill)
 {
@@ -535,13 +535,13 @@ void imlib_draw_circle(image_t *img, int cx, int cy, int r, int c, int thickness
 // https://scratch.mit.edu/projects/50039326/
 // 效果 https://scratch.mit.edu/projects/50039326/editor/
 /**
- * 绘制一个变形效果的像素点。其设计可用于实现某种倾斜或透视的效果。
- * @param img：目标图像，用于绘制。
- * @param x0 和 y0：基准点坐标。
- * @param dx 和 dy：相对于基准点 (x0, y0) 的偏移量，用于确定绘制点的位置。
- * @param shear_dx 和 shear_dy：倾斜参数，控制变形的强度和方向。
- * @param r0 和 r1：定义填充区域的半径范围，用于控制绘制的区域大小。
- * @param c：颜色值，用于填充区域。
+ * Draw a pixel with a distortion effect. Its design can be used to achieve a certain tilt or perspective effect.
+ * @param img: target image for drawing.
+ * @param x0 and y0: base point coordinates.
+ * @param dx and dy: offset relative to the base point (x0, y0) to determine the drawing position.
+ * @param shear_dx and shear_dy: tilt parameters to control the intensity and direction of the deformation.
+ * @param r0 and r1: define the radius range of the fill area to control the size of the drawing area.
+ * @param c: color value for filling the area.
  */
 static void scratch_draw_pixel(image_t *img, int x0, int y0, int dx, int dy, float shear_dx, float shear_dy, int r0, int r1, int c)
 {
@@ -671,14 +671,14 @@ static void scratch_draw_rotated_ellipse(image_t *img, int x, int y, int x_axis,
 }
 
 /**
- * 绘制椭圆
- * @param img：目标图像，绘制操作将在此图像上执行。
- * @param cx 和 cy：椭圆中心点的坐标。
- * @param rx 和 ry：椭圆的水平和垂直半径。
- * @param rotation：椭圆的旋转角度，以度为单位。
- * @param c：椭圆的颜色值。
- * @param thickness：椭圆边框的厚度。
- * @param fill：布尔值，表示是否填充椭圆。
+ * Draw an ellipse
+ * @param img: The target image on which the drawing operation will be performed.
+ * @param cx and cy: The coordinates of the center of the ellipse.
+ * @param rx and ry: The horizontal and vertical radii of the ellipse.
+ * @param rotation: The rotation angle of the ellipse in degrees.
+ * @param c: The color value of the ellipse.
+ * @param thickness: The thickness of the ellipse border.
+ * @param fill: A boolean value indicating whether to fill the ellipse.
  */
 void imlib_draw_ellipse(image_t *img, int cx, int cy, int rx, int ry, int rotation, int c, int thickness, bool fill)
 {
@@ -692,18 +692,18 @@ void imlib_draw_ellipse(image_t *img, int cx, int cy, int rx, int ry, int rotati
 }
 
 /**
- * 绘制字符串，支持多种字体属性，如字符旋转、镜像、缩放等。
- * @param img：目标图像。
- * @param x_off 和 y_off：绘制字符串的起始位置。
- * @param str：要绘制的字符串。
- * @param c：字符串颜色。
- * @param scale：字符缩放比例。
- * @param x_spacing 和 y_spacing：字符之间的水平和垂直间距。
- * @param mono_space：是否启用等宽字体。
- * @param char_rotation：单字符和整体字符串的旋转角度。 0, 90, 180, 360, etc.
- * @param char_hmirror 和 char_vflip：字符水平镜像和垂直翻转。
- * @param string_rotation：单字符和整体字符串的旋转角度。 0, 90, 180, 360, etc.
- * @param string_hmirror 和 string_vflip：字符串水平镜像和垂直翻转。
+ * Draw a string, supporting multiple font attributes, such as character rotation, mirroring, scaling, etc.
+ * @param img: target image.
+ * @param x_off and y_off: starting position for drawing the string.
+ * @param str: the string to be drawn.
+ * @param c: string color.
+ * @param scale: character scaling ratio.
+ * @param x_spacing and y_spacing: horizontal and vertical spacing between characters.
+ * @param mono_space: whether to enable monospaced font.
+ * @param char_rotation: rotation angle of single character and whole string. 0, 90, 180, 360, etc.
+ * @param char_hmirror and char_vflip: character horizontal mirror and vertical flip.
+ * @param string_rotation: rotation angle of single character and whole string. 0, 90, 180, 360, etc.
+ * @param string_hmirror and string_vflip: string horizontal mirror and vertical flip.
  */
 typedef struct
 {
@@ -715,7 +715,7 @@ typedef struct
 font_t gfont;
 
 // 8x16
-// 16x16 分两部分显示
+// 16x16 displayed in two parts
 void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int c, float scale, int x_spacing, int y_spacing, bool mono_space, int char_rotation, bool char_hmirror, bool char_vflip, int string_rotation, bool string_hmirror, bool string_vflip)
 {
     char_rotation %= 360;
@@ -735,7 +735,7 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
     bool char_swap_w_h = (char_rotation == 90) || (char_rotation == 270);
     bool char_upsidedown = (char_rotation == 180) || (char_rotation == 270);
 
-    /* 设置字体 */
+    /* Set font */
     if (gfont.data == NULL)
     {
         gfont.w = 16;
@@ -766,9 +766,9 @@ void imlib_draw_string(image_t *img, int x_off, int y_off, const char *str, int 
     {
         bytes = utf8_to_unicode(str, &unicode);
 
-        /* 获取单个字符数据 */
+        /* Get single character data */
         if (bytes == 1)
-        { // 拉丁语范围使用 8x16 点阵字符
+        { // Latin range uses 8x16 dot matrix characters
             ch = unicode;
             g->w = 8;
             g->h = 16;
