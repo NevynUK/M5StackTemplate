@@ -60,7 +60,7 @@ BraceWrapping:
   AfterCaseLabel:  true
   AfterClass:      true
   AfterControlStatement: Always
-  AfterEnum:       false
+  AfterEnum:       true
   AfterExternBlock: true
   AfterFunction:   true
   AfterNamespace:  true
@@ -82,6 +82,7 @@ BreakArrays: false
 BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: Never
 BreakBeforeBraces: Custom
+# BreakBeforeBraces: BS_Allman
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTernaryOperators: true
 BreakStringLiterals: false
