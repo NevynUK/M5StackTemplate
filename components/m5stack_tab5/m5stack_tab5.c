@@ -55,7 +55,7 @@ static i2s_chan_handle_t i2s_rx_chan = NULL;
 static const audio_codec_data_if_t *i2s_data_if = NULL; /* Codec data interface */
 
 //==================================================================================
-// camera 设置输出时钟
+// Camera output clock configuration
 //==================================================================================
 
 esp_err_t bsp_cam_osc_init(void)
@@ -74,7 +74,7 @@ esp_err_t bsp_cam_osc_init(void)
     }
 
     ledc_channel_config_t ch_conf;
-    ch_conf.gpio_num = 36; // 摄像头时钟输入
+    ch_conf.gpio_num = 36; // Camera clock input
     ch_conf.speed_mode = LEDC_LOW_SPEED_MODE;
     ch_conf.channel = LEDC_CHANNEL_0;
     ch_conf.intr_type = LEDC_INTR_DISABLE;
@@ -280,7 +280,7 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     write_buf[0] = PI4IO_REG_OUT_H_IM;
     write_buf[1] = 0b00000000;
     i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // 使用到的引脚关闭 High-Impedance
+                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
     write_buf[0] = PI4IO_REG_PULL_SEL;
     write_buf[1] = 0b01111111;
     i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
@@ -289,8 +289,8 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     write_buf[1] = 0b01111111;
 
     i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // P7 中断使能 0 enable, 1 disable
-    /* Output Port Register P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST 输出高电平 */
+                        I2C_MASTER_TIMEOUT_MS); // P7 interrupt enable: 0 enable, 1 disable
+    /* Output Port Register P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST output high level */
     write_buf[0] = PI4IO_REG_OUT_SET;
     write_buf[1] = 0b01110110;
     i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
@@ -315,7 +315,7 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     write_buf[0] = PI4IO_REG_OUT_H_IM;
     write_buf[1] = 0b00000110;
     i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // 使用到的引脚关闭 High-Impedance
+                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
     write_buf[0] = PI4IO_REG_PULL_SEL;
     write_buf[1] = 0b10111001;
     i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
@@ -326,12 +326,12 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
                         I2C_MASTER_TIMEOUT_MS);                                       // pull up/down enable, 0 disable, 1 enable
     write_buf[0] = PI4IO_REG_IN_DEF_STA;
     write_buf[1] = 0b01000000;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P6 默认高电平
+    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P6 default high level
     write_buf[0] = PI4IO_REG_INT_MASK;
     write_buf[1] = 0b10111111;
     i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // P6 中断使能 0 enable, 1 disable
-    /* Output Port Register P0(WLAN_PWR_EN), P3(USB5V_EN), P7(CHG_EN) 输出高电平 */
+                        I2C_MASTER_TIMEOUT_MS); // P6 interrupt enable: 0 enable, 1 disable
+    /* Output Port Register P0(WLAN_PWR_EN), P3(USB5V_EN), P7(CHG_EN) output high level */
     write_buf[0] = PI4IO_REG_OUT_SET;
     // write_buf[1] = 0b10001001;
     write_buf[1] = 0b00001001;
@@ -574,15 +574,15 @@ void bsp_reset_tp()
 #define BSP_LDO_PROBE_SD_CHAN 4
 #define BSP_LDO_PROBE_SD_VOLTAGE_MV 3300
 
-#define SDMMC_BUS_WIDTH (4)          // SDIO 4 线模式
-#define GPIO_SDMMC_DET (GPIO_NUM_NC) // SDIO 卡检测
+#define SDMMC_BUS_WIDTH (4)          // SDIO 4-wire mode
+#define GPIO_SDMMC_DET (GPIO_NUM_NC) // SDIO card detection
 // M5Stack-Tab5-P4
-#define GPIO_SDMMC_CLK (GPIO_NUM_43) // SDIO 时钟
-#define GPIO_SDMMC_CMD (GPIO_NUM_44) // SDIO 命令
-#define GPIO_SDMMC_D0 (GPIO_NUM_39)  // SDIO 数据 0
-#define GPIO_SDMMC_D1 (GPIO_NUM_40)  // SDIO 数据 1
-#define GPIO_SDMMC_D2 (GPIO_NUM_41)  // SDIO 数据 2
-#define GPIO_SDMMC_D3 (GPIO_NUM_42)  // SDIO 数据 3
+#define GPIO_SDMMC_CLK (GPIO_NUM_43) // SDIO clock
+#define GPIO_SDMMC_CMD (GPIO_NUM_44) // SDIO command
+#define GPIO_SDMMC_D0 (GPIO_NUM_39)  // SDIO data 0
+#define GPIO_SDMMC_D1 (GPIO_NUM_40)  // SDIO data 1
+#define GPIO_SDMMC_D2 (GPIO_NUM_41)  // SDIO data 2
+#define GPIO_SDMMC_D3 (GPIO_NUM_42)  // SDIO data 3
 
 static sdmmc_card_t *card;
 
@@ -888,7 +888,7 @@ esp_codec_dev_handle_t bsp_audio_codec_speaker_init(void)
         .codec_mode = ESP_CODEC_DEV_WORK_MODE_DAC,
         .master_mode = false,
         .ctrl_if = i2c_ctrl_if,
-        .pa_pin = -1, // PI4IOE1 P1 控制
+        .pa_pin = -1, // PI4IOE1 P1 control
     };
     const audio_codec_if_t *es8388_dev = es8388_codec_new(&es8388_cfg);
     BSP_NULL_CHECK(es8388_dev, NULL);
@@ -1058,14 +1058,14 @@ void bsp_codec_init(void)
     bsp_codec_es7210_set(48000, 16, 4);
     bsp_codec_es8388_set(48000, 16, 2);
 
-    /* 初始化 codec handle */
-    bsp_codec_config_t *codec_cfg = bsp_get_codec_handle(); // 获取 codec handle
-    codec_cfg->i2s_read = bsp_i2s_read;                     // I2S 读数据
-    codec_cfg->i2s_write = bsp_i2s_write;                   // I2S 写数据
-    codec_cfg->set_mute = bsp_codec_set_mute;               // 静音设置
-    codec_cfg->set_volume = bsp_codec_set_volume;           // 音量设置
+    /* Initialize codec handle */
+    bsp_codec_config_t *codec_cfg = bsp_get_codec_handle(); // Get codec handle
+    codec_cfg->i2s_read = bsp_i2s_read;                     // I2S read data
+    codec_cfg->i2s_write = bsp_i2s_write;                   // I2S write data
+    codec_cfg->set_mute = bsp_codec_set_mute;               // Mute setting
+    codec_cfg->set_volume = bsp_codec_set_volume;           // Volume setting
     codec_cfg->get_volume = bsp_codec_get_volume;
-    codec_cfg->set_in_gain = bsp_codec_set_in_gain;         // 麦克风输入增益设置
+    codec_cfg->set_in_gain = bsp_codec_set_in_gain;         // Microphone input gain setting
     codec_cfg->codec_reconfig_fn = bsp_codec_es7210_set;
     codec_cfg->i2s_reconfig_clk_fn = bsp_codec_es8388_set;
 
@@ -1286,7 +1286,7 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
                 .vsync_pulse_width = 4,
                 .vsync_front_porch = 16,
             },
-        //.flags.use_dma2d = true, // ??? 开启后需要等待 previous draw 完成
+        //.flags.use_dma2d = true, // ??? When enabled, need to wait for previous draw to complete
     };
 
     st7703_vendor_config_t vendor_config = {
@@ -1359,7 +1359,7 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     };
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
-    tp_io_config.dev_addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS_BACKUP; // 更改 GT911 地址
+    tp_io_config.dev_addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS_BACKUP; // Change GT911 address
     tp_io_config.scl_speed_hz = CONFIG_BSP_I2C_CLK_SPEED_HZ;
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_i2c(i2c_handle, &tp_io_config, &tp_io_handle), TAG, "");
     return esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, ret_touch);

@@ -47,7 +47,7 @@ void HalEsp32::updateImuData()
     static struct bmi2_sens_data bmi_sensor_data;
     accel_gyro_bmi270_get_data(&bmi_sensor_data);
 
-    /* 根据设置量程转换 */
+    /* Convert according to set range */
     imuData.accelX = bmi_sensor_data.acc.y / 835.92 / 10.0f;  // m/s^2
     imuData.accelY = -bmi_sensor_data.acc.x / 835.92 / 10.0f;
     imuData.accelZ = -bmi_sensor_data.acc.z / 835.92 / 10.0f;

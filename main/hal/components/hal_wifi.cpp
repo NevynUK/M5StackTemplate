@@ -25,7 +25,7 @@
 #define WIFI_PASS    ""
 #define MAX_STA_CONN 4
 
-// HTTP 处理函数
+// HTTP handler function
 esp_err_t hello_get_handler(httpd_req_t* req)
 {
     const char* html_response = R"rawliteral(
@@ -68,10 +68,10 @@ esp_err_t hello_get_handler(httpd_req_t* req)
     return ESP_OK;
 }
 
-// URI 路由
+// URI routing
 httpd_uri_t hello_uri = {.uri = "/", .method = HTTP_GET, .handler = hello_get_handler, .user_ctx = nullptr};
 
-// 启动 Web Server
+// Start Web Server
 httpd_handle_t start_webserver()
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -83,7 +83,7 @@ httpd_handle_t start_webserver()
     return server;
 }
 
-// 初始化 Wi-Fi AP 模式
+// Initialize Wi-Fi AP mode
 void wifi_init_softap()
 {
     ESP_ERROR_CHECK(esp_netif_init());

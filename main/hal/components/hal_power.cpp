@@ -18,9 +18,9 @@ static const std::string _tag = "power";
 void HalEsp32::updatePowerMonitorData()
 {
     // mclog::tagInfo(_tag, "update power monitor");
-    powerMonitorData.busVoltage   = ina226.readBusVoltage();
+    powerMonitorData.busVoltage = ina226.readBusVoltage();
     powerMonitorData.shuntVoltage = ina226.readShuntVoltage();
-    powerMonitorData.busPower     = ina226.readBusPower();
+    powerMonitorData.busPower = ina226.readBusPower();
     powerMonitorData.shuntCurrent = ina226.readShuntCurrent();
 }
 
@@ -80,8 +80,10 @@ void HalEsp32::powerOff()
     setDisplayBrightness(0);
 
     delay(100);
-    while (1) {
-        if (getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_IDLE) {
+    while (1)
+    {
+        if (getMusicPlayTestState() == hal::HalBase::MUSIC_PLAY_IDLE)
+        {
             break;
         }
         delay(100);
@@ -105,23 +107,25 @@ void HalEsp32::sleepAndTouchWakeup()
     uint16_t touch_strength[1];
     uint8_t touch_cnt = 0;
 
-    while (1) {
+    while (1)
+    {
         esp_lcd_touch_read_data(_lcd_touch_handle);
-        bool touchpad_pressed =
-            esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
+        bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
         // mclog::tagInfo(_tag, "touchpad pressed: {}", touchpad_pressed);
-        if (!touchpad_pressed) {
+        if (!touchpad_pressed)
+        {
             break;
         }
         delay(100);
     }
 
-    while (1) {
+    while (1)
+    {
         esp_lcd_touch_read_data(_lcd_touch_handle);
-        bool touchpad_pressed =
-            esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
+        bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
         // mclog::tagInfo(_tag, "touchpad pressed: {}", touchpad_pressed);
-        if (touchpad_pressed) {
+        if (touchpad_pressed)
+        {
             break;
         }
         delay(100);
@@ -147,17 +151,18 @@ void HalEsp32::sleepAndRtcWakeup()
     struct tm time;
     rx8130.getTime(&time);
     time.tm_hour = 0;
-    time.tm_min  = 1;
-    time.tm_sec  = 49;
+    time.tm_min = 1;
+    time.tm_sec = 49;
     rx8130.setTime(&time);
     time.tm_hour = 0;
-    time.tm_min  = 2;
-    time.tm_sec  = 0;
+    time.tm_min = 2;
+    time.tm_sec = 0;
     rx8130.setAlarmIrq(&time);
 
     // delay(800);
     powerOff();
-    while (1) {
+    while (1)
+    {
         delay(100);
     }
 }

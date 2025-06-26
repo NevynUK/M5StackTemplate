@@ -178,7 +178,7 @@ void RX8130_Class::setAlarmIrq(struct tm* time)
     // debug_print_reg(0x1E, buf);
 }
 
-// RX8130 寄存器地址
+// RX8130 register addresses
 #define RX8130_REG_SEC                0x10
 #define RX8130_REG_MIN                0x11
 #define RX8130_REG_HOUR               0x12
@@ -200,13 +200,13 @@ void RX8130_Class::setTimerIrq(uint16_t seconds)
 {
     uint8_t flag_register = 0;
     uint8_t buffer[2]     = {0};
-    buffer[0]             = seconds & 0xFF;         // 定时器低字节
-    buffer[1]             = (seconds >> 8) & 0xFF;  // 定时器高字节
+    buffer[0]             = seconds & 0xFF;         // Timer low byte
+    buffer[1]             = (seconds >> 8) & 0xFF;  // Timer high byte
 
     // Step 1: Disable Timer
     flag_register = readRegister8(RX8130_REG_EXTENSION);
 
-    flag_register &= ~(1 << 4);  // 禁用定时器 (TE = 0)
+    flag_register &= ~(1 << 4);  // Disable timer (TE = 0)
     writeRegister8(RX8130_REG_EXTENSION, flag_register);
 
     // Setp 2: Write Timer Counter Register (1Ah, 1Bh)
@@ -215,7 +215,7 @@ void RX8130_Class::setTimerIrq(uint16_t seconds)
     // Step 3: Enable Timer
     flag_register = readRegister8(RX8130_REG_EXTENSION);
 
-    setbit(flag_register, 4);  // 启用定时器 (TE = 1)
+    setbit(flag_register, 4);  // Enable timer (TE = 1)
     clrbit(flag_register, 2);
     setbit(flag_register, 1);
     clrbit(flag_register, 0);
@@ -223,7 +223,7 @@ void RX8130_Class::setTimerIrq(uint16_t seconds)
 
     // Step 4: Enable Timer Interrupt
     flag_register = readRegister8(RX8130_REG_CONTROL0);
-    flag_register |= (1 << 4);  // 启用定时器中断 (TIE = 1)
+    flag_register |= (1 << 4);  // Enable timer interrupt (TIE = 1)
     writeRegister8(RX8130_REG_CONTROL0, flag_register);
 }
 

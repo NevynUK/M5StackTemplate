@@ -11,7 +11,7 @@
 /* -------------------------------------------------------------------------- */
 /*                                  Singleton                                 */
 /* -------------------------------------------------------------------------- */
-// 提供一个可注入的全局单例
+// Provides an injectable global singleton
 
 static std::unique_ptr<hal::HalBase> _hal_instance;
 static const std::string _tag = "hal";
@@ -34,14 +34,14 @@ void hal::Inject(std::unique_ptr<HalBase> hal)
         return;
     }
 
-    // 销毁已有实例，储存新实例
+    // Destroy existing instance, store new instance
     Destroy();
     _hal_instance = std::move(hal);
 
-    // 看看何方神圣
+    // Let's see what we're dealing with
     mclog::tagInfo(_tag, "injecting hal type: {}", _hal_instance->type());
 
-    // 初始化
+    // Initialize
     mclog::tagInfo(_tag, "invoke init");
     _hal_instance->init();
     mclog::tagInfo(_tag, "hal injected");

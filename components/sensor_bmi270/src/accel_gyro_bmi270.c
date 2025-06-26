@@ -50,7 +50,7 @@ esp_err_t accel_gyro_bmi270_init(i2c_master_bus_handle_t bus_handle)
     }
 
     /* To enable the i2c interface settings for bmi270. */
-    bmi270.intf = BMI2_I2C_INTF; // 使用 I2C 接口驱动
+    bmi270.intf = BMI2_I2C_INTF; // Use I2C interface driver
     bmi270.read = bmi270_i2c_read;
     bmi270.write = bmi270_i2c_write;
     bmi270.delay_us = bmi270_delay_us;
@@ -89,10 +89,10 @@ void accel_gyro_bmi270_enable_sensor(void)
     if (rslt == BMI2_OK)
     {
         ESP_LOGI(TAG, "Set sensors odr and range");
-        config[ACCEL].cfg.acc.odr = BMI2_ACC_ODR_200HZ;   // 加速度数据输出速率 200Hz
-        config[ACCEL].cfg.acc.range = BMI2_ACC_RANGE_4G;  // 加速度量程 +- 4g --> 2^16/(8*9.8) --> (1/835.92)LSB m/s^2
-        config[GYRO].cfg.gyr.odr = BMI2_GYR_ODR_200HZ;    // 角速度速度数据输出速率 200Hz
-        config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_1000; // 角速度量程 +- 1000dps --> 2^16/2000 --> (1/32.768)LSB °/S
+        config[ACCEL].cfg.acc.odr = BMI2_ACC_ODR_200HZ;   // Accelerometer data output rate 200Hz
+        config[ACCEL].cfg.acc.range = BMI2_ACC_RANGE_4G;  // Accelerometer range +- 4g --> 2^16/(8*9.8) --> (1/835.92)LSB m/s^2
+        config[GYRO].cfg.gyr.odr = BMI2_GYR_ODR_200HZ;    // Gyroscope data output rate 200Hz
+        config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_1000; // Gyroscope range +- 1000dps --> 2^16/2000 --> (1/32.768)LSB °/S
         rslt = bmi270_set_sensor_config(config, 2, &bmi270);
         bmi2_error_codes_print_result(rslt);
         if (rslt == BMI2_OK)

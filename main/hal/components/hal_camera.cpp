@@ -36,7 +36,7 @@
 static lv_obj_t* camera_canvas;
 // extern uint8_t* frame_buf;
 static QueueHandle_t queue_camera_ctrl = NULL;
-// 定义任务控制标志
+// Define task control flags
 #define TASK_CONTROL_PAUSE  0
 #define TASK_CONTROL_RESUME 1
 #define TASK_CONTROL_EXIT   2
@@ -259,7 +259,7 @@ void app_camera_display(void* arg)
     uint32_t img_show_size = screen_width * screen_height * 2;
     // uint32_t img_offset = 280 * 720 * 2;
     uint32_t img_offset = 0;
-    static image_t* img_show;  // 初始化静态变量时不能使用非常量表达式
+    static image_t* img_show;  // Cannot use non-constant expressions when initializing static variables
     if (img_show == NULL) {
         img_show    = (image_t*)malloc(sizeof(image_t));
         img_show->w = 720,            // screen_width;
