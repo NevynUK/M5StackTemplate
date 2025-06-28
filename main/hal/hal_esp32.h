@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 #pragma once
-#include <hal/hal.h>
+#include <HalBase.h>
 #include <ina226.hpp>
 #include <lvgl.h>
 #include "utils/rx8130/rx8130.h"

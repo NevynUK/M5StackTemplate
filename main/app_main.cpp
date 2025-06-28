@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 #include "hal/hal_esp32.h"
-#include <app.h>
-#include <hal/hal.h>
+#include <HalBase.h>
 #include <memory>
 #include <cstring>
 #include <freertos/FreeRTOS.h>
@@ -15,6 +14,7 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 
+#include "Utils.hpp"
 
 extern "C" void app_main(void)
 {
@@ -40,7 +40,7 @@ extern "C" void app_main(void)
     // app::Destroy();
 
 
-        esp_chip_info_t chip_info;
+    esp_chip_info_t chip_info;
     uint32_t flash_size;
 
     esp_chip_info(&chip_info);
