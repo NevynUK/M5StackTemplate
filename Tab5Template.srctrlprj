@@ -178,6 +178,14 @@
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/perfmon/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/spiffs/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/wifi_provisioning/include</header_search_path>
+                <header_search_path>components/sensor_bmi270/include</header_search_path>
+                <header_search_path>components/imlib/include</header_search_path>
+                <header_search_path>components/m5stack_tab5/include</header_search_path>
+                <header_search_path>components/rx8130</header_search_path>
+                <header_search_path>components/power_monitor_ina226/include</header_search_path>
+                <header_search_path>components/mooncake_log/src</header_search_path>
+                <header_search_path>components/mooncake_log/src/fmt</header_search_path>
+                <header_search_path>components/Utilities</header_search_path>
             </header_search_paths>
             <name>C++ Source Group</name>
             <pch_flags>
