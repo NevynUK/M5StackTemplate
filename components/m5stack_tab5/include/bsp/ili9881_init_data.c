@@ -1,4 +1,13 @@
+#include <stdint.h>
+#include <stddef.h>
 
+struct ili9881c_lcd_init_cmd_s {
+    uint8_t cmd; // Command
+    uint8_t *data; // Data to send
+    size_t data_size; // Size of data
+    uint32_t delay; // Delay after command in milliseconds
+};
+typedef struct ili9881c_lcd_init_cmd_s ili9881c_lcd_init_cmd_t;
 
 static const ili9881c_lcd_init_cmd_t tab5_lcd_ili9881c_specific_init_code_default[] = {
     // {cmd, { data }, data_size, delay}
