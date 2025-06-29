@@ -21,25 +21,6 @@ extern "C" void app_main(void)
     std::unique_ptr<HalEsp32> hal = std::make_unique<HalEsp32>();
     hal->init();
 
-    // Application layer initialization callback
-    // app::InitCallback_t callback;
-
-    // callback.onHalInjection = []()
-    // {
-    //     // Inject hardware abstraction for ESP32 platform
-    //     hal::Inject(std::make_unique<HalEsp32>());
-    // };
-
-    // // Application layer startup
-    // app::Init(callback);
-    // while (!app::IsDone())
-    // {
-    //     app::Update();
-    //     vTaskDelay(1);
-    // }
-    // app::Destroy();
-
-
     esp_chip_info_t chip_info;
     uint32_t flash_size;
 
@@ -67,25 +48,25 @@ extern "C" void app_main(void)
 
     // Display *display = Display::GetInstance();
     // display->Setup();
-    // uint32_t brightness = 0;
-    // int direction = 10;
-    // while (true)
-    // {
-    //     if (brightness >= 100)
-    //     {
-    //         direction = -10;
-    //     }
-    //     else 
-    //     {
-    //         if (brightness == 0)
-    //         {
-    //             direction = 10;
-    //         }
-    //     }
-    //     brightness += direction;
-    //     display->SetBrightness(brightness);
-    //     vTaskDelay(1000 / portTICK_PERIOD_MS);
-    // }
+    uint32_t brightness = 0;
+    int direction = 10;
+    while (true)
+    {
+        if (brightness >= 100)
+        {
+            direction = -10;
+        }
+        else 
+        {
+            if (brightness == 0)
+            {
+                direction = 10;
+            }
+        }
+        brightness += direction;
+        hal->setDisplayBrightness(brightness);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 
     vTaskDelay(portMAX_DELAY / portTICK_PERIOD_MS);
 }
