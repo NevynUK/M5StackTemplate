@@ -1231,16 +1231,16 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565,
         .num_fbs = 1,
         .video_timing =
-            {
-                .h_size = BSP_LCD_H_RES,
-                .v_size = BSP_LCD_V_RES,
-                .hsync_back_porch = 140,
-                .hsync_pulse_width = 40,
-                .hsync_front_porch = 40,
-                .vsync_back_porch = 20,
-                .vsync_pulse_width = 4,
-                .vsync_front_porch = 20,
-            },
+        {
+            .h_size = BSP_LCD_H_RES,
+            .v_size = BSP_LCD_V_RES,
+            .hsync_back_porch = 140,
+            .hsync_pulse_width = 40,
+            .hsync_front_porch = 40,
+            .vsync_back_porch = 20,
+            .vsync_pulse_width = 4,
+            .vsync_front_porch = 20,
+        },
         .flags.use_dma2d = true,
     };
 
@@ -1249,11 +1249,11 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .init_cmds = tab5_lcd_ili9881c_specific_init_code_default,
         .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
         .mipi_config =
-            {
-                .dsi_bus = mipi_dsi_bus,
-                .dpi_config = &dpi_config,
-                .lane_num = 2,
-            },
+        {
+            .dsi_bus = mipi_dsi_bus,
+            .dpi_config = &dpi_config,
+            .lane_num = 2,
+        },
     };
 
     const esp_lcd_panel_dev_config_t lcd_dev_config =
@@ -1278,28 +1278,30 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565, // LCD_COLOR_PIXEL_FORMAT_RGB888,
         .num_fbs = 1,
         .video_timing =
-            {
-                .h_size = BSP_LCD_H_RES, // lcd_param.width,
-                .v_size = BSP_LCD_V_RES, // lcd_param.height,
-                .hsync_back_porch = 40,
-                .hsync_pulse_width = 10,
-                .hsync_front_porch = 40,
-                .vsync_back_porch = 16,
-                .vsync_pulse_width = 4,
-                .vsync_front_porch = 16,
-            },
+        {
+            .h_size = BSP_LCD_H_RES, // lcd_param.width,
+            .v_size = BSP_LCD_V_RES, // lcd_param.height,
+            .hsync_back_porch = 40,
+            .hsync_pulse_width = 10,
+            .hsync_front_porch = 40,
+            .vsync_back_porch = 16,
+            .vsync_pulse_width = 4,
+            .vsync_front_porch = 16,
+        },
         //.flags.use_dma2d = true, // ??? When enabled, need to wait for previous draw to complete
     };
 
-    st7703_vendor_config_t vendor_config = {
+    st7703_vendor_config_t vendor_config =
+    {
         .flags.use_mipi_interface = 1,
         .mipi_config =
-            {
-                .dsi_bus = mipi_dsi_bus,
-                .dpi_config = &dpi_config,
-            },
+        {
+            .dsi_bus = mipi_dsi_bus,
+            .dpi_config = &dpi_config,
+        },
     };
-    esp_lcd_panel_dev_config_t lcd_dev_config = {
+    esp_lcd_panel_dev_config_t lcd_dev_config =
+    {
         .bits_per_pixel = 16, // 24,
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
         .reset_gpio_num = -1,
@@ -1348,16 +1350,16 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
         .rst_gpio_num = -1, // BSP_LCD_TOUCH_RST, // NC
         .int_gpio_num = 23, // BSP_LCD_TOUCH_INT,
         .levels =
-            {
-                .reset = 0,
-                .interrupt = 0,
-            },
+        {
+            .reset = 0,
+            .interrupt = 0,
+        },
         .flags =
-            {
-                .swap_xy = 0,
-                .mirror_x = 0,
-                .mirror_y = 0,
-            },
+        {
+            .swap_xy = 0,
+            .mirror_x = 0,
+            .mirror_y = 0,
+        },
     };
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
@@ -1376,7 +1378,8 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
 
     /* Add LCD screen */
     ESP_LOGD(TAG, "Add LCD screen");
-    const lvgl_port_display_cfg_t disp_cfg = {
+    const lvgl_port_display_cfg_t disp_cfg =
+    {
         .io_handle = lcd_panels.io,
         .panel_handle = lcd_panels.panel,
         .control_handle = lcd_panels.control,
@@ -1387,11 +1390,11 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
         .monochrome = false,
         /* Rotation values must be same as used in esp_lcd for initial settings of the screen */
         .rotation =
-            {
-                .swap_xy = false,
-                .mirror_x = false,
-                .mirror_y = false,
-            },
+        {
+            .swap_xy = false,
+            .mirror_x = false,
+            .mirror_y = false,
+        },
     #if LVGL_VERSION_MAJOR >= 9
         #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
         .color_format = LV_COLOR_FORMAT_RGB888,
@@ -1399,7 +1402,8 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
         .color_format = LV_COLOR_FORMAT_RGB565,
         #endif
     #endif
-        .flags = {
+        .flags =
+        {
             .buff_dma = cfg->flags.buff_dma,
             .buff_spiram = cfg->flags.buff_spiram,
     #if LVGL_VERSION_MAJOR >= 9
@@ -1415,16 +1419,20 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
     #elif CONFIG_BSP_DISPLAY_LVGL_DIRECT_MODE
             .direct_mode = true,
     #endif
-        }};
+        }
+    };
 
-    const lvgl_port_display_dsi_cfg_t dpi_cfg = {
-        .flags = {
+    const lvgl_port_display_dsi_cfg_t dpi_cfg =
+    {
+        .flags =
+        {
     #if CONFIG_BSP_DISPLAY_LVGL_AVOID_TEAR
             .avoid_tearing = true,
     #else
             .avoid_tearing = false,
     #endif
-        }};
+        }
+    };
 
     return lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
 }
@@ -1447,7 +1455,8 @@ static lv_indev_t *bsp_display_indev_init(lv_display_t *disp)
     _lcd_touch_handle = tp;
 
     /* Add touch input (for selected screen) */
-    const lvgl_port_touch_cfg_t touch_cfg = {
+    const lvgl_port_touch_cfg_t touch_cfg =
+    {
         .disp = disp,
         .handle = tp,
     };
@@ -1457,11 +1466,13 @@ static lv_indev_t *bsp_display_indev_init(lv_display_t *disp)
 
 lv_display_t *bsp_display_start(void)
 {
-    bsp_display_cfg_t cfg = {
+    bsp_display_cfg_t cfg =
+    {
         .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
         .buffer_size = BSP_LCD_DRAW_BUFF_SIZE,
         .double_buffer = BSP_LCD_DRAW_BUFF_DOUBLE,
-        .flags = {
+        .flags = 
+        {
     #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
             .buff_dma = false,
     #else
@@ -1469,7 +1480,8 @@ lv_display_t *bsp_display_start(void)
     #endif
             .buff_spiram = false,
             .sw_rotate = true,
-        }};
+        }
+    };
     return bsp_display_start_with_config(&cfg);
 }
 
