@@ -2,6 +2,27 @@
 <config>
     <source_groups>
         <source_group_f81d015e-505c-40e5-a4a0-c6c09ce17790>
+            <compiler_flags>
+                <compiler_flag>-DESP_CAM_SENSOR_VER_MAJOR=1</compiler_flag>
+                <compiler_flag>-DESP_CAM_SENSOR_VER_MINOR=1</compiler_flag>
+                <compiler_flag>-DESP_CAM_SENSOR_VER_PATCH=0</compiler_flag>
+                <compiler_flag>-DESP_VIDEO_VER_MAJOR=1</compiler_flag>
+                <compiler_flag>-DESP_VIDEO_VER_MINOR=0</compiler_flag>
+                <compiler_flag>-DESP_VIDEO_VER_PATCH=0</compiler_flag>
+                <compiler_flag>-DESP_IPA_VER_MAJOR=1</compiler_flag>
+                <compiler_flag>-DESP_IPA_VER_MINOR=0</compiler_flag>
+                <compiler_flag>-DESP_IPA_VER_PATCH=0</compiler_flag>
+                <compiler_flag>-DESP_PLATFORM</compiler_flag>
+                <compiler_flag>-DIDF_VER=\\\&quot;v5.4.1\\\&quot;</compiler_flag>
+                <compiler_flag>-DLV_ATTRIBUTE_FAST_MEM=IRAM_ATTR</compiler_flag>
+                <compiler_flag>-DLV_CONF_INCLUDE_SIMPLE</compiler_flag>
+                <compiler_flag>-DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE</compiler_flag>
+                <compiler_flag>-DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ</compiler_flag>
+                <compiler_flag>-D_GLIBCXX_HAVE_POSIX_SEMAPHORE</compiler_flag>
+                <compiler_flag>-D_GLIBCXX_USE_POSIX_SEMAPHORE</compiler_flag>
+                <compiler_flag>-D_GNU_SOURCE</compiler_flag>
+                <compiler_flag>-D_POSIX_READER_WRITER_LOCKS</compiler_flag>
+            </compiler_flags>
             <cpp_standard>c++2a</cpp_standard>
             <cross_compilation>
                 <target>
