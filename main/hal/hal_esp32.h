@@ -7,7 +7,7 @@
 #include <HalBase.h>
 #include <ina226.hpp>
 #include <lvgl.h>
-#include "utils/rx8130/rx8130.h"
+#include <rx8130.h>
 
 class HalEsp32 : public hal::HalBase
 {
