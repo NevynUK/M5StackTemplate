@@ -17,39 +17,46 @@
                 <exclude_filter>Reference</exclude_filter>
             </exclude_filters>
             <header_search_paths>
-                <header_search_path>build/config</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/xtensa/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/xtensa/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/xtensa/deprecated_include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/build/config</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/main</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/newlib/platform_include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/config/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/config/include/freertos</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/config/xtensa/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/config/riscv/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/freertos/esp_additions/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/include/soc</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/include/soc/esp32</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/include/soc/esp32p4</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/dma/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/ldo/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/port/esp32/.</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/port/esp32/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/debug_probe/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/port/esp32p4/.</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/port/esp32p4/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hw_support/port/esp32p4/private_include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/heap/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/heap/tlsf</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/log/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/esp32</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/esp32/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/esp32p4</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/esp32p4/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/soc/esp32p4/register</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/hal/platform_port/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/hal/esp32/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/hal/esp32p4/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/hal/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_rom/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_rom/esp32</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_rom/esp32p4/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_rom/esp32p4/include/esp32p4</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_rom/esp32p4</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_common/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_system/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_system/port/soc</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_system/port/include/riscv</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_system/port/include/private</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/riscv/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_timer/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/include/apps</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/include/apps/sntp</header_search_path>
@@ -59,41 +66,29 @@
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/port/esp32xx/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/port/esp32xx/include/arch</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/lwip/port/esp32xx/include/sys</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_gpio/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/Utilities</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/HalBase</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/mooncake_log/src</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_lvgl_port/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/interface</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/rgb/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/dsi/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/deprecated</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/i2c/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/touch_sensor/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/twai/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_pm/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/port/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/mbedtls/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/mbedtls/library</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/esp_crt_bundle/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_app_format/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_bootloader_format/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/app_update/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bootloader_support/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bootloader_support/bootloader_flash/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_partition/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/efuse/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/efuse/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_mm/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/spi_flash/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/pthread/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_timer/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_gptimer/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_ringbuf/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_uart/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/vfs/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/app_trace/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_event/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/nvs_flash/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_gpio/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_pcnt/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_gptimer/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_spi/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_mcpwm/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_ana_cmpr/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_i2s/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/sdmmc/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_sdmmc/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/sdmmc/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_sdspi/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_sdio/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_dac/include</header_search_path>
@@ -101,91 +96,70 @@
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_tsens/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_sdm/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_i2c/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_uart/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/vfs/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_ledc/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_parlio/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_usb_serial_jtag/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/deprecated</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/i2c/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/touch_sensor/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/twai/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/driver/touch_sensor/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_phy/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_phy/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_vfs_console/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_netif/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/wpa_supplicant/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/wpa_supplicant/port/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/wpa_supplicant/esp_supplicant/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_coex/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/lvgl__lvgl</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/lvgl__lvgl/src</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/lvgl__lvgl/examples</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/lvgl__lvgl/demos</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/power_monitor_ina226/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/rx8130</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/m5stack_tab5/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/m5stack_tab5/include/bsp</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_codec_dev/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_codec_dev/interface</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_codec_dev/device/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_lcd_ili9881c/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_lcd_touch/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/sensor_bmi270/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/nvs_flash/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_partition/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_wifi_remote/idf_v5.4/include/injected</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_wifi/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_wifi/wifi_apps/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_wifi/wifi_apps/nan_app/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_wifi/include/local</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/include/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/common/osi/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/common/api/include/api</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/common/btc/profile/esp/blufi/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/common/btc/profile/esp/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/common/hci_log/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/host/bluedroid/api/include/api</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/bt/porting/ext/tinycrypt/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/unity/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/unity/unity/src</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/cmock/CMock/src</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/console</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_event/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_netif/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_wifi_remote/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_wifi_remote/idf_v5.4/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/usb/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__usb_host_hid/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_cam_sensor/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_cam_sensor/sensors/sc202cs/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_sccb_intf/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_sccb_intf/interface</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_sccb_intf/sccb_i2c/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_http_server/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/http_parser</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp-tls</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp-tls/esp-tls-crypto</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_adc/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_adc/interface</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_adc/esp32/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_adc/deprecated/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_isp/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_video/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_cam/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_cam/interface</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_cam/csi/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_cam/isp_dvp/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_cam/dvp/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_isp/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_mm/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_h264/interface/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_h264/sw/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_h264/port/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_h264/hw/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_jpeg/include</header_search_path>
+                <header_search_path>/Users/markstevens/esp/esp-idf/components/spi_flash/include</header_search_path>
                 <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_driver_ppa/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_eth/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_gdbstub/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_hid/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/tcp_transport/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_http_client/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_http_server/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_https_ota/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_https_server/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_psram/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_lcd/interface</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protobuf-c/protobuf-c</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protocomm/include/common</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protocomm/include/security</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protocomm/include/transports</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protocomm/include/crypto/srp6a</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/protocomm/proto-c</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/esp_local_ctrl/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/espcoredump/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/espcoredump/include/port/xtensa</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/wear_levelling/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/fatfs/diskio</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/fatfs/src</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/fatfs/vfs</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/idf_test/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/idf_test/include/esp32</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/ieee802154/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/json/cJSON</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/mqtt/esp-mqtt/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/nvs_sec_provider/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/perfmon/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/spiffs/include</header_search_path>
-                <header_search_path>/Users/markstevens/esp/esp-idf/components/wifi_provisioning/include</header_search_path>
-                <header_search_path>components/sensor_bmi270/include</header_search_path>
-                <header_search_path>components/imlib/include</header_search_path>
-                <header_search_path>components/m5stack_tab5/include</header_search_path>
-                <header_search_path>components/rx8130</header_search_path>
-                <header_search_path>components/power_monitor_ina226/include</header_search_path>
-                <header_search_path>components/mooncake_log/src</header_search_path>
-                <header_search_path>components/mooncake_log/src/fmt</header_search_path>
-                <header_search_path>components/Utilities</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/components/imlib/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/chmorgan__esp-audio-player/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/chmorgan__esp-libhelix-mp3/libhelix-mp3/pub</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/chmorgan__esp-file-iterator/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_hosted/host</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_hosted/host/api/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__esp_ipa/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__led_strip/include</header_search_path>
+                <header_search_path>/Users/markstevens/GitHub/Tab5Template/managed_components/espressif__led_strip/interface</header_search_path>
+                <header_search_path>/Users/markstevens/.espressif/tools/riscv32-esp-elf/esp-14.2.0_20241119/riscv32-esp-elf/riscv32-esp-elf/include</header_search_path>
+                <header_search_path>/Users/markstevens/.espressif/tools/riscv32-esp-elf/esp-14.2.0_20241119/riscv32-esp-elf/riscv32-esp-elf/include/c++/14.2.0</header_search_path>
             </header_search_paths>
             <name>C++ Source Group</name>
             <pch_flags>
