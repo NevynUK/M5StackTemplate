@@ -8,6 +8,7 @@ extern "C"
 {
 #include <rx8130.h>
 }
+
 #include <mooncake_log.h>
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
@@ -91,11 +92,13 @@ void HalEsp32::init()
 
     mclog::tagInfo(_tag, "display init");
     bsp_reset_tp();
-    bsp_display_cfg_t cfg = {
+    bsp_display_cfg_t cfg =
+    {
         .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
         .buffer_size = BSP_LCD_H_RES * BSP_LCD_V_RES,
         .double_buffer = true,
-        .flags = {
+        .flags = 
+        {
 #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
             .buff_dma = false,
 #else
@@ -103,7 +106,8 @@ void HalEsp32::init()
 #endif
             .buff_spiram = true,
             .sw_rotate = true,
-        }};
+        }
+    };
     lvDisp = bsp_display_start_with_config(&cfg);
     lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
     bsp_display_backlight_on();
@@ -201,7 +205,8 @@ int HalEsp32::getCpuTemp()
 {
     if (_temp_sensor == nullptr)
     {
-        temperature_sensor_config_t temp_sensor_config = {
+        temperature_sensor_config_t temp_sensor_config =
+        {
             .range_min = 20,
             .range_max = 100,
         };
