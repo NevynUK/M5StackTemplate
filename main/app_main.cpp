@@ -14,6 +14,9 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 
+#include <lvgl.h>
+#include <esp_lvgl_port.h>
+
 #include "Utils.hpp"
 
 extern "C" void app_main(void)
@@ -48,6 +51,25 @@ extern "C" void app_main(void)
 
     // Display *display = Display::GetInstance();
     // display->Setup();
+
+    hal->lvglLock();
+    /**
+     * @brief Pointer to the screen object to be used in drawing operations.
+     */
+    lv_obj_t *_screen = nullptr;
+
+    _screen = lv_scr_act();
+
+    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
+
+    lv_obj_t *rectangle = lv_obj_create(_screen);
+    lv_obj_set_size(rectangle, 200, 200);
+    lv_obj_set_pos(rectangle, 100, 100);
+    lv_obj_set_style_radius(rectangle, 0, 0);
+    lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
+
+    hal->lvglUnlock();
+
     uint32_t brightness = 0;
     int direction = 10;
     while (true)
