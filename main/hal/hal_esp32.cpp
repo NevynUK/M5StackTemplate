@@ -6,7 +6,7 @@
 #include "hal/hal_esp32.h"
 extern "C"
 {
-#include "utils/rx8130/rx8130.h"
+#include <rx8130.h>
 }
 #include <mooncake_log.h>
 #include <esp_timer.h>
