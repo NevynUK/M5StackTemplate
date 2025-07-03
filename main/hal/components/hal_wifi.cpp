@@ -21,14 +21,14 @@
 
 #define TAG "wifi"
 
-#define WIFI_SSID    "M5Tab5-UserDemo-WiFi"
-#define WIFI_PASS    ""
+#define WIFI_SSID "M5Tab5-UserDemo-WiFi"
+#define WIFI_PASS ""
 #define MAX_STA_CONN 4
 
 // HTTP handler function
-esp_err_t hello_get_handler(httpd_req_t* req)
+esp_err_t hello_get_handler(httpd_req_t *req)
 {
-    const char* html_response = R"rawliteral(
+    const char *html_response = R"rawliteral(
         <!DOCTYPE html>
         <html>
         <head>
@@ -77,7 +77,8 @@ httpd_handle_t start_webserver()
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = nullptr;
 
-    if (httpd_start(&server, &config) == ESP_OK) {
+    if (httpd_start(&server, &config) == ESP_OK)
+    {
         httpd_register_uri_handler(server, &hello_uri);
     }
     return server;
@@ -95,11 +96,11 @@ void wifi_init_softap()
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
     wifi_config_t wifi_config = {};
-    std::strncpy(reinterpret_cast<char*>(wifi_config.ap.ssid), WIFI_SSID, sizeof(wifi_config.ap.ssid));
-    std::strncpy(reinterpret_cast<char*>(wifi_config.ap.password), WIFI_PASS, sizeof(wifi_config.ap.password));
-    wifi_config.ap.ssid_len       = std::strlen(WIFI_SSID);
+    std::strncpy(reinterpret_cast<char *>(wifi_config.ap.ssid), WIFI_SSID, sizeof(wifi_config.ap.ssid));
+    std::strncpy(reinterpret_cast<char *>(wifi_config.ap.password), WIFI_PASS, sizeof(wifi_config.ap.password));
+    wifi_config.ap.ssid_len = std::strlen(WIFI_SSID);
     wifi_config.ap.max_connection = MAX_STA_CONN;
-    wifi_config.ap.authmode       = WIFI_AUTH_OPEN;
+    wifi_config.ap.authmode = WIFI_AUTH_OPEN;
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
@@ -108,12 +109,13 @@ void wifi_init_softap()
     ESP_LOGI(TAG, "Wi-Fi AP started. SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
 }
 
-static void wifi_ap_test_task(void* param)
+static void wifi_ap_test_task(void *param)
 {
     wifi_init_softap();
     start_webserver();
 
-    while (1) {
+    while (1)
+    {
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
     vTaskDelete(NULL);
@@ -124,7 +126,8 @@ bool HalEsp32::wifi_init()
     mclog::tagInfo(TAG, "wifi init");
 
     esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
