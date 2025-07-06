@@ -16,6 +16,8 @@
 
 #include <lvgl.h>
 
+#include "HalBase.h"
+
 /**
  * @brief Hardware abstraction layer
  */
@@ -24,7 +26,7 @@ namespace HAL
     /**
      * @brief
      */
-    class HalBase
+    class HalTab5 : public HalBase
     {
     public:
         /**
@@ -32,24 +34,29 @@ namespace HAL
          *
          * This is used for logging and debugging purposes.
          */
-        static constexpr const char *COMPONENT_NAME = "HalBase";
+        static constexpr const char *COMPONENT_NAME = "HalTab5";
 
         /**
          * @brief Default constructor for this class.
          */
-        HalBase();
+        HalTab5();
 
         /**
          * @brief Delete the default destructor for this class as we should not need it.
          */
-        ~HalBase();
-
-        static HalBase *GetInstance();
+        ~HalTab5();
 
         /**
-         * @brief Perform any necessary initialization for the M5Stack Tab5 HAL.
+         * @brief Get the instance object
+         * 
+         * @return HalTab5* Pointer to the singleton instance of HalTab5.
          */
-        virtual void init()
+        static HalTab5 *GetInstance();
+
+        /**
+         * @brief Perform any class initialization.
+         */
+        void init() override
         {
         }
 
@@ -58,27 +65,48 @@ namespace HAL
          *
          * @return float CPU temperature in degrees Celsius
          */
-        virtual float GetCpuTemperatureC()
+        float GetCpuTemperatureC() override
         {
             return 0.0f;
         }
 
         /* --------------------------------- Display -------------------------------- */
-        virtual int GetDisplayWidth()
+
+        /**
+         * @brief Get the display width in pixels.
+         * 
+         * @return int Display width in pixels.
+         */
+        int GetDisplayWidth() override
         {
-            return 0;
+            return 1280;
         }
 
-        virtual int GetDisplayHeight()
+        /**
+         * @brief Get the display height in pixels.
+         * 
+         * @return int Display height in pixels.
+         */
+        int GetDisplayHeight() override
         {
-            return 0;
+            return 720;
         }
 
-        virtual void SetDisplayBrightness(uint8_t brightness)
+        /**
+         * @brief Set the display brightness.
+         * 
+         * @param brightness Brightness level (0-100).
+         */
+        void SetDisplayBrightness(uint8_t brightness) override
         {
         }
 
-        virtual uint8_t GetDisplayBrightness()
+        /**
+         * @brief Get the display brightness.
+         * 
+         * @return uint8_t Display brightness level (0-100).
+         */
+        uint8_t GetDisplayBrightness() override
         {
             return 0;
         }
@@ -88,17 +116,17 @@ namespace HAL
 
         /* --------------------------------- SD Card -------------------------------- */
 
-        virtual bool Mount(std::string mountPoint)
+        bool Mount(std::string mountPoint) override
         {
             return false;
         }
 
-        virtual bool Unmount()
+        bool Unmount() override
         {
             return false;
         }
 
-        virtual bool IsSdCardMounted()
+        bool IsSdCardMounted() override
         {
             return false;
         }
@@ -379,48 +407,47 @@ namespace HAL
     //             uartMonitorData.txQueue.push('\n');
     //         }
     //     }
-    // };
-
-    // /**
-    //  * @brief Get the HAL instance
-    //  *
-    //  * @return HalBase&
-    //  */
-    // HalBase *Get();
-
-    // /**
-    //  * @brief Inject the HAL, which will call init() to initialize the HAL
-    //  *
-    //  * @param hal
-    //  */
-    // void Inject(std::unique_ptr<HalBase> hal);
-
-    // /**
-    //  * @brief Destroy the HAL instance
-    //  *
-    //  */
-    // void Destroy();
-
-    // /**
-    //  * @brief Check if the HAL instance exists
-    //  *
-    //  * @return true
-    //  * @return false
-    //  */
-    // bool Check();
 
     private:
         // Prevent copying
-        HalBase(const HalBase &) = delete;
-        HalBase &operator=(const HalBase &) = delete;
+        HalTab5(const HalTab5 &) = delete;
+        HalTab5 &operator=(const HalTab5 &) = delete;
 
         // Prevent moving
-        HalBase(HalBase &&) = delete;
-        HalBase &operator=(HalBase &&) = delete;
+        HalTab5(HalTab5 &&) = delete;
+        HalTab5 &operator=(HalTab5 &&) = delete;
 
         /**
-         * @brief Singleton instance of HalBase
+         * @brief Singleton instance of HalTab5
          */
-        static HalBase *_instance;
+        static HalTab5 *_instance;
     };
 } // namespace hal
+
+// /**
+//  * @brief Get the HAL instance
+//  *
+//  * @return hal::HalBase&
+//  */
+// inline hal::HalTab5 *GetHAL()
+// {
+//     return hal::Get();
+// }
+
+// /**
+//  * @brief
+//  *
+//  */
+// class LvglLockGuard
+// {
+// public:
+//     LvglLockGuard()
+//     {
+//         GetHAL()->lvglLock();
+//     }
+
+//     ~LvglLockGuard()
+//     {
+//         GetHAL()->lvglUnlock();
+//     }
+// };
