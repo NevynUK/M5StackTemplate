@@ -3,10 +3,14 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "hal/hal_esp32.h"
+
+ #include <sdkconfig.h>
+
 #include <HalBase.h>
+#include <HalTab5.h>
 #include <memory>
 #include <cstring>
+
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
@@ -18,10 +22,13 @@
 #include <esp_lvgl_port.h>
 
 #include "Utils.hpp"
+#include "HalTab5.h"
+
+using namespace HAL;
 
 extern "C" void app_main(void)
 {
-    std::unique_ptr<HalEsp32> hal = std::make_unique<HalEsp32>();
+    std::unique_ptr<HalBase> hal = std::make_unique<HalTab5>();
     hal->init();
 
     esp_chip_info_t chip_info;
@@ -52,43 +59,43 @@ extern "C" void app_main(void)
     // Display *display = Display::GetInstance();
     // display->Setup();
 
-    hal->lvglLock();
+    // hal->lvglLock();
     /**
      * @brief Pointer to the screen object to be used in drawing operations.
      */
-    lv_obj_t *_screen = nullptr;
+    // lv_obj_t *_screen = nullptr;
 
-    _screen = lv_scr_act();
+    // _screen = lv_scr_act();
 
-    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
+    // lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
 
-    lv_obj_t *rectangle = lv_obj_create(_screen);
-    lv_obj_set_size(rectangle, 200, 200);
-    lv_obj_set_pos(rectangle, 100, 100);
-    lv_obj_set_style_radius(rectangle, 0, 0);
-    lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
+    // lv_obj_t *rectangle = lv_obj_create(_screen);
+    // lv_obj_set_size(rectangle, 200, 200);
+    // lv_obj_set_pos(rectangle, 100, 100);
+    // lv_obj_set_style_radius(rectangle, 0, 0);
+    // lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
 
-    hal->lvglUnlock();
+    // hal->lvglUnlock();
 
-    uint32_t brightness = 0;
-    int direction = 10;
-    while (true)
-    {
-        if (brightness >= 100)
-        {
-            direction = -10;
-        }
-        else 
-        {
-            if (brightness == 0)
-            {
-                direction = 10;
-            }
-        }
-        brightness += direction;
-        hal->setDisplayBrightness(brightness);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    // uint32_t brightness = 0;
+    // int direction = 10;
+    // while (true)
+    // {
+    //     if (brightness >= 100)
+    //     {
+    //         direction = -10;
+    //     }
+    //     else 
+    //     {
+    //         if (brightness == 0)
+    //         {
+    //             direction = 10;
+    //         }
+    //     }
+    //     brightness += direction;
+    //     hal->setDisplayBrightness(brightness);
+    //     vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // }
 
     vTaskDelay(portMAX_DELAY / portTICK_PERIOD_MS);
 }
