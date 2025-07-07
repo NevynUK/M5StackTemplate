@@ -114,20 +114,84 @@ namespace HAL
 
         /* --------------------------------- SD Card -------------------------------- */
 
-        bool Mount(std::string mountPoint) override
-        {
-            return false;
-        }
+        esp_err_t Mount(std::string mountPoint = MOUNT_POINT, size_t maximumFiles = 25) override;
 
-        bool Unmount() override
-        {
-            return false;
-        }
+        esp_err_t Unmount(std::string mountPoint) override;
 
-        bool IsSdCardMounted() override
-        {
-            return false;
-        }
+        bool IsSdCardMounted() override;
+
+    private:
+        /**
+         * @brief SDMMC bus width.
+         */
+        const int SDMMC_BUS_WIDTH = 4;
+
+        /**
+         * @brief SDMMC card detect GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_DET = GPIO_NUM_NC;
+
+        /**
+         * @brief SDMMC clock GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_CLK = GPIO_NUM_43;
+
+        /**
+         * @brief SDMMC command GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_CMD = GPIO_NUM_44;
+
+        /**
+         * @brief SDMMC data 0 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D0 = GPIO_NUM_39;
+
+        /**
+         * @brief SDMMC data 1 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D1 = GPIO_NUM_40;
+
+        /**
+         * @brief SDMMC data 2 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D2 = GPIO_NUM_41;
+
+        /**
+         * @brief SDMMC data 3 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D3 = GPIO_NUM_42;
+
+        /**
+         * @brief SDMMC mount point.
+         */
+        // static const std::string MOUNT_POINT;
+
+        // Prevent copying
+        HalTab5(const HalTab5 &) = delete;
+        HalTab5 &operator=(const HalTab5 &) = delete;
+
+        // Prevent moving
+        HalTab5(HalTab5 &&) = delete;
+        HalTab5 &operator=(HalTab5 &&) = delete;
+
+        /**
+         * @brief Singleton instance of HalTab5
+         */
+        static HalTab5 *_instance;
+
+        /**
+         * @brief Pointer to the SD card structure.
+         */
+        sdmmc_card_t *_sdCard = nullptr;
+
+        /**
+         * @brief Pointer to the SD card power control handle.
+         */
+        sd_pwr_ctrl_handle_t _sdCardPowerControlHandle = nullptr;
+    };
+} // namespace hal
+
+
 
         // /* ---------------------------------- Power --------------------------------- */
         // struct PMData_t
@@ -406,18 +470,3 @@ namespace HAL
     //         }
     //     }
 
-    private:
-        // Prevent copying
-        HalTab5(const HalTab5 &) = delete;
-        HalTab5 &operator=(const HalTab5 &) = delete;
-
-        // Prevent moving
-        HalTab5(HalTab5 &&) = delete;
-        HalTab5 &operator=(HalTab5 &&) = delete;
-
-        /**
-         * @brief Singleton instance of HalTab5
-         */
-        static HalTab5 *_instance;
-    };
-} // namespace hal

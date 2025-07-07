@@ -6,10 +6,11 @@
 
  #include <sdkconfig.h>
 
-#include <HalBase.h>
-#include <HalTab5.h>
 #include <memory>
 #include <cstring>
+
+#include <dirent.h>
+#include <sys/types.h>
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -22,7 +23,8 @@
 #include <esp_lvgl_port.h>
 
 #include "Utils.hpp"
-#include "HalTab5.h"
+#include <HalBase.h>
+#include <HalTab5.h>
 
 using namespace HAL;
 
@@ -52,9 +54,36 @@ extern "C" void app_main(void)
 
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
-    // SDCard *sd_card = SDCard::GetInstance();
-    // sd_card->Setup();
-    // ListFiles(sd_card->GetMountPoint());
+    printf("SD card interface configured successfully\n");
+    std::string mountPoint = "/sdcard";
+    if (hal->Mount() != ESP_OK)
+    {
+        printf("Failed to mount SD card\n");
+    }
+    else
+    {
+        printf("SD card mounted successfully\n");
+        DIR* dir = opendir(mountPoint.c_str());
+        if (dir == nullptr)
+        {
+            printf("Failed to open directory: %s\n", mountPoint.c_str());
+        }
+        else
+        {
+            printf("Directory opened successfully: %s\n", mountPoint.c_str());
+            struct dirent* entry;
+            while ((entry = readdir(dir)) != nullptr)
+            {
+                if (std::string(entry->d_name) == "." || std::string(entry->d_name) == "..")
+                {
+                    continue;
+                }
+                printf("Found file: %s\n", entry->d_name);
+            }
+
+            closedir(dir);
+        }
+    }
 
     // Display *display = Display::GetInstance();
     // display->Setup();
