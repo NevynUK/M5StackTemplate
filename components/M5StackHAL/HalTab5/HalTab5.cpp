@@ -109,7 +109,7 @@ void HalTab5::init()
 
 /**
  * @brief Configure the SD card interface.
- * 
+ *
  * @return esp_err_t Error code indicating the result of the operation.
  */
 esp_err_t HalTab5::Mount(std::string mountPoint, size_t maximumFiles)
@@ -130,9 +130,8 @@ esp_err_t HalTab5::Mount(std::string mountPoint, size_t maximumFiles)
     sdmmc_host_t host = SDMMC_HOST_DEFAULT();
     host.slot = SDMMC_HOST_SLOT_0;
     host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
-    sd_pwr_ctrl_ldo_config_t ldo_config =
-    {
-        .ldo_chan_id = BSP_LDO_PROBE_SD_CHAN,   // `LDO_VO4` is used as the SDMMC IO power
+    sd_pwr_ctrl_ldo_config_t ldo_config = {
+        .ldo_chan_id = BSP_LDO_PROBE_SD_CHAN, // `LDO_VO4` is used as the SDMMC IO power
     };
 
     if (!_sdCardPowerControlHandle)
@@ -164,8 +163,7 @@ esp_err_t HalTab5::Mount(std::string mountPoint, size_t maximumFiles)
      *   If format_if_mount_failed is set to true, SD card will be partitioned and
      *   formatted in case when mounting fails.
      */
-    esp_vfs_fat_sdmmc_mount_config_t mount_config =
-    {
+    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
         .format_if_mount_failed = false,
         .max_files = (int) maximumFiles,
         .allocation_unit_size = 16 * 1024,
@@ -176,7 +174,7 @@ esp_err_t HalTab5::Mount(std::string mountPoint, size_t maximumFiles)
 
     if (result != ESP_OK)
     {
-        ESP_LOGE(COMPONENT_NAME, "Failed to initialize the card (%s).  Make sure SD card lines have pull-up resistors in place.",  esp_err_to_name(result));
+        ESP_LOGE(COMPONENT_NAME, "Failed to initialize the card (%s).  Make sure SD card lines have pull-up resistors in place.", esp_err_to_name(result));
         return result;
     }
 
@@ -185,7 +183,7 @@ esp_err_t HalTab5::Mount(std::string mountPoint, size_t maximumFiles)
 
 /**
  * @brief Unmount the SD card.
- * 
+ *
  * @param mountPoint The mount point of the SD card.
  * @return esp_err_t Error code indicating the result of the operation.
  */
@@ -200,7 +198,7 @@ esp_err_t HalTab5::Unmount(std::string mountPoint)
 
 /**
  * @brief Check if the SD card is mounted.
- * 
+ *
  * @return true If the SD card is mounted.
  * @return false If the SD card is not mounted.
  */
@@ -216,7 +214,7 @@ bool HalTab5::IsSdCardMounted()
 
 /**
  * @brief Configure the display.
- * 
+ *
  * @return esp_err_t Error code indicating the result of the operation.
  */
 esp_err_t HalTab5::ConfigureDisplay()
@@ -242,13 +240,13 @@ esp_err_t HalTab5::ConfigureDisplayBrightnessControl()
     ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
 
     ledc_channel_config_t lcd_backlight_channel = {};
-    lcd_backlight_channel.gpio_num   = GPIO_LCD_BACKLIGHT;
+    lcd_backlight_channel.gpio_num = GPIO_LCD_BACKLIGHT;
     lcd_backlight_channel.speed_mode = LEDC_LOW_SPEED_MODE;
-    lcd_backlight_channel.channel    = LEDC_CHANNEL_1;
-    lcd_backlight_channel.intr_type  = LEDC_INTR_DISABLE;
-    lcd_backlight_channel.timer_sel  = LEDC_TIMER_0;
-    lcd_backlight_channel.duty       = 0;
-    lcd_backlight_channel.hpoint     = 0;
+    lcd_backlight_channel.channel = LEDC_CHANNEL_1;
+    lcd_backlight_channel.intr_type = LEDC_INTR_DISABLE;
+    lcd_backlight_channel.timer_sel = LEDC_TIMER_0;
+    lcd_backlight_channel.duty = 0;
+    lcd_backlight_channel.hpoint = 0;
     ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
 
     return ESP_OK;
@@ -256,7 +254,7 @@ esp_err_t HalTab5::ConfigureDisplayBrightnessControl()
 
 /**
  * @brief Set the display brightness.
- * 
+ *
  * @param brightness Brightness level (0-100).
  */
 esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightnessPercent)
@@ -280,15 +278,13 @@ esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightnessPercent)
 
 /**
  * @brief Get the display brightness.
- * 
+ *
  * @return uint8_t Display brightness level (0-100).
  */
 uint8_t HalTab5::GetDisplayBrightness()
 {
     return _displayBrightness;
 }
-
-
 
 //     bsp_reset_tp();
 //     bsp_display_cfg_t cfg = {.lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
@@ -314,7 +310,6 @@ uint8_t HalTab5::GetDisplayBrightness()
 //     lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
 //     lv_indev_set_display(lvTouchpad, lvDisp);
 
-
 // lv_display_t* bsp_display_start_with_config(const bsp_display_cfg_t* cfg)
 // {
 //     lv_display_t* disp;
@@ -328,7 +323,6 @@ uint8_t HalTab5::GetDisplayBrightness()
 //     BSP_NULL_CHECK(disp_indev = bsp_display_indev_init(disp), NULL);
 //     return disp;
 // }
-
 
 // esp_err_t bsp_display_backlight_off(void)
 // {
