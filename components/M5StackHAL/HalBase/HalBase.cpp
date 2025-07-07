@@ -113,3 +113,45 @@ bool HalBase::IsSdCardMounted()
 {
     return false;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                            Display Methods                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the display.
+ * 
+ * @return esp_err_t Error code indicating the result of the operation.
+ */
+esp_err_t HalBase::ConfigureDisplay()
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Configure the display brightness control interface.
+ */
+esp_err_t HalBase::ConfigureDisplayBrightnessControl()
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Set the display brightness.
+ * 
+ * @param brightness Brightness level (0-100).
+ */
+esp_err_t HalBase::SetDisplayBrightness(uint8_t brightnessPercent)
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Get the display brightness.
+ * 
+ * @return uint8_t Display brightness level (0-100).
+ */
+uint8_t HalBase::GetDisplayBrightness()
+{
+    return 0;
+}

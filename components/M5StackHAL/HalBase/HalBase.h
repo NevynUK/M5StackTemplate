@@ -74,25 +74,55 @@ namespace HAL
             return 0.0f;
         }
 
-        /* --------------------------------- Display -------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                            Display Methods                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the display.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        virtual esp_err_t ConfigureDisplay();
+
+        /**
+         * @brief Get the Display Width object
+         * 
+         * @return int Width of the display in pixels.
+         */
         virtual int GetDisplayWidth()
         {
             return 0;
         }
 
+        /**
+         * @brief Get the display height in pixels.
+         * 
+         * @return int Display height in pixels.
+         */
         virtual int GetDisplayHeight()
         {
             return 0;
         }
 
-        virtual void SetDisplayBrightness(uint8_t brightness)
-        {
-        }
+        /**
+         * @brief Configure the display brightness control interface.
+         */
+        virtual esp_err_t ConfigureDisplayBrightnessControl();
 
-        virtual uint8_t GetDisplayBrightness()
-        {
-            return 0;
-        }
+        /**
+         * @brief Set the display brightness.
+         * 
+         * @param brightness Brightness level (0-100).
+         */
+        virtual esp_err_t SetDisplayBrightness(uint8_t brightnessPercent);
+
+        /**
+         * @brief Get the display brightness.
+         * 
+         * @return uint8_t Display brightness level (0-100).
+         */
+        virtual uint8_t GetDisplayBrightness();
 
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
