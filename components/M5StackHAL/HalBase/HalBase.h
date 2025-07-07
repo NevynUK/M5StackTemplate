@@ -40,7 +40,7 @@ namespace HAL
         HalBase();
 
         /**
-         * @brief Delete the default destructor for this class as we should not need it.
+         * @brief Destructor for this class.
          */
         ~HalBase();
 
@@ -52,7 +52,7 @@ namespace HAL
         static HalBase *GetInstance();
 
         /**
-         * @brief Perform any necessary initialization for the M5Stack Tab5 HAL.
+         * @brief Perform any necessary initialisation for the M5Stack Tab5 HAL.
          */
         virtual void init()
         {
@@ -385,34 +385,6 @@ namespace HAL
     //         }
     //     }
     // };
-
-    // /**
-    //  * @brief Get the HAL instance
-    //  *
-    //  * @return HalBase&
-    //  */
-    // HalBase *Get();
-
-    // /**
-    //  * @brief Inject the HAL, which will call init() to initialize the HAL
-    //  *
-    //  * @param hal
-    //  */
-    // void Inject(std::unique_ptr<HalBase> hal);
-
-    // /**
-    //  * @brief Destroy the HAL instance
-    //  *
-    //  */
-    // void Destroy();
-
-    // /**
-    //  * @brief Check if the HAL instance exists
-    //  *
-    //  * @return true
-    //  * @return false
-    //  */
-    // bool Check();
 
     private:
         // Prevent copying

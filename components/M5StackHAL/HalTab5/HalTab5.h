@@ -42,7 +42,7 @@ namespace HAL
         HalTab5();
 
         /**
-         * @brief Delete the default destructor for this class as we should not need it.
+         * @brief Destructor for this class.
          */
         ~HalTab5();
 
@@ -54,7 +54,7 @@ namespace HAL
         static HalTab5 *GetInstance();
 
         /**
-         * @brief Perform any class initialization.
+         * @brief Perform any class initialisation.
          */
         void init() override;
 
@@ -421,31 +421,3 @@ namespace HAL
         static HalTab5 *_instance;
     };
 } // namespace hal
-
-// /**
-//  * @brief Get the HAL instance
-//  *
-//  * @return hal::HalBase&
-//  */
-// inline hal::HalTab5 *GetHAL()
-// {
-//     return hal::Get();
-// }
-
-// /**
-//  * @brief
-//  *
-//  */
-// class LvglLockGuard
-// {
-// public:
-//     LvglLockGuard()
-//     {
-//         GetHAL()->lvglLock();
-//     }
-
-//     ~LvglLockGuard()
-//     {
-//         GetHAL()->lvglUnlock();
-//     }
-// };

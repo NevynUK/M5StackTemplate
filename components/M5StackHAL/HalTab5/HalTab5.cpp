@@ -17,71 +17,36 @@
 using namespace HAL;
 
 /* -------------------------------------------------------------------------- */
-/*                                  Singleton                                 */
+/*                            Static Data Members                             */
 /* -------------------------------------------------------------------------- */
-// Provides an injectable global singleton
-
-// static std::unique_ptr<hal::HalTab5> _hal_instance;
-// static const std::string _tag = "HalTab6";
-
-// hal::HalTab5 *hal::Get()
-// {
-//     if (!_hal_instance)
-//     {
-//         ESP_LOGW(_tag.c_str(), "Getting null hal, auto inject base\n");
-//         _hal_instance = std::make_unique<HalTab5>();
-//     }
-//     return _hal_instance.get();
-// }
-
-// void hal::Inject(std::unique_ptr<HalTab5> hal)
-// {
-//     if (!hal)
-//     {
-//         ESP_LOGE(_tag.c_str(), "Pass null hal");
-//         return;
-//     }
-
-//     // Destroy existing instance, store new instance
-//     Destroy();
-//     _hal_instance = std::move(hal);
-
-//     // Let's see what we're dealing with
-//     ESP_LOGI(_tag.c_str(), "Injecting hal type: %s\n", _hal_instance->type().c_str());
-
-//     // Initialize
-//     ESP_LOGI(_tag.c_str(), "Invoking init\n");
-//     _hal_instance->init();
-//     ESP_LOGI(_tag.c_str(), "HAL injected\n");
-// }
-
-// void hal::Destroy()
-// {
-//     _hal_instance.reset();
-// }
-
-// bool hal::Check()
-// {
-//     if (_hal_instance)
-//     {
-//         return true;
-//     }
-//     return false;
-// }
 
 /**
  * @brief Static pointer used to ensure that only one instance of HalTab5 exists.
  */
 HalTab5 *HalTab5::_instance = nullptr;
 
+/* -------------------------------------------------------------------------- */
+/*                         Constructors / Destructor                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Default constructor for this class.
+ * 
+ * This constructor is private to enforce the singleton pattern.
+ */
 HalTab5::HalTab5()
 {
-    ESP_LOGI("HalTab5", "HalTab5 instance created");
+    ESP_LOGI(COMPONENT_NAME, "HalTab5 instance created");
 }
 
+/**
+ * @brief Delete the default destructor for this class as we should not need it.
+ * 
+ * This destructor is private to enforce the singleton pattern.
+ */
 HalTab5::~HalTab5()
 {
-    ESP_LOGI("HalTab5", "HalTab5 instance destroyed");
+    ESP_LOGI(COMPONENT_NAME, "HalTab5 instance destroyed");
 }
 
 /**
@@ -100,7 +65,11 @@ HalTab5 *HalTab5::GetInstance()
     return _instance;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                Methods                                     */
+/* -------------------------------------------------------------------------- */
+
 void HalTab5::init()
 {
-    ESP_LOGI("HalTab5", "HalTab5 initialized");
+    ESP_LOGI(COMPONENT_NAME, "HalTab5 initialized");
 }
