@@ -68,7 +68,16 @@ namespace HAL
             return 0.0f;
         }
 
-        /* --------------------------------- Display -------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                            Display Methods                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the display.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureDisplay() override;
 
         /**
          * @brief Get the display width in pixels.
@@ -91,23 +100,23 @@ namespace HAL
         }
 
         /**
+         * @brief Configure the display brightness control interface.
+         */
+        esp_err_t ConfigureDisplayBrightnessControl() override;
+
+        /**
          * @brief Set the display brightness.
          * 
          * @param brightness Brightness level (0-100).
          */
-        void SetDisplayBrightness(uint8_t brightness) override
-        {
-        }
+        esp_err_t SetDisplayBrightness(uint8_t brightnessPercent) override;
 
         /**
          * @brief Get the display brightness.
          * 
          * @return uint8_t Display brightness level (0-100).
          */
-        uint8_t GetDisplayBrightness() override
-        {
-            return 0;
-        }
+        uint8_t GetDisplayBrightness() override;
 
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
@@ -162,6 +171,11 @@ namespace HAL
         const gpio_num_t GPIO_SDMMC_D3 = GPIO_NUM_42;
 
         /**
+         * @brief Display backlight control GPIO pin.
+         */
+        const gpio_num_t GPIO_LCD_BACKLIGHT = GPIO_NUM_22;
+
+        /**
          * @brief SDMMC mount point.
          */
         // static const std::string MOUNT_POINT;
@@ -188,6 +202,11 @@ namespace HAL
          * @brief Pointer to the SD card power control handle.
          */
         sd_pwr_ctrl_handle_t _sdCardPowerControlHandle = nullptr;
+
+        /**
+         * @brief Display brightness control.
+         */
+        uint8_t _displayBrightness = 100;
     };
 } // namespace hal
 

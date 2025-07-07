@@ -85,6 +85,7 @@ extern "C" void app_main(void)
         }
     }
 
+    hal->ConfigureDisplay();
     // Display *display = Display::GetInstance();
     // display->Setup();
 
