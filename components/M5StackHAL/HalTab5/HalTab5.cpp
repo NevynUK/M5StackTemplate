@@ -99,3 +99,8 @@ HalTab5 *HalTab5::GetInstance()
     }
     return _instance;
 }
+
+void HalTab5::init()
+{
+    ESP_LOGI("HalTab5", "HalTab5 initialized");
+}

@@ -56,9 +56,7 @@ namespace HAL
         /**
          * @brief Perform any class initialization.
          */
-        void init() override
-        {
-        }
+        void init() override;
 
         /**
          * @brief Get the CPU temperature

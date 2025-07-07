@@ -22,14 +22,13 @@
 #include <esp_lvgl_port.h>
 
 #include "Utils.hpp"
-
 #include "HalTab5.h"
 
 using namespace HAL;
 
 extern "C" void app_main(void)
 {
-    std::unique_ptr<HalTab5> hal = std::make_unique<HalTab5>();
+    std::unique_ptr<HalBase> hal = std::make_unique<HalTab5>();
     hal->init();
 
     esp_chip_info_t chip_info;
