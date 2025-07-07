@@ -22,6 +22,11 @@ using namespace HAL;
  */
 HalBase *HalBase::_instance = nullptr;
 
+/**
+ * @brief Mount point for the SD card.
+ */
+const std::string HalBase::MOUNT_POINT = "/sdcard";
+
 /* -------------------------------------------------------------------------- */
 /*                         Constructors / Destructor                          */
 /* -------------------------------------------------------------------------- */
@@ -64,4 +69,47 @@ HalBase *HalBase::GetInstance()
         _instance = new HalBase();
     }
     return _instance;
+}
+
+void HalBase::init()
+{
+    ESP_LOGI(COMPONENT_NAME, "HalBase initialized");
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            SD Card Methods                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the SD card interface.
+ * 
+ * @param mountPoint The mount point of the SD card.
+ * @param maximumFiles The maximum number of files that can be opened on the SD card.
+ * @return esp_err_t Error code indicating the result of the operation.
+ */
+esp_err_t HalBase::Mount(std::string mountPoint, size_t maximumFiles)
+{
+    return ESP_FAIL;
+}
+
+/**
+ * @brief Unmount the SD card.
+ * 
+ * @param mountPoint The mount point of the SD card.
+ * @return esp_err_t Error code indicating the result of the operation.
+ */
+esp_err_t HalBase::Unmount(std::string mountPoint)
+{
+    return ESP_FAIL;
+}
+
+/**
+ * @brief Check if the SD card is mounted.
+ * 
+ * @return true If the SD card is mounted.
+ * @return false If the SD card is not mounted.
+ */
+bool HalBase::IsSdCardMounted()
+{
+    return false;
 }

@@ -14,6 +14,14 @@
 #include <mutex>
 #include <vector>
 
+#include "esp_err.h"
+#include "esp_log.h"
+#include "esp_spiffs.h"
+#include "sdmmc_cmd.h"
+#include "esp_vfs_fat.h"
+#include "sd_pwr_ctrl_by_on_chip_ldo.h"
+#include "driver/sdmmc_host.h"
+
 #include <lvgl.h>
 
 /**
@@ -54,9 +62,7 @@ namespace HAL
         /**
          * @brief Perform any necessary initialisation for the M5Stack Tab5 HAL.
          */
-        virtual void init()
-        {
-        }
+        virtual void init();
 
         /**
          * @brief Get the CPU temperature
@@ -91,22 +97,58 @@ namespace HAL
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
 
-        /* --------------------------------- SD Card -------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                            SD Card Methods                                 */
+        /* -------------------------------------------------------------------------- */
 
-        virtual bool Mount(std::string mountPoint)
-        {
-            return false;
-        }
+        /**
+         * @brief Configure the SD card interface.
+         * 
+         * @param mountPoint The mount point of the SD card.
+         * @param maximumFiles The maximum number of files that can be opened on the SD card
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        virtual esp_err_t Mount(std::string mountPoint = MOUNT_POINT, size_t maximumFiles = 25);
 
-        virtual bool Unmount()
-        {
-            return false;
-        }
+        /**
+         * @brief Unmount the SD card.
+         * 
+         * @param mountPoint The mount point of the SD card.
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        virtual esp_err_t Unmount(std::string mountPoint = MOUNT_POINT);
 
-        virtual bool IsSdCardMounted()
-        {
-            return false;
-        }
+        /**
+         * @brief Check if the SD card is mounted.
+         * 
+         * @return true If the SD card is mounted.
+         * @return false If the SD card is not mounted.
+         */
+        virtual bool IsSdCardMounted();
+
+    protected:
+        /**
+         * @brief SDMMC mount point.
+         */
+        static const std::string MOUNT_POINT;
+
+    private:
+        // Prevent copying
+        HalBase(const HalBase &) = delete;
+        HalBase &operator=(const HalBase &) = delete;
+
+        // Prevent moving
+        HalBase(HalBase &&) = delete;
+        HalBase &operator=(HalBase &&) = delete;
+
+        /**
+         * @brief Singleton instance of HalBase
+         */
+        static HalBase *_instance;
+    };
+} // namespace hal
+
 
         // /* ---------------------------------- Power --------------------------------- */
         // struct PMData_t
@@ -385,19 +427,3 @@ namespace HAL
     //         }
     //     }
     // };
-
-    private:
-        // Prevent copying
-        HalBase(const HalBase &) = delete;
-        HalBase &operator=(const HalBase &) = delete;
-
-        // Prevent moving
-        HalBase(HalBase &&) = delete;
-        HalBase &operator=(HalBase &&) = delete;
-
-        /**
-         * @brief Singleton instance of HalBase
-         */
-        static HalBase *_instance;
-    };
-} // namespace hal
