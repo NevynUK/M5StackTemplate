@@ -285,7 +285,7 @@ esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightnessPercent)
  */
 uint8_t HalTab5::GetDisplayBrightness()
 {
-    return 0;
+    return _displayBrightness;
 }
 
 
