@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <lvgl.h>
+#include "esp_lcd_mipi_dsi.h"
 
 #include "HalBase.h"
 
@@ -78,6 +79,21 @@ namespace HAL
          * @return esp_err_t Error code indicating the result of the operation.
          */
         esp_err_t ConfigureDisplay() override;
+
+        /**
+         * @brief Panel IO handle.
+         */
+        esp_lcd_panel_io_handle_t GetPanelIoHandle() const;
+
+        /**
+         * @brief Display panel handle.
+         */
+        esp_lcd_panel_handle_t GetDisplayPanelHandle() const;
+
+        /**
+         * @brief MIPI DSI bus handle.
+         */
+        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
 
         /**
          * @brief Get the display width in pixels.
@@ -176,6 +192,16 @@ namespace HAL
         const gpio_num_t GPIO_LCD_BACKLIGHT = GPIO_NUM_22;
 
         /**
+         * @brief Number of data lanes for MIPI DSI.
+         */
+        const uint8_t BSP_LCD_MIPI_DSI_LANE_NUM = 2;
+
+        /**
+         * @brief MIPI DSI lane bitrate in Mbps.
+         */
+        const uint32_t BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS = 730;
+
+        /**
          * @brief SDMMC mount point.
          */
         // static const std::string MOUNT_POINT;
@@ -207,6 +233,43 @@ namespace HAL
          * @brief Display brightness control.
          */
         uint8_t _displayBrightness = 100;
+
+        /* -------------------------------------------------------------------------- */
+        /*                      Private Display Methods and Data                      */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Panel IO handle.
+         */
+        esp_lcd_panel_io_handle_t _panelIOHandle = nullptr;
+
+        /**
+         * @brief Display panel handle.
+         */
+        esp_lcd_panel_handle_t _displayPanelHandle = nullptr;
+
+        /**
+         * @brief MIPI DSI bus handle.
+         */
+        esp_lcd_dsi_bus_handle_t _mipiDSIBusHandle = nullptr;
+
+        /**
+         * @brief Configure the LCD panel.
+         * 
+         * This function sets up the LCD panel for the M5Stack Tab5.
+         * It initializes the MIPI DSI bus and configures the display settings.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureLCDPanel();
+
+        /**
+         * @brief Configure the display power.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureDisplayPower();
+
     };
 } // namespace hal
 
