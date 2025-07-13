@@ -3,11 +3,15 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "HalBase.h"
+#include <sdkconfig.h>
+
 #include <memory>
 #include <string>
 
 #include "esp_log.h"
+#include "esp_lcd_ili9881c.h"
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_mipi_dsi.h"
 
 #include "HalBase.h"
 
@@ -71,9 +75,32 @@ HalBase *HalBase::GetInstance()
     return _instance;
 }
 
-void HalBase::init()
+/* -------------------------------------------------------------------------- */
+/*                                    I2C                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the I2C bus.
+ *
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
+esp_err_t HalBase::ConfigureI2C()
 {
-    ESP_LOGI(COMPONENT_NAME, "HalBase initialized");
+    return ESP_FAIL;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               IO Expanders                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the IO Expanders.
+ *
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
+esp_err_t HalBase::ConfigureIoExpanders()
+{
+    return ESP_FAIL;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,4 +139,70 @@ esp_err_t HalBase::Unmount(std::string mountPoint)
 bool HalBase::IsSdCardMounted()
 {
     return false;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            Display Methods                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the display.
+ * 
+ * @return esp_err_t Error code indicating the result of the operation.
+ */
+esp_err_t HalBase::ConfigureDisplay()
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Panel IO handle.
+ */
+esp_lcd_panel_io_handle_t HalBase::GetPanelIoHandle() const
+{
+    return nullptr;
+}
+
+/**
+ * @brief Display panel handle.
+ */
+esp_lcd_panel_handle_t HalBase::GetDisplayPanelHandle() const
+{
+    return nullptr;
+}
+
+/**
+ * @brief MIPI DSI bus handle.
+ */
+esp_lcd_dsi_bus_handle_t HalBase::GetMipiDsiBusHandle() const
+{
+    return nullptr;
+}
+
+        /** 
+ * @brief Configure the display brightness control interface.
+ */
+esp_err_t HalBase::ConfigureDisplayBrightnessControl()
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Set the display brightness.
+ * 
+ * @param brightness Brightness level (0-100).
+ */
+esp_err_t HalBase::SetDisplayBrightness(uint8_t brightnessPercent)
+{
+    return ESP_OK;
+}
+
+/**
+ * @brief Get the display brightness.
+ * 
+ * @return uint8_t Display brightness level (0-100).
+ */
+uint8_t HalBase::GetDisplayBrightness()
+{
+    return 0;
 }

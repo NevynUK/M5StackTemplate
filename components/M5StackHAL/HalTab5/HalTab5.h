@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <lvgl.h>
+#include "esp_lcd_mipi_dsi.h"
 
 #include "HalBase.h"
 
@@ -34,7 +35,7 @@ namespace HAL
          *
          * This is used for logging and debugging purposes.
          */
-        static constexpr const char *COMPONENT_NAME = "HalTab5";
+        const char *COMPONENT_NAME = "HalTab5";
 
         /**
          * @brief Default constructor for this class.
@@ -54,11 +55,6 @@ namespace HAL
         static HalTab5 *GetInstance();
 
         /**
-         * @brief Perform any class initialisation.
-         */
-        void init() override;
-
-        /**
          * @brief Get the CPU temperature
          *
          * @return float CPU temperature in degrees Celsius
@@ -68,46 +64,86 @@ namespace HAL
             return 0.0f;
         }
 
-        /* --------------------------------- Display -------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the I2C bus.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureI2C() override;
+
+        /* -------------------------------------------------------------------------- */
+        /*                               IO Expanders                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the IO Expanders.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureIoExpanders() override;
+
+        /* -------------------------------------------------------------------------- */
+        /*                            Display Methods                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the display.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureDisplay() override;
+
+        /**
+         * @brief Panel IO handle.
+         */
+        esp_lcd_panel_io_handle_t GetPanelIoHandle() const override;
+
+        /**
+         * @brief Display panel handle.
+         */
+        esp_lcd_panel_handle_t GetDisplayPanelHandle() const override;
+
+        /**
+         * @brief MIPI DSI bus handle.
+         */
+        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const override;
 
         /**
          * @brief Get the display width in pixels.
          * 
          * @return int Display width in pixels.
          */
-        int GetDisplayWidth() override
-        {
-            return 1280;
-        }
+        int GetDisplayWidth() override;
 
         /**
          * @brief Get the display height in pixels.
          * 
          * @return int Display height in pixels.
          */
-        int GetDisplayHeight() override
-        {
-            return 720;
-        }
+        int GetDisplayHeight() override;
+
+        /**
+         * @brief Configure the display brightness control interface.
+         */
+        esp_err_t ConfigureDisplayBrightnessControl() override;
 
         /**
          * @brief Set the display brightness.
          * 
          * @param brightness Brightness level (0-100).
          */
-        void SetDisplayBrightness(uint8_t brightness) override
-        {
-        }
+        esp_err_t SetDisplayBrightness(uint8_t brightnessPercent) override;
 
         /**
          * @brief Get the display brightness.
          * 
          * @return uint8_t Display brightness level (0-100).
          */
-        uint8_t GetDisplayBrightness() override
-        {
-            return 0;
-        }
+        uint8_t GetDisplayBrightness() override;
 
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
@@ -162,6 +198,21 @@ namespace HAL
         const gpio_num_t GPIO_SDMMC_D3 = GPIO_NUM_42;
 
         /**
+         * @brief Display backlight control GPIO pin.
+         */
+        const gpio_num_t GPIO_LCD_BACKLIGHT = GPIO_NUM_22;
+
+        /**
+         * @brief Number of data lanes for MIPI DSI.
+         */
+        const uint8_t BSP_LCD_MIPI_DSI_LANE_NUM = 2;
+
+        /**
+         * @brief MIPI DSI lane bitrate in Mbps.
+         */
+        const uint32_t BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS = 730;
+
+        /**
          * @brief SDMMC mount point.
          */
         // static const std::string MOUNT_POINT;
@@ -188,6 +239,153 @@ namespace HAL
          * @brief Pointer to the SD card power control handle.
          */
         sd_pwr_ctrl_handle_t _sdCardPowerControlHandle = nullptr;
+
+        /**
+         * @brief Display brightness control.
+         */
+        uint8_t _displayBrightness = 100;
+
+        /* -------------------------------------------------------------------------- */
+        /*                        Private I2C Methods and Data                        */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Port number for the I2C master bus.
+         */
+        const i2c_port_num_t MASTER_I2C_PORT_NUMBER = 0;
+
+        /**
+         * @brief GPIO number for the I2C master SDA line.
+         */
+        const gpio_num_t MASTER_I2C_SDA_GPIO = GPIO_NUM_31;
+
+        /**
+         * @brief GPIO number for the I2C master SCL line.
+         */
+        const gpio_num_t MASTER_I2C_SCL_GPIO = GPIO_NUM_32;
+
+        /**
+         * @brief I2C master bus handle.
+         */
+        i2c_master_bus_handle_t _i2cHandle = nullptr;
+
+        /* -------------------------------------------------------------------------- */
+        /*                    Private IO Expanders Data and Methods                   */
+        /*                                                                            */
+        /* Chip: PI4IOE5V6416                                                         */
+        /* Datasheet: https://www.diodes.com/datasheet/download/PI4IOE5V6416.pdf      */
+        /*                                                                            */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief I2C device addresses for the first PI4IOE expander.
+         */
+        const uint8_t I2C_DEV_ADDR_PI4IOE1 = 0x43;
+
+        /**
+         * @brief I2C device address for the second PI4IOE expander.
+         */
+        const uint8_t I2C_DEV_ADDR_PI4IOE2 = 0x44;
+
+        /**
+         * @brief I2C master timeout in milliseconds.
+         */
+        const uint8_t I2C_MASTER_TIMEOUT_MS = 50;
+
+        /**
+         * @brief Reset register address
+         */
+        const uint8_t PI4IO_REG_CHIP_RESET = 0x01;
+
+        /**
+         * @brief IO register address.
+         */
+        const uint8_t PI4IO_REG_IO_DIR = 0x03;
+
+
+        const uint8_t PI4IO_REG_OUT_SET = 0x05;
+
+        /**
+         * @brief Output high impedance register address.
+         */
+        const uint8_t PI4IO_REG_OUT_H_IM = 0x07;
+
+        /**
+         * @brief Default state register address.
+         */
+        const uint8_t PI4IO_REG_IN_DEF_STA = 0x09;
+
+        /**
+         * @brief Pull up/down enable register address.
+         */
+        const uint8_t PI4IO_REG_PULL_EN = 0x0B;
+
+        /**
+         * @brief Pull up/down selection.
+         */
+        const uint8_t PI4IO_REG_PULL_SEL = 0x0D;
+
+        /**
+         * @brief Set the state for a pin.
+         */
+        const uint8_t PI4IO_REG_IN_STA = 0x0F;
+
+        /**
+         * @brief Interrupt mask register address.
+         */
+        const uint8_t PI4IO_REG_INT_MASK = 0x11;
+
+        /**
+         * @brief Interrupt status register address.
+         */
+        const uint8_t PI4IO_REG_IRQ_STA = 0x13;
+
+        /**
+         * @brief Handle for the first PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe1Handle = nullptr;
+
+        /**
+         * @brief Handle for the second PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
+
+        /* -------------------------------------------------------------------------- */
+        /*                      Private Display Methods and Data                      */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Panel IO handle.
+         */
+        esp_lcd_panel_io_handle_t _panelIOHandle = nullptr;
+
+        /**
+         * @brief Display panel handle.
+         */
+        esp_lcd_panel_handle_t _displayPanelHandle = nullptr;
+
+        /**
+         * @brief MIPI DSI bus handle.
+         */
+        esp_lcd_dsi_bus_handle_t _mipiDSIBusHandle = nullptr;
+
+        /**
+         * @brief Configure the LCD panel.
+         * 
+         * This function sets up the LCD panel for the M5Stack Tab5.
+         * It initializes the MIPI DSI bus and configures the display settings.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureLCDPanel();
+
+        /**
+         * @brief Configure the display power.
+         * 
+         * @return esp_err_t Error code indicating the result of the operation.
+         */
+        esp_err_t ConfigureDisplayPower();
+
     };
 } // namespace hal
 
