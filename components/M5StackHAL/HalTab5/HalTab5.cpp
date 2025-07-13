@@ -22,6 +22,8 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_mipi_dsi.h"
 
+#include "driver/i2c_master.h"
+
 #include "HalTab5.h"
 #include "ILI9881InitialisationData.h"
 
@@ -101,12 +103,119 @@ HalTab5 *HalTab5::GetInstance()
 /*                                Methods                                     */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/*                                    I2C                                     */
+/* -------------------------------------------------------------------------- */
+
 /**
- * @brief Initialize the HalTab5 instance.
+ * @brief Configure the I2C bus.
+ *
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-void HalTab5::init()
+esp_err_t HalTab5::ConfigureI2C()
 {
-    ESP_LOGI(COMPONENT_NAME, "HalTab5 initialized");
+    if (_i2cHandle)
+    {
+        return ESP_OK;
+    }
+
+    i2c_master_bus_config_t i2c_bus_conf = {};
+    i2c_bus_conf.clk_source = I2C_CLK_SRC_DEFAULT;
+    i2c_bus_conf.sda_io_num = MASTER_I2C_SDA_GPIO;
+    i2c_bus_conf.scl_io_num = MASTER_I2C_SCL_GPIO;
+    i2c_bus_conf.i2c_port = MASTER_I2C_PORT_NUMBER;
+    i2c_bus_conf.flags.enable_internal_pullup = true;
+    esp_err_t result = i2c_new_master_bus(&i2c_bus_conf, &_i2cHandle);
+    if (result != ESP_OK)
+    {
+        ESP_LOGE(COMPONENT_NAME, "Failed to create I2C master bus");
+        _i2cHandle = nullptr;
+    }
+
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          IO Expander Methods                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Configure the IO Expanders.
+ *
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
+esp_err_t HalTab5::ConfigureIoExpanders()
+{
+    ConfigureI2C();
+
+    uint8_t write_buf[2] = {};
+    uint8_t read_buf[1] = {};
+
+    i2c_device_config_t deviceConfig = {};
+    deviceConfig.dev_addr_length = I2C_ADDR_BIT_LEN_7;
+    deviceConfig.device_address = I2C_DEV_ADDR_PI4IOE1;
+    deviceConfig.scl_speed_hz = 400000;
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(_i2cHandle, &deviceConfig, &_pi4ioe1Handle));
+
+    write_buf[0] = PI4IO_REG_CHIP_RESET;
+    write_buf[1] = 0xff;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    write_buf[0] = PI4IO_REG_CHIP_RESET;
+    i2c_master_transmit_receive(_pi4ioe1Handle, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+    write_buf[0] = PI4IO_REG_IO_DIR;
+    write_buf[1] = 0b01111111;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
+    write_buf[0] = PI4IO_REG_OUT_H_IM;
+    write_buf[1] = 0b00000000;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
+    write_buf[0] = PI4IO_REG_PULL_SEL;
+    write_buf[1] = 0b01111111;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
+    write_buf[0] = PI4IO_REG_PULL_EN;
+    write_buf[1] = 0b01111111;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P7 interrupt enable: 0 enable, 1 disable
+    /* Output Port Register P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST output high level */
+    write_buf[0] = PI4IO_REG_OUT_SET;
+    write_buf[1] = 0b01110110;
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+
+    deviceConfig.device_address = I2C_DEV_ADDR_PI4IOE2;
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(_i2cHandle, &deviceConfig, &_pi4ioe2Handle));
+
+    write_buf[0] = PI4IO_REG_CHIP_RESET;
+    write_buf[1] = 0xFF;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    write_buf[0] = PI4IO_REG_CHIP_RESET;
+    i2c_master_transmit_receive(_pi4ioe2Handle, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+    write_buf[0] = PI4IO_REG_IO_DIR;
+    write_buf[1] = 0b10111001;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
+    write_buf[0] = PI4IO_REG_OUT_H_IM;
+    write_buf[1] = 0b00000110;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
+                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
+    write_buf[0] = PI4IO_REG_PULL_SEL;
+    write_buf[1] = 0b10111001;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
+                        I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
+    write_buf[0] = PI4IO_REG_PULL_EN;
+    write_buf[1] = 0b11111001;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
+                        I2C_MASTER_TIMEOUT_MS);                                       // pull up/down enable, 0 disable, 1 enable
+    write_buf[0] = PI4IO_REG_IN_DEF_STA;
+    write_buf[1] = 0b01000000;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P6 default high level
+    write_buf[0] = PI4IO_REG_INT_MASK;
+    write_buf[1] = 0b10111111;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
+                        I2C_MASTER_TIMEOUT_MS); // P6 interrupt enable: 0 enable, 1 disable
+    /* Output Port Register P0(WLAN_PWR_EN), P3(USB5V_EN), P7(CHG_EN) output high level */
+    write_buf[0] = PI4IO_REG_OUT_SET;
+    // write_buf[1] = 0b10001001;
+    write_buf[1] = 0b00001001;
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+
+    return ESP_OK;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -235,6 +344,50 @@ esp_err_t HalTab5::ConfigureDisplay()
 }
 
 /**
+ * @brief Get the display width in pixels.
+ * 
+ * @return int Display width in pixels.
+ */
+inline int HalTab5::GetDisplayWidth()
+{
+    return 1280;
+}
+
+/**
+ * @brief Get the display height in pixels.
+ * 
+ * @return int Display height in pixels.
+ */
+inline int HalTab5::GetDisplayHeight()
+{
+    return 720;
+}
+
+/**
+ * @brief Get the panel IO handle.
+ */
+esp_lcd_panel_io_handle_t HalTab5::GetPanelIoHandle() const
+{
+    return _panelIOHandle;
+}
+
+/**
+ * @brief Get the display panel handle.
+ */
+esp_lcd_panel_handle_t HalTab5::GetDisplayPanelHandle() const
+{
+    return _displayPanelHandle;
+}
+
+/**
+ * @brief Get the MIPI DSI bus handle.
+ */
+esp_lcd_dsi_bus_handle_t HalTab5::GetMipiDsiBusHandle() const
+{
+    return _mipiDSIBusHandle;
+}
+
+/**
  * @brief Configure the display power.
  *
  * This function configures the power for the MIPI DSI PHY, allowing it to transition from "No Power" state to "Shutdown" state.
@@ -266,21 +419,28 @@ esp_err_t HalTab5::ConfigureLCDPanel()
 {
     ESP_LOGI(COMPONENT_NAME, "Configuring LCD panel");
 
-    /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
-    esp_lcd_dsi_bus_config_t bus_config = {};
-    bus_config.bus_id = 0;
-    bus_config.num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM;
-    bus_config.phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT;
-    bus_config.lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS;
-    ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_config, &_mipiDSIBusHandle), COMPONENT_NAME, "New DSI bus init failed");
+    ESP_LOGI(COMPONENT_NAME, "Configuring I2C for LCD panel");
+    ConfigureI2C();
+    ConfigureIoExpanders();
+    ESP_LOGI(COMPONENT_NAME, "I2C Configured");
+    vTaskDelay(pdMS_TO_TICKS(100)); // Wait for the panel to stabilize
+
+
+    /* Create MIPI DSI bus first, it will initialize the DSI PHY as well */
+    esp_lcd_dsi_bus_config_t mipiDsiBusConfig = {};
+    mipiDsiBusConfig.bus_id = 0;
+    mipiDsiBusConfig.num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM;
+    mipiDsiBusConfig.phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT;
+    mipiDsiBusConfig.lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS;
+    ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&mipiDsiBusConfig, &_mipiDSIBusHandle), COMPONENT_NAME, "New DSI bus init failed");
 
     ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
-    // we use DBI interface to send LCD commands and parameters
-    esp_lcd_dbi_io_config_t dbi_config = {};
-    dbi_config.virtual_channel = 0;
-    dbi_config.lcd_cmd_bits = 8;        // according to the LCD spec
-    dbi_config.lcd_param_bits = 8;      // according to the LCD spec
-    if (esp_lcd_new_panel_io_dbi(_mipiDSIBusHandle, &dbi_config, &_panelIOHandle) != ESP_OK)
+    // We use DBI interface to send LCD commands and parameters
+    esp_lcd_dbi_io_config_t dbiConfig = {};
+    dbiConfig.virtual_channel = 0;
+    dbiConfig.lcd_cmd_bits = 8;        // According to the LCD spec
+    dbiConfig.lcd_param_bits = 8;      // According to the LCD spec
+    if (esp_lcd_new_panel_io_dbi(_mipiDSIBusHandle, &dbiConfig, &_panelIOHandle) != ESP_OK)
     {
         ESP_LOGE(COMPONENT_NAME, "New panel IO failed");
         if (_mipiDSIBusHandle)
@@ -290,41 +450,48 @@ esp_err_t HalTab5::ConfigureLCDPanel()
     }
 
     ESP_LOGI(COMPONENT_NAME, "Install ili9881c LCD driver");
-    esp_lcd_dpi_panel_config_t dpi_config = {};
-    dpi_config.virtual_channel = 0;
-    dpi_config.dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT;
-    dpi_config.dpi_clock_freq_mhz = 60;
-    dpi_config.pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565;
-    dpi_config.num_fbs = 1;
-    dpi_config.video_timing = {};
-    dpi_config.video_timing.h_size = GetDisplayWidth();
-    dpi_config.video_timing.v_size = GetDisplayHeight();
-    dpi_config.video_timing.hsync_back_porch = 140;
-    dpi_config.video_timing.hsync_pulse_width = 40;
-    dpi_config.video_timing.hsync_front_porch = 40;
-    dpi_config.video_timing.vsync_back_porch = 20;
-    dpi_config.video_timing.vsync_pulse_width = 4;
-    dpi_config.video_timing.vsync_front_porch = 20;
-    dpi_config.flags.use_dma2d = true;
+    esp_lcd_dpi_panel_config_t dpiConfig = {};
+    dpiConfig.virtual_channel = 0;
+    dpiConfig.dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT;
+    dpiConfig.dpi_clock_freq_mhz = 60;
+    dpiConfig.pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565;
+    dpiConfig.num_fbs = 1;
+    dpiConfig.video_timing = {};
+    dpiConfig.video_timing.h_size = GetDisplayWidth();
+    dpiConfig.video_timing.v_size = GetDisplayHeight();
+    dpiConfig.video_timing.hsync_back_porch = 140;
+    dpiConfig.video_timing.hsync_pulse_width = 40;
+    dpiConfig.video_timing.hsync_front_porch = 40;
+    dpiConfig.video_timing.vsync_back_porch = 20;
+    dpiConfig.video_timing.vsync_pulse_width = 4;
+    dpiConfig.video_timing.vsync_front_porch = 20;
+    dpiConfig.flags.use_dma2d = true;
 
-    ili9881c_vendor_config_t vendor_config = {};
-    vendor_config.init_cmds = tab5_lcd_ili9881c_specific_init_code_default;
-    // vendor_config.init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]);
-    vendor_config.init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(ili9881c_lcd_init_cmd_t);
-    vendor_config.mipi_config = {};
-    vendor_config.mipi_config.dsi_bus = _mipiDSIBusHandle;
-    vendor_config.mipi_config.dpi_config = &dpi_config;
-    vendor_config.mipi_config.lane_num = 2;
+    ili9881c_vendor_config_t vendorConfig = {};
+    vendorConfig.init_cmds = tab5_lcd_ili9881c_specific_init_code_default;
+    vendorConfig.init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(ili9881c_lcd_init_cmd_t);
+    vendorConfig.mipi_config = {};
+    vendorConfig.mipi_config.dsi_bus = _mipiDSIBusHandle;
+    vendorConfig.mipi_config.dpi_config = &dpiConfig;
+    vendorConfig.mipi_config.lane_num = 2;
 
-    esp_lcd_panel_dev_config_t lcd_dev_config = {};
-    lcd_dev_config.bits_per_pixel = 16;
-    lcd_dev_config.rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB;
-    lcd_dev_config.reset_gpio_num = -1;
-    lcd_dev_config.vendor_config = &vendor_config;
-    ESP_ERROR_CHECK(esp_lcd_new_panel_ili9881c(_panelIOHandle, &lcd_dev_config, &_displayPanelHandle));
-    ESP_ERROR_CHECK(esp_lcd_panel_reset(_displayPanelHandle));
-    ESP_ERROR_CHECK(esp_lcd_panel_init(_displayPanelHandle));
-    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(_displayPanelHandle, true));
+    esp_lcd_panel_dev_config_t lcdDeviceConfig = {};
+    lcdDeviceConfig.bits_per_pixel = 16;
+    lcdDeviceConfig.rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB;
+    lcdDeviceConfig.reset_gpio_num = -1;
+    lcdDeviceConfig.vendor_config = &vendorConfig;
+    ESP_LOGI(COMPONENT_NAME, "New panel init with ILI9881C LCD driver");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9881c(_panelIOHandle, &lcdDeviceConfig, &_displayPanelHandle), COMPONENT_NAME, "New panel init failed");
+    ESP_LOGI(COMPONENT_NAME, "Panel IO handle: %p", _panelIOHandle);
+    ESP_LOGI(COMPONENT_NAME, "Panel handle: %p", _displayPanelHandle);
+    ESP_LOGI(COMPONENT_NAME, "esp_lcd_panel_reset");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(_displayPanelHandle), COMPONENT_NAME, "Panel reset failed");
+    ESP_LOGI(COMPONENT_NAME, "Panel reset done");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_init(_displayPanelHandle), COMPONENT_NAME, "Panel init failed");
+    ESP_LOGI(COMPONENT_NAME, "Panel init done");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(_displayPanelHandle, true), COMPONENT_NAME, "Panel display on failed");
+
+    ESP_LOGI(COMPONENT_NAME, "LCD panel configured successfully");
 
     return ESP_OK;
 }
@@ -334,6 +501,7 @@ esp_err_t HalTab5::ConfigureLCDPanel()
  */
 esp_err_t HalTab5::ConfigureDisplayBrightnessControl()
 {
+    ESP_LOGI(COMPONENT_NAME, "Configuring display brightness control");
     ledc_timer_config_t lcd_backlight_timer = {};
     lcd_backlight_timer.speed_mode = LEDC_LOW_SPEED_MODE;
     lcd_backlight_timer.duty_resolution = LEDC_TIMER_12_BIT;
@@ -486,75 +654,4 @@ uint8_t HalTab5::GetDisplayBrightness()
 //     return lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
 // }
 
-// esp_err_t bsp_display_new_with_handles(const bsp_display_config_t* config, bsp_lcd_handles_t* ret_handles)
-// {
-// #if defined(LCD_MIPI_DSI_USE_ILI9881C) && !defined(LCD_MIPI_DSI_USE_ST7703)
-//     ESP_LOGI(TAG, "Install LCD driver of ili9881c");
-//     esp_lcd_dpi_panel_config_t dpi_config = {
-//         .virtual_channel    = 0,
-//         .dpi_clk_src        = MIPI_DSI_DPI_CLK_SRC_DEFAULT,
-//         .dpi_clock_freq_mhz = 60,  // 720*1280 RGB24 60Hz RGB24 // 80,
-//         .pixel_format       = LCD_COLOR_PIXEL_FORMAT_RGB565,
-//         .num_fbs            = 1,
-//         .video_timing =
-//             {
-//                 .h_size            = BSP_LCD_H_RES,
-//                 .v_size            = BSP_LCD_V_RES,
-//                 .hsync_back_porch  = 140,
-//                 .hsync_pulse_width = 40,
-//                 .hsync_front_porch = 40,
-//                 .vsync_back_porch  = 20,
-//                 .vsync_pulse_width = 4,
-//                 .vsync_front_porch = 20,
-//             },
-//         .flags.use_dma2d = true,
-//     };
 
-//     ili9881c_vendor_config_t vendor_config = {
-//         .init_cmds      = tab5_lcd_ili9881c_specific_init_code_default,
-//         .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) /
-//                           sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
-//         .mipi_config =
-//             {
-//                 .dsi_bus    = mipi_dsi_bus,
-//                 .dpi_config = &dpi_config,
-//                 .lane_num   = 2,
-//             },
-//     };
-
-//     const esp_lcd_panel_dev_config_t lcd_dev_config = {
-//         .bits_per_pixel = 16,
-//         .rgb_ele_order  = LCD_RGB_ELEMENT_ORDER_RGB,
-//         .reset_gpio_num = -1,
-//         .vendor_config  = &vendor_config,
-//     };
-//     ESP_ERROR_CHECK(esp_lcd_new_panel_ili9881c(io, &lcd_dev_config, &disp_panel));
-//     ESP_ERROR_CHECK(esp_lcd_panel_reset(disp_panel));
-//     ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
-//     //  ESP_ERROR_CHECK(esp_lcd_panel_mirror(disp_panel, false, true));
-//     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(disp_panel, true));
-
-// #endif
-
-//     /* Return all handles */
-//     ret_handles->io           = io;
-//     ret_handles->mipi_dsi_bus = mipi_dsi_bus;
-//     ret_handles->panel        = disp_panel;
-//     ret_handles->control      = NULL;
-
-//     ESP_LOGI(TAG, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
-
-//     return ret;
-
-// err:
-//     if (disp_panel) {
-//         esp_lcd_panel_del(disp_panel);
-//     }
-//     if (io) {
-//         esp_lcd_panel_io_del(io);
-//     }
-//     if (mipi_dsi_bus) {
-//         esp_lcd_del_dsi_bus(mipi_dsi_bus);
-//     }
-//     return ret;
-// }

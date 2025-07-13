@@ -35,7 +35,7 @@ namespace HAL
          *
          * This is used for logging and debugging purposes.
          */
-        static constexpr const char *COMPONENT_NAME = "HalTab5";
+        const char *COMPONENT_NAME = "HalTab5";
 
         /**
          * @brief Default constructor for this class.
@@ -55,11 +55,6 @@ namespace HAL
         static HalTab5 *GetInstance();
 
         /**
-         * @brief Perform any class initialisation.
-         */
-        void init() override;
-
-        /**
          * @brief Get the CPU temperature
          *
          * @return float CPU temperature in degrees Celsius
@@ -68,6 +63,28 @@ namespace HAL
         {
             return 0.0f;
         }
+
+        /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the I2C bus.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureI2C() override;
+
+        /* -------------------------------------------------------------------------- */
+        /*                               IO Expanders                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the IO Expanders.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureIoExpanders() override;
 
         /* -------------------------------------------------------------------------- */
         /*                            Display Methods                                 */
@@ -83,37 +100,31 @@ namespace HAL
         /**
          * @brief Panel IO handle.
          */
-        esp_lcd_panel_io_handle_t GetPanelIoHandle() const;
+        esp_lcd_panel_io_handle_t GetPanelIoHandle() const override;
 
         /**
          * @brief Display panel handle.
          */
-        esp_lcd_panel_handle_t GetDisplayPanelHandle() const;
+        esp_lcd_panel_handle_t GetDisplayPanelHandle() const override;
 
         /**
          * @brief MIPI DSI bus handle.
          */
-        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
+        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const override;
 
         /**
          * @brief Get the display width in pixels.
          * 
          * @return int Display width in pixels.
          */
-        int GetDisplayWidth() override
-        {
-            return 1280;
-        }
+        int GetDisplayWidth() override;
 
         /**
          * @brief Get the display height in pixels.
          * 
          * @return int Display height in pixels.
          */
-        int GetDisplayHeight() override
-        {
-            return 720;
-        }
+        int GetDisplayHeight() override;
 
         /**
          * @brief Configure the display brightness control interface.
@@ -233,6 +244,65 @@ namespace HAL
          * @brief Display brightness control.
          */
         uint8_t _displayBrightness = 100;
+
+        /* -------------------------------------------------------------------------- */
+        /*                        Private I2C Methods and Data                        */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Port number for the I2C master bus.
+         */
+        const i2c_port_num_t MASTER_I2C_PORT_NUMBER = 0;
+
+        /**
+         * @brief GPIO number for the I2C master SDA line.
+         */
+        const gpio_num_t MASTER_I2C_SDA_GPIO = GPIO_NUM_31;
+
+        /**
+         * @brief GPIO number for the I2C master SCL line.
+         */
+        const gpio_num_t MASTER_I2C_SCL_GPIO = GPIO_NUM_32;
+
+        /**
+         * @brief I2C master bus handle.
+         */
+        i2c_master_bus_handle_t _i2cHandle = nullptr;
+
+        /* -------------------------------------------------------------------------- */
+        /*                    Private IO Expanders Data and Methods                   */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief I2C device addresses for PI4IOE expanders.
+         */
+        const uint8_t I2C_DEV_ADDR_PI4IOE1 = 0x43;
+        const uint8_t I2C_DEV_ADDR_PI4IOE2 = 0x44;
+        const uint8_t I2C_MASTER_TIMEOUT_MS = 50;
+
+        /**
+         * @brief PI4IO register addresses.
+         */
+        const uint8_t PI4IO_REG_CHIP_RESET = 0x01;
+        const uint8_t PI4IO_REG_IO_DIR = 0x03;
+        const uint8_t PI4IO_REG_OUT_SET = 0x05;
+        const uint8_t PI4IO_REG_OUT_H_IM = 0x07;
+        const uint8_t PI4IO_REG_IN_DEF_STA = 0x09;
+        const uint8_t PI4IO_REG_PULL_EN = 0x0B;
+        const uint8_t PI4IO_REG_PULL_SEL = 0x0D;
+        const uint8_t PI4IO_REG_IN_STA = 0x0F;
+        const uint8_t PI4IO_REG_INT_MASK = 0x11;
+        const uint8_t PI4IO_REG_IRQ_STA = 0x13;
+
+        /**
+         * @brief Handle for the first PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe1Handle = nullptr;
+
+        /**
+         * @brief Handle for the second PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
 
         /* -------------------------------------------------------------------------- */
         /*                      Private Display Methods and Data                      */
