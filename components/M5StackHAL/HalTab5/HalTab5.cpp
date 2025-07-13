@@ -162,23 +162,42 @@ esp_err_t HalTab5::ConfigureIoExpanders()
     i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
     write_buf[0] = PI4IO_REG_CHIP_RESET;
     i2c_master_transmit_receive(_pi4ioe1Handle, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the port direction (0 = input, 1 = output).
+    //
     write_buf[0] = PI4IO_REG_IO_DIR;
     write_buf[1] = 0b01111111;
-    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Disable High-Impedance for used pins.
+    //
     write_buf[0] = PI4IO_REG_OUT_H_IM;
     write_buf[1] = 0b00000000;
-    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the pull-up/pull-down resistors for the pins (0 = pull down, 1 = pull up).
+    //
     write_buf[0] = PI4IO_REG_PULL_SEL;
     write_buf[1] = 0b01111111;
-    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set pull up/down enable ability (0 = enable, 1 = disable).
+    //  Port 7 enabled, all others disabled.
+    //
     write_buf[0] = PI4IO_REG_PULL_EN;
     write_buf[1] = 0b01111111;
-    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P7 interrupt enable: 0 enable, 1 disable
-    /* Output Port Register P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST output high level */
+    i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the output ports high.
+    //
+    //  P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST
+    //
     write_buf[0] = PI4IO_REG_OUT_SET;
     write_buf[1] = 0b01110110;
     i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-
+    //
+    //  Now for the second IO expander.
+    //
     deviceConfig.device_address = I2C_DEV_ADDR_PI4IOE2;
     ESP_ERROR_CHECK(i2c_master_bus_add_device(_i2cHandle, &deviceConfig, &_pi4ioe2Handle));
 
@@ -187,31 +206,49 @@ esp_err_t HalTab5::ConfigureIoExpanders()
     i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
     write_buf[0] = PI4IO_REG_CHIP_RESET;
     i2c_master_transmit_receive(_pi4ioe2Handle, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the port direction (0 = input, 1 = output).
+    //
     write_buf[0] = PI4IO_REG_IO_DIR;
     write_buf[1] = 0b10111001;
-    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Disable High-Impedance for used pins.
+    //
     write_buf[0] = PI4IO_REG_OUT_H_IM;
     write_buf[1] = 0b00000110;
-    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the pull-up/pull-down resistors for the pins (0 = pull down, 1 = pull up).
+    //
     write_buf[0] = PI4IO_REG_PULL_SEL;
     write_buf[1] = 0b10111001;
-    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set pull up/down enable ability (0 = enable, 1 = disable).
+    //
     write_buf[0] = PI4IO_REG_PULL_EN;
     write_buf[1] = 0b11111001;
-    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS);                                       // pull up/down enable, 0 disable, 1 enable
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the input default state (0 = low, 1 = high).
+    //
     write_buf[0] = PI4IO_REG_IN_DEF_STA;
     write_buf[1] = 0b01000000;
     i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P6 default high level
+    //
+    //  Set interrupt ability (0 = enable, 1 = disable).
+    //  Port 6 enabled, all others disabled.
+    //
     write_buf[0] = PI4IO_REG_INT_MASK;
     write_buf[1] = 0b10111111;
-    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // P6 interrupt enable: 0 enable, 1 disable
-    /* Output Port Register P0(WLAN_PWR_EN), P3(USB5V_EN), P7(CHG_EN) output high level */
+    i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    //
+    //  Set the output ports high.
+    //
+    //  P0(WLAN_PWR_EN), P3(USB5V_EN)
+    //
     write_buf[0] = PI4IO_REG_OUT_SET;
-    // write_buf[1] = 0b10001001;
     write_buf[1] = 0b00001001;
     i2c_master_transmit(_pi4ioe2Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
 

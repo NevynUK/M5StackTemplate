@@ -271,27 +271,73 @@ namespace HAL
 
         /* -------------------------------------------------------------------------- */
         /*                    Private IO Expanders Data and Methods                   */
+        /*                                                                            */
+        /* Chip: PI4IOE5V6416                                                         */
+        /* Datasheet: https://www.diodes.com/datasheet/download/PI4IOE5V6416.pdf      */
+        /*                                                                            */
         /* -------------------------------------------------------------------------- */
 
         /**
-         * @brief I2C device addresses for PI4IOE expanders.
+         * @brief I2C device addresses for the first PI4IOE expander.
          */
         const uint8_t I2C_DEV_ADDR_PI4IOE1 = 0x43;
+
+        /**
+         * @brief I2C device address for the second PI4IOE expander.
+         */
         const uint8_t I2C_DEV_ADDR_PI4IOE2 = 0x44;
+
+        /**
+         * @brief I2C master timeout in milliseconds.
+         */
         const uint8_t I2C_MASTER_TIMEOUT_MS = 50;
 
         /**
-         * @brief PI4IO register addresses.
+         * @brief Reset register address
          */
         const uint8_t PI4IO_REG_CHIP_RESET = 0x01;
+
+        /**
+         * @brief IO register address.
+         */
         const uint8_t PI4IO_REG_IO_DIR = 0x03;
+
+
         const uint8_t PI4IO_REG_OUT_SET = 0x05;
+
+        /**
+         * @brief Output high impedance register address.
+         */
         const uint8_t PI4IO_REG_OUT_H_IM = 0x07;
+
+        /**
+         * @brief Default state register address.
+         */
         const uint8_t PI4IO_REG_IN_DEF_STA = 0x09;
+
+        /**
+         * @brief Pull up/down enable register address.
+         */
         const uint8_t PI4IO_REG_PULL_EN = 0x0B;
+
+        /**
+         * @brief Pull up/down selection.
+         */
         const uint8_t PI4IO_REG_PULL_SEL = 0x0D;
+
+        /**
+         * @brief Set the state for a pin.
+         */
         const uint8_t PI4IO_REG_IN_STA = 0x0F;
+
+        /**
+         * @brief Interrupt mask register address.
+         */
         const uint8_t PI4IO_REG_INT_MASK = 0x11;
+
+        /**
+         * @brief Interrupt status register address.
+         */
         const uint8_t PI4IO_REG_IRQ_STA = 0x13;
 
         /**
