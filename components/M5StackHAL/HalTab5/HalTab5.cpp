@@ -456,23 +456,21 @@ esp_err_t HalTab5::ConfigureLCDPanel()
 {
     ESP_LOGI(COMPONENT_NAME, "Configuring LCD panel");
 
-    ESP_LOGI(COMPONENT_NAME, "Configuring I2C for LCD panel");
     ConfigureI2C();
     ConfigureIoExpanders();
-    ESP_LOGI(COMPONENT_NAME, "I2C Configured");
     vTaskDelay(pdMS_TO_TICKS(100)); // Wait for the panel to stabilize
-
-
-    /* Create MIPI DSI bus first, it will initialize the DSI PHY as well */
+    //
+    //  Create MIPI DSI bus first, it will initialize the DSI PHY as well.
+    //
     esp_lcd_dsi_bus_config_t mipiDsiBusConfig = {};
     mipiDsiBusConfig.bus_id = 0;
     mipiDsiBusConfig.num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM;
     mipiDsiBusConfig.phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT;
     mipiDsiBusConfig.lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS;
     ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&mipiDsiBusConfig, &_mipiDSIBusHandle), COMPONENT_NAME, "New DSI bus init failed");
-
-    ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
-    // We use DBI interface to send LCD commands and parameters
+    //
+    //  DBI interface is used to send LCD commands and data.
+    //
     esp_lcd_dbi_io_config_t dbiConfig = {};
     dbiConfig.virtual_channel = 0;
     dbiConfig.lcd_cmd_bits = 8;        // According to the LCD spec
@@ -485,8 +483,9 @@ esp_err_t HalTab5::ConfigureLCDPanel()
             esp_lcd_del_dsi_bus(_mipiDSIBusHandle);
         }
     }
-
-    ESP_LOGI(COMPONENT_NAME, "Install ili9881c LCD driver");
+    //
+    // Install ili9881c LCD driver.
+    //
     esp_lcd_dpi_panel_config_t dpiConfig = {};
     dpiConfig.virtual_channel = 0;
     dpiConfig.dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT;
@@ -517,15 +516,9 @@ esp_err_t HalTab5::ConfigureLCDPanel()
     lcdDeviceConfig.rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB;
     lcdDeviceConfig.reset_gpio_num = -1;
     lcdDeviceConfig.vendor_config = &vendorConfig;
-    ESP_LOGI(COMPONENT_NAME, "New panel init with ILI9881C LCD driver");
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9881c(_panelIOHandle, &lcdDeviceConfig, &_displayPanelHandle), COMPONENT_NAME, "New panel init failed");
-    ESP_LOGI(COMPONENT_NAME, "Panel IO handle: %p", _panelIOHandle);
-    ESP_LOGI(COMPONENT_NAME, "Panel handle: %p", _displayPanelHandle);
-    ESP_LOGI(COMPONENT_NAME, "esp_lcd_panel_reset");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(_displayPanelHandle), COMPONENT_NAME, "Panel reset failed");
-    ESP_LOGI(COMPONENT_NAME, "Panel reset done");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_init(_displayPanelHandle), COMPONENT_NAME, "Panel init failed");
-    ESP_LOGI(COMPONENT_NAME, "Panel init done");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(_displayPanelHandle, true), COMPONENT_NAME, "Panel display on failed");
 
     ESP_LOGI(COMPONENT_NAME, "LCD panel configured successfully");
