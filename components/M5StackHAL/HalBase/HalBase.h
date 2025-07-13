@@ -21,6 +21,7 @@
 #include "esp_vfs_fat.h"
 #include "sd_pwr_ctrl_by_on_chip_ldo.h"
 #include "driver/sdmmc_host.h"
+#include "esp_lcd_mipi_dsi.h"
 
 #include <lvgl.h>
 
@@ -60,11 +61,6 @@ namespace HAL
         static HalBase *GetInstance();
 
         /**
-         * @brief Perform any necessary initialisation for the M5Stack Tab5 HAL.
-         */
-        virtual void init();
-
-        /**
          * @brief Get the CPU temperature
          *
          * @return float CPU temperature in degrees Celsius
@@ -80,14 +76,29 @@ namespace HAL
 
         /**
          * @brief Configure the display.
-         * 
+         *
          * @return esp_err_t Error code indicating the result of the operation.
          */
         virtual esp_err_t ConfigureDisplay();
 
         /**
+         * @brief Panel IO handle.
+         */
+        virtual esp_lcd_panel_io_handle_t GetPanelIoHandle() const;
+
+        /**
+         * @brief Display panel handle.
+         */
+        virtual esp_lcd_panel_handle_t GetDisplayPanelHandle() const;
+
+        /**
+         * @brief MIPI DSI bus handle.
+         */
+        virtual esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
+
+        /**
          * @brief Get the Display Width object
-         * 
+         *
          * @return int Width of the display in pixels.
          */
         virtual int GetDisplayWidth()
@@ -97,7 +108,7 @@ namespace HAL
 
         /**
          * @brief Get the display height in pixels.
-         * 
+         *
          * @return int Display height in pixels.
          */
         virtual int GetDisplayHeight()
@@ -112,14 +123,14 @@ namespace HAL
 
         /**
          * @brief Set the display brightness.
-         * 
+         *
          * @param brightness Brightness level (0-100).
          */
         virtual esp_err_t SetDisplayBrightness(uint8_t brightnessPercent);
 
         /**
          * @brief Get the display brightness.
-         * 
+         *
          * @return uint8_t Display brightness level (0-100).
          */
         virtual uint8_t GetDisplayBrightness();
@@ -128,22 +139,44 @@ namespace HAL
         lv_indev_t *lvTouchpad = nullptr;
 
         /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the I2C bus.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        virtual esp_err_t ConfigureI2C();
+
+        /* -------------------------------------------------------------------------- */
+        /*                               IO Expanders                                 */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the IO Expanders.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        virtual esp_err_t ConfigureIoExpanders();
+
+        /* -------------------------------------------------------------------------- */
         /*                            SD Card Methods                                 */
         /* -------------------------------------------------------------------------- */
 
         /**
          * @brief Configure the SD card interface.
-         * 
+         *
          * @param mountPoint The mount point of the SD card.
          * @param maximumFiles The maximum number of files that can be opened on the SD card
-         * 
+         *
          * @return esp_err_t Error code indicating the result of the operation.
          */
         virtual esp_err_t Mount(std::string mountPoint = MOUNT_POINT, size_t maximumFiles = 25);
 
         /**
          * @brief Unmount the SD card.
-         * 
+         *
          * @param mountPoint The mount point of the SD card.
          * @return esp_err_t Error code indicating the result of the operation.
          */
@@ -151,7 +184,7 @@ namespace HAL
 
         /**
          * @brief Check if the SD card is mounted.
-         * 
+         *
          * @return true If the SD card is mounted.
          * @return false If the SD card is not mounted.
          */
@@ -177,283 +210,282 @@ namespace HAL
          */
         static HalBase *_instance;
     };
-} // namespace hal
+} // namespace HAL
 
+// /* ---------------------------------- Power --------------------------------- */
+// struct PMData_t
+// {
+//     float busVoltage = 0.0f;
+//     float busPower = 0.0f;
+//     float shuntVoltage = 0.0f;
+//     float shuntCurrent = 0.0f;
+// };
 
-        // /* ---------------------------------- Power --------------------------------- */
-        // struct PMData_t
-        // {
-        //     float busVoltage = 0.0f;
-        //     float busPower = 0.0f;
-        //     float shuntVoltage = 0.0f;
-        //     float shuntCurrent = 0.0f;
-        // };
+// PMData_t powerMonitorData;
 
-        // PMData_t powerMonitorData;
+// virtual void updatePowerMonitorData()
+// {
+// }
 
-        // virtual void updatePowerMonitorData()
-        // {
-        // }
+// virtual void setChargeQcEnable(bool enable)
+// {
+// }
 
-        // virtual void setChargeQcEnable(bool enable)
-        // {
-        // }
+// virtual bool getChargeQcEnable()
+// {
+//     return false;
+// }
 
-        // virtual bool getChargeQcEnable()
-        // {
-        //     return false;
-        // }
+// virtual void setChargeEnable(bool enable)
+// {
+// }
 
-        // virtual void setChargeEnable(bool enable)
-        // {
-        // }
+// virtual bool getChargeEnable()
+// {
+//     return false;
+// }
 
-        // virtual bool getChargeEnable()
-        // {
-        //     return false;
-        // }
+// virtual void setUsb5vEnable(bool enable)
+// {
+// }
 
-        // virtual void setUsb5vEnable(bool enable)
-        // {
-        // }
+// virtual bool getUsb5vEnable()
+// {
+//     return false;
+// }
 
-        // virtual bool getUsb5vEnable()
-        // {
-        //     return false;
-        // }
+// virtual void setExt5vEnable(bool enable)
+// {
+// }
 
-        // virtual void setExt5vEnable(bool enable)
-        // {
-        // }
+// virtual bool getExt5vEnable()
+// {
+//     return false;
+// }
 
-        // virtual bool getExt5vEnable()
-        // {
-        //     return false;
-        // }
+// virtual void powerOff()
+// {
+// }
 
-        // virtual void powerOff()
-        // {
-        // }
+// virtual void sleepAndTouchWakeup()
+// {
+// }
 
-        // virtual void sleepAndTouchWakeup()
-        // {
-        // }
+// virtual void sleepAndShakeWakeup()
+// {
+// }
 
-        // virtual void sleepAndShakeWakeup()
-        // {
-        // }
+// virtual void sleepAndRtcWakeup()
+// {
+// }
 
-        // virtual void sleepAndRtcWakeup()
-        // {
-        // }
+// /* ----------------------------------- IMU ---------------------------------- */
+// struct IMUData_t
+// {
+//     float accelX = 0.0f;
+//     float accelY = 0.0f;
+//     float accelZ = 0.0f;
+//     float gyroX = 0.0f;
+//     float gyroY = 0.0f;
+//     float gyroZ = 0.0f;
+// };
 
-        // /* ----------------------------------- IMU ---------------------------------- */
-        // struct IMUData_t
-        // {
-        //     float accelX = 0.0f;
-        //     float accelY = 0.0f;
-        //     float accelZ = 0.0f;
-        //     float gyroX = 0.0f;
-        //     float gyroY = 0.0f;
-        //     float gyroZ = 0.0f;
-        // };
+// IMUData_t imuData;
 
-        // IMUData_t imuData;
+// virtual void updateImuData()
+// {
+// }
 
-        // virtual void updateImuData()
-        // {
-        // }
+// virtual void clearImuIrq()
+// {
+// }
 
-        // virtual void clearImuIrq()
-        // {
-        // }
+// /* ----------------------------------- RTC ---------------------------------- */
+// virtual void getRtcTime(tm *time)
+// {
+// }
 
-        // /* ----------------------------------- RTC ---------------------------------- */
-        // virtual void getRtcTime(tm *time)
-        // {
-        // }
+// virtual void setRtcTime(tm time)
+// {
+// }
 
-        // virtual void setRtcTime(tm time)
-        // {
-        // }
+// virtual void clearRtcIrq()
+// {
+// }
 
-        // virtual void clearRtcIrq()
-        // {
-        // }
+// /* --------------------------------- Camera --------------------------------- */
+// virtual void startCameraCapture(lv_obj_t *imgCanvas)
+// {
+// }
 
-        // /* --------------------------------- Camera --------------------------------- */
-        // virtual void startCameraCapture(lv_obj_t *imgCanvas)
-        // {
-        // }
+// virtual void stopCameraCapture()
+// {
+// }
 
-        // virtual void stopCameraCapture()
-        // {
-        // }
+// virtual bool isCameraCapturing()
+// {
+//     return false;
+// }
 
-        // virtual bool isCameraCapturing()
-        // {
-        //     return false;
-        // }
+// /* ---------------------------------- USB-A --------------------------------- */
+// struct HidMouseData_t
+// {
+//     std::mutex mutex;
+//     int x = 0;
+//     int y = 0;
+//     bool btnLeft = false;
+//     bool btnRight = false;
+// };
 
-        // /* ---------------------------------- USB-A --------------------------------- */
-        // struct HidMouseData_t
-        // {
-        //     std::mutex mutex;
-        //     int x = 0;
-        //     int y = 0;
-        //     bool btnLeft = false;
-        //     bool btnRight = false;
-        // };
+// HidMouseData_t hidMouseData;
 
-        // HidMouseData_t hidMouseData;
+// /* ---------------------------------- Audio --------------------------------- */
+// virtual void setSpeakerVolume(uint8_t volume)
+// {
+// }
 
-        // /* ---------------------------------- Audio --------------------------------- */
-        // virtual void setSpeakerVolume(uint8_t volume)
-        // {
-        // }
+// virtual uint8_t getSpeakerVolume()
+// {
+//     return 0;
+// }
 
-        // virtual uint8_t getSpeakerVolume()
-        // {
-        //     return 0;
-        // }
+// // [MIC-L, AEC, MIC-R, MIC-HP]
+// virtual void audioRecord(std::vector<int16_t> &data, uint16_t durationMs, float gain = 80.0f)
+// {
+// }
 
-        // // [MIC-L, AEC, MIC-R, MIC-HP]
-        // virtual void audioRecord(std::vector<int16_t> &data, uint16_t durationMs, float gain = 80.0f)
-        // {
-        // }
+// virtual void audioPlay(std::vector<int16_t> &data, bool async = true)
+// {
+// }
 
-        // virtual void audioPlay(std::vector<int16_t> &data, bool async = true)
-        // {
-        // }
+// // Mic record test
+// enum MicTestState_t {
+//     MIC_TEST_IDLE,
+//     MIC_TEST_RECORDING,
+//     MIC_TEST_PLAYING,
+// };
 
-        // // Mic record test
-        // enum MicTestState_t {
-        //     MIC_TEST_IDLE,
-        //     MIC_TEST_RECORDING,
-        //     MIC_TEST_PLAYING,
-        // };
+// virtual void startDualMicRecordTest()
+// {
+// }
 
-        // virtual void startDualMicRecordTest()
-        // {
-        // }
+// virtual MicTestState_t getDualMicRecordTestState()
+// {
+//     return MIC_TEST_IDLE;
+// }
 
-        // virtual MicTestState_t getDualMicRecordTestState()
-        // {
-        //     return MIC_TEST_IDLE;
-        // }
+// virtual void startHeadphoneMicRecordTest()
+// {
+// }
 
-        // virtual void startHeadphoneMicRecordTest()
-        // {
-        // }
+// virtual MicTestState_t getHeadphoneMicRecordTestState()
+// {
+//     return MIC_TEST_IDLE;
+// }
 
-        // virtual MicTestState_t getHeadphoneMicRecordTestState()
-        // {
-        //     return MIC_TEST_IDLE;
-        // }
+// // Play music test
+// enum MusicPlayState_t {
+//     MUSIC_PLAY_IDLE,
+//     MUSIC_PLAY_PLAYING,
+// };
 
-        // // Play music test
-        // enum MusicPlayState_t {
-        //     MUSIC_PLAY_IDLE,
-        //     MUSIC_PLAY_PLAYING,
-        // };
+// virtual void startPlayMusicTest()
+// {
+// }
 
-        // virtual void startPlayMusicTest()
-        // {
-        // }
+// virtual MusicPlayState_t getMusicPlayTestState()
+// {
+//     return MUSIC_PLAY_IDLE;
+// }
 
-        // virtual MusicPlayState_t getMusicPlayTestState()
-        // {
-        //     return MUSIC_PLAY_IDLE;
-        // }
+// virtual void stopPlayMusicTest()
+// {
+// }
 
-        // virtual void stopPlayMusicTest()
-        // {
-        // }
+// // Sfx
+// virtual void playStartupSfx()
+// {
+// }
 
-        // // Sfx
-        // virtual void playStartupSfx()
-        // {
-        // }
+// virtual void playShutdownSfx()
+// {
+// }
 
-        // virtual void playShutdownSfx()
-        // {
-        // }
+// /* --------------------------------- Network -------------------------------- */
+// virtual void setExtAntennaEnable(bool enable)
+// {
+// }
 
-        // /* --------------------------------- Network -------------------------------- */
-        // virtual void setExtAntennaEnable(bool enable)
-        // {
-        // }
+// virtual bool getExtAntennaEnable()
+// {
+//     return false;
+// }
 
-        // virtual bool getExtAntennaEnable()
-        // {
-        //     return false;
-        // }
+// virtual void startWifiAp()
+// {
+// }
 
-        // virtual void startWifiAp()
-        // {
-        // }
+//     /* -------------------------------- Interface ------------------------------- */
+//     virtual bool usbCDetect()
+//     {
+//         return false;
+//     }
 
-    //     /* -------------------------------- Interface ------------------------------- */
-    //     virtual bool usbCDetect()
-    //     {
-    //         return false;
-    //     }
+//     virtual bool usbADetect()
+//     {
+//         return false;
+//     }
 
-    //     virtual bool usbADetect()
-    //     {
-    //         return false;
-    //     }
+//     virtual bool headPhoneDetect()
+//     {
+//         return false;
+//     }
 
-    //     virtual bool headPhoneDetect()
-    //     {
-    //         return false;
-    //     }
+//     virtual std::vector<uint8_t> i2cScan(bool isInternal)
+//     {
+//         return {};
+//     }
 
-    //     virtual std::vector<uint8_t> i2cScan(bool isInternal)
-    //     {
-    //         return {};
-    //     }
+//     virtual void initPortAI2c()
+//     {
+//     }
 
-    //     virtual void initPortAI2c()
-    //     {
-    //     }
+//     virtual void deinitPortAI2c()
+//     {
+//     }
 
-    //     virtual void deinitPortAI2c()
-    //     {
-    //     }
+//     virtual void gpioInitOutput(uint8_t pin)
+//     {
+//     }
 
-    //     virtual void gpioInitOutput(uint8_t pin)
-    //     {
-    //     }
+//     virtual void gpioSetLevel(uint8_t pin, bool level)
+//     {
+//     }
 
-    //     virtual void gpioSetLevel(uint8_t pin, bool level)
-    //     {
-    //     }
+//     virtual void gpioReset(uint8_t pin)
+//     {
+//     }
 
-    //     virtual void gpioReset(uint8_t pin)
-    //     {
-    //     }
+//     /* ------------------------------ UART monitor ------------------------------ */
+//     struct UartMonitorData_t
+//     {
+//         std::mutex mutex;
+//         std::queue<uint8_t> rxQueue;
+//         std::queue<uint8_t> txQueue;
+//     };
 
-    //     /* ------------------------------ UART monitor ------------------------------ */
-    //     struct UartMonitorData_t
-    //     {
-    //         std::mutex mutex;
-    //         std::queue<uint8_t> rxQueue;
-    //         std::queue<uint8_t> txQueue;
-    //     };
+//     UartMonitorData_t uartMonitorData;
 
-    //     UartMonitorData_t uartMonitorData;
-
-    //     virtual void uartMonitorSend(std::string msg, bool newLine = true)
-    //     {
-    //         std::lock_guard<std::mutex> lock(uartMonitorData.mutex);
-    //         for (auto c: msg)
-    //         {
-    //             uartMonitorData.txQueue.push(c);
-    //         }
-    //         if (newLine)
-    //         {
-    //             uartMonitorData.txQueue.push('\n');
-    //         }
-    //     }
-    // };
+//     virtual void uartMonitorSend(std::string msg, bool newLine = true)
+//     {
+//         std::lock_guard<std::mutex> lock(uartMonitorData.mutex);
+//         for (auto c: msg)
+//         {
+//             uartMonitorData.txQueue.push(c);
+//         }
+//         if (newLine)
+//         {
+//             uartMonitorData.txQueue.push('\n');
+//         }
+//     }
+// };
