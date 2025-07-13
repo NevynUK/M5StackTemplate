@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
- #include <sdkconfig.h>
+#include <sdkconfig.h>
 
 #include <memory>
 #include <cstring>
@@ -18,6 +18,7 @@
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp_system.h"
+#include "esp_heap_caps.h"
 
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
@@ -25,13 +26,21 @@
 #include "Utils.hpp"
 #include <HalBase.h>
 #include <HalTab5.h>
+#include <Display.hpp>
 
 using namespace HAL;
+
+extern "C" void heap_caps_alloc_failed_hook(size_t requested_size, uint32_t caps, const char *function_name)
+{
+  printf("%s was called but failed to allocate %d bytes with 0x%X capabilities. \n",function_name, requested_size, (unsigned int) caps);
+}
 
 extern "C" void app_main(void)
 {
     std::unique_ptr<HalBase> hal = std::make_unique<HalTab5>();
-    hal->init();
+    ESP_ERROR_CHECK(hal->ConfigureDisplay());
+    std::unique_ptr<Display> display = std::make_unique<Display>();
+    display->Configure(hal);
 
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -54,78 +63,72 @@ extern "C" void app_main(void)
 
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
-    printf("SD card interface configured successfully\n");
-    std::string mountPoint = "/sdcard";
-    if (hal->Mount() != ESP_OK)
-    {
-        printf("Failed to mount SD card\n");
-    }
-    else
-    {
-        printf("SD card mounted successfully\n");
-        DIR* dir = opendir(mountPoint.c_str());
-        if (dir == nullptr)
-        {
-            printf("Failed to open directory: %s\n", mountPoint.c_str());
-        }
-        else
-        {
-            printf("Directory opened successfully: %s\n", mountPoint.c_str());
-            struct dirent* entry;
-            while ((entry = readdir(dir)) != nullptr)
-            {
-                if (std::string(entry->d_name) == "." || std::string(entry->d_name) == "..")
-                {
-                    continue;
-                }
-                printf("Found file: %s\n", entry->d_name);
-            }
-
-            closedir(dir);
-        }
-    }
-
-    hal->ConfigureDisplay();
-    // Display *display = Display::GetInstance();
-    // display->Setup();
-
-    // hal->lvglLock();
-    /**
-     * @brief Pointer to the screen object to be used in drawing operations.
-     */
-    // lv_obj_t *_screen = nullptr;
-
-    // _screen = lv_scr_act();
-
-    // lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
-
-    // lv_obj_t *rectangle = lv_obj_create(_screen);
-    // lv_obj_set_size(rectangle, 200, 200);
-    // lv_obj_set_pos(rectangle, 100, 100);
-    // lv_obj_set_style_radius(rectangle, 0, 0);
-    // lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
-
-    // hal->lvglUnlock();
-
-    // uint32_t brightness = 0;
-    // int direction = 10;
-    // while (true)
+    // printf("SD card interface configured successfully\n");
+    // std::string mountPoint = "/sdcard";
+    // if (hal->Mount() != ESP_OK)
     // {
-    //     if (brightness >= 100)
-    //     {
-    //         direction = -10;
-    //     }
-    //     else 
-    //     {
-    //         if (brightness == 0)
-    //         {
-    //             direction = 10;
-    //         }
-    //     }
-    //     brightness += direction;
-    //     hal->setDisplayBrightness(brightness);
-    //     vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //     printf("Failed to mount SD card\n");
     // }
+    // else
+    // {
+    //     printf("SD card mounted successfully\n");
+    //     DIR* dir = opendir(mountPoint.c_str());
+    //     if (dir == nullptr)
+    //     {
+    //         printf("Failed to open directory: %s\n", mountPoint.c_str());
+    //     }
+    //     else
+    //     {
+    //         printf("Directory opened successfully: %s\n", mountPoint.c_str());
+    //         struct dirent* entry;
+    //         while ((entry = readdir(dir)) != nullptr)
+    //         {
+    //             if (std::string(entry->d_name) == "." || std::string(entry->d_name) == "..")
+    //             {
+    //                 continue;
+    //             }
+    //             printf("Found file: %s\n", entry->d_name);
+    //         }
+
+    //         closedir(dir);
+    //     }
+    // }
+
+
+    display->Lock();
+    lv_obj_t *_screen = nullptr;
+
+    _screen = lv_scr_act();
+
+    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
+
+    lv_obj_t *rectangle = lv_obj_create(_screen);
+    lv_obj_set_size(rectangle, 200, 200);
+    lv_obj_set_pos(rectangle, 100, 100);
+    lv_obj_set_style_radius(rectangle, 0, 0);
+    lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
+
+    display->Unlock();
+
+    uint32_t brightness = 0;
+    int direction = 10;
+    while (true)
+    {
+        if (brightness >= 100)
+        {
+            direction = -10;
+        }
+        else 
+        {
+            if (brightness == 0)
+            {
+                direction = 10;
+            }
+        }
+        brightness += direction;
+        hal->SetDisplayBrightness(brightness);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 
     vTaskDelay(portMAX_DELAY / portTICK_PERIOD_MS);
 }
