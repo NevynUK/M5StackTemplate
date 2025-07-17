@@ -29,7 +29,7 @@
 #include "bsp_err_check.h"
 #include "esp_codec_dev_defaults.h"
 
-static const char *TAG = "M5STACK_TAB5";
+static const char *COMPONENT_NAME = "M5STACK_TAB5";
 
 static lv_indev_t *disp_indev = NULL;
 
@@ -71,9 +71,9 @@ esp_err_t bsp_i2c_init(void)
 
 void bsp_reset_tp()
 {
-    // ESP_LOGI(TAG, "reset tp");
+    // ESP_LOGI(COMPONENT_NAME, "reset tp");
 
-    // ESP_LOGI(TAG, "reset gpio %d", GPIO_NUM_23);
+    // ESP_LOGI(COMPONENT_NAME, "reset gpio %d", GPIO_NUM_23);
     // gpio_reset_pin(GPIO_NUM_23);
 
     // uint8_t write_buf[2] = {0};
@@ -112,8 +112,8 @@ static esp_err_t bsp_enable_dsi_phy_power(void)
         .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
         .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
     };
-    ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), TAG, "Acquire LDO channel for DPHY failed");
-    ESP_LOGI(TAG, "MIPI DSI PHY Powered on");
+    ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), COMPONENT_NAME, "Acquire LDO channel for DPHY failed");
+    ESP_LOGI(COMPONENT_NAME, "MIPI DSI PHY Powered on");
 #endif // BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
 
     return ESP_OK;
@@ -127,8 +127,8 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     esp_lcd_panel_io_handle_t io = NULL;
     esp_lcd_panel_handle_t disp_panel = NULL;
 
-    // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
-    ESP_RETURN_ON_ERROR(bsp_enable_dsi_phy_power(), TAG, "DSI PHY power failed");
+    // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), COMPONENT_NAME, "Brightness init failed");
+    ESP_RETURN_ON_ERROR(bsp_enable_dsi_phy_power(), COMPONENT_NAME, "DSI PHY power failed");
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
     esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
@@ -139,9 +139,9 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
         .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
     };
-    ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_config, &mipi_dsi_bus), TAG, "New DSI bus init failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_config, &mipi_dsi_bus), COMPONENT_NAME, "New DSI bus init failed");
 
-    ESP_LOGI(TAG, "Install MIPI DSI LCD control panel");
+    ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
     // we use DBI interface to send LCD commands and parameters
     esp_lcd_dbi_io_config_t dbi_config =
     {
@@ -149,9 +149,9 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .lcd_cmd_bits = 8,   // according to the LCD spec
         .lcd_param_bits = 8, // according to the LCD spec
     };
-    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, TAG, "New panel IO failed");
+    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, COMPONENT_NAME, "New panel IO failed");
 
-    ESP_LOGI(TAG, "Install LCD driver of ili9881c");
+    ESP_LOGI(COMPONENT_NAME, "Install LCD driver of ili9881c");
     esp_lcd_dpi_panel_config_t dpi_config =
     {
         .virtual_channel = 0,
@@ -204,7 +204,7 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     ret_handles->panel = disp_panel;
     ret_handles->control = NULL;
 
-    ESP_LOGI(TAG, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
+    ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
 
     return ret;
 
@@ -252,7 +252,7 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
     tp_io_config.dev_addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS_BACKUP; // Change GT911 address
     tp_io_config.scl_speed_hz = CONFIG_BSP_I2C_CLK_SPEED_HZ;
-    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_i2c(i2c_handle, &tp_io_config, &tp_io_handle), TAG, "");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_i2c(i2c_handle, &tp_io_config, &tp_io_handle), COMPONENT_NAME, "");
     return esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, ret_touch);
 }
 
@@ -263,7 +263,7 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
     BSP_ERROR_CHECK_RETURN_NULL(bsp_display_new_with_handles(NULL, &lcd_panels));
 
     /* Add LCD screen */
-    ESP_LOGD(TAG, "Add LCD screen");
+    ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
     const lvgl_port_display_cfg_t disp_cfg =
     {
         .io_handle = lcd_panels.io,
