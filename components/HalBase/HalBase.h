@@ -76,21 +76,6 @@ namespace hal
         {
         }
 
-        // [MIC-L, AEC, MIC-R, MIC-HP]
-        /* --------------------------------- Network -------------------------------- */
-        virtual void setExtAntennaEnable(bool enable)
-        {
-        }
-
-        virtual bool getExtAntennaEnable()
-        {
-            return false;
-        }
-
-        virtual void startWifiAp()
-        {
-        }
-
         /* -------------------------------- Interface ------------------------------- */
         virtual bool usbCDetect()
         {

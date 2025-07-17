@@ -228,10 +228,6 @@ extern "C"
 
     void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle);
 
-    void bsp_set_ext_antenna_enable(bool en);
-
-    void bsp_set_wifi_power_enable(bool en);
-
     void bsp_reset_tp();
 
 #ifdef __cplusplus

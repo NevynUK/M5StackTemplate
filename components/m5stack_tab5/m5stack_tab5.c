@@ -266,57 +266,6 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
     i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
 }
 
-
-void bsp_set_ext_antenna_enable(bool en)
-{
-    uint8_t write_buf[2] = {0};
-    uint8_t read_buf[1] = {0};
-
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe1, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    write_buf[1] = read_buf[0];
-    if (en)
-    {
-        setbit(write_buf[1], 0);
-    }
-    else
-    {
-        clrbit(write_buf[1], 0);
-    }
-
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-}
-
-void bsp_set_wifi_power_enable(bool en)
-{
-    uint8_t write_buf[2] = {0};
-    uint8_t read_buf[1] = {0};
-
-    ESP_LOGI(TAG, "set_wifi_power_enable: %d", en);
-
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe2, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    write_buf[1] = read_buf[0];
-    if (en)
-    {
-        setbit(write_buf[1], 0);
-    }
-    else
-    {
-        clrbit(write_buf[1], 0);
-    }
-
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe2, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-    printf("0x%02X: %02x\n", PI4IO_REG_OUT_SET, read_buf[0]);
-}
-
 void bsp_reset_tp()
 {
     ESP_LOGI(TAG, "reset tp");
