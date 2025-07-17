@@ -3,8 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "hal/hal_esp32.h"
-#include <HalBase.h>
 #include <memory>
 #include <cstring>
 #include <freertos/FreeRTOS.h>
@@ -17,6 +15,8 @@
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
 
+#include "hal/hal_esp32.hpp"
+#include <HalBase.h>
 #include "Utils.hpp"
 
 extern "C" void app_main(void)
@@ -54,7 +54,7 @@ extern "C" void app_main(void)
     // Display *display = Display::GetInstance();
     // display->Setup();
 
-    hal->lvglLock();
+    lvgl_port_lock(0);
     /**
      * @brief Pointer to the screen object to be used in drawing operations.
      */
@@ -70,13 +70,13 @@ extern "C" void app_main(void)
     lv_obj_set_style_radius(rectangle, 0, 0);
     lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
 
-    hal->lvglUnlock();
+    lvgl_port_unlock();
 
     while (true)
     {
-        hal->setDisplayBrightness(100);
+        hal->SetDisplayBrightness(100);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        hal->setDisplayBrightness(0);
+        hal->SetDisplayBrightness(0);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 

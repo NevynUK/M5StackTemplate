@@ -44,7 +44,7 @@ dependencies:
       type: service
     version: 0.5.3
   espressif/eppp_link:
-    component_hash: f82b41b83936cb99b01129c0aec5ebf39c4bbff252bea400062d8bc4e7b83e20
+    component_hash: 3b1c8f79fa1261a87b9fa8ea6012cb8bf058a949d120c8ad59e1eeffdc0c154f
     dependencies:
     - name: espressif/esp_serial_slave_link
       registry_url: https://components.espressif.com
@@ -56,7 +56,7 @@ dependencies:
     source:
       registry_url: https://components.espressif.com
       type: service
-    version: 0.3.1
+    version: 1.0.0
   espressif/esp_cam_sensor:
     component_hash: 1e4dfa0232fc900d3141e342f1ad3a042fdccf74084f18684e6a42e0c022f5a4
     dependencies:
@@ -109,7 +109,7 @@ dependencies:
       type: service
     version: 1.4.0
   espressif/esp_ipa:
-    component_hash: d96e89566310400d98fd8809cfe584bac6ecd3ae6ab9072dd98957a51cb7109f
+    component_hash: d198b1864f1abd263f97956713639617b3ead35e1871a41c755c4ef89b83121c
     dependencies:
     - name: espressif/cmake_utilities
       registry_url: https://components.espressif.com
@@ -123,7 +123,7 @@ dependencies:
       type: service
     targets:
     - esp32p4
-    version: 1.0.0
+    version: 1.0.1
   espressif/esp_lcd_ili9881c:
     component_hash: f4f374226b62baf13f735864e8fae58e17c537df34d598e059f6caad4761ef65
     dependencies:
@@ -201,7 +201,7 @@ dependencies:
       type: service
     version: 0.0.5
   espressif/esp_serial_slave_link:
-    component_hash: 8c534b7d4986ca0e4c41db71f559492b795ab862f1d15359d7993034696b7bcc
+    component_hash: d8c13c033a7604e9333b5d8ea45e0d6fec908fd552df7db20d33dd8d6916528d
     dependencies:
     - name: idf
       require: private
@@ -209,7 +209,7 @@ dependencies:
     source:
       registry_url: https://components.espressif.com
       type: service
-    version: 1.1.0
+    version: 1.1.0~1
   espressif/esp_video:
     component_hash: f2b4807ae7286ecb1b10e63aa4b705021f5d6686121135e15206beccf12a10ac
     dependencies:
@@ -311,6 +311,6 @@ direct_dependencies:
 - espressif/usb_host_hid
 - idf
 - lvgl/lvgl
-manifest_hash: d74942f6ff063810eee7a93928cd65dcd649c2115adbb7a0830e82d5cb8a3a96
+manifest_hash: 4fedcc4f8da36c8b5a1ca5f5c5ebf036a0f07da8d1d720af5521f3dfdcb006de
 target: esp32p4
 version: 2.0.0

@@ -103,7 +103,7 @@ extern "C"
      *      - ESP_OK         On success
      *      - Else           esp_lcd failure
      */
-    esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_handle_t *ret_panel, esp_lcd_panel_io_handle_t *ret_io);
+    // esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_handle_t *ret_panel, esp_lcd_panel_io_handle_t *ret_io);
 
     /**
      * @brief Create new display panel
@@ -130,53 +130,6 @@ extern "C"
      */
     esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles);
 
-    /**
-     * @brief Initialize display's brightness
-     *
-     * Brightness is controlled with PWM signal to a pin controlling backlight.
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   Parameter error
-     */
-    esp_err_t bsp_display_brightness_init(void);
-
-    /**
-     * @brief Set display's brightness
-     *
-     * Brightness is controlled with PWM signal to a pin controlling backlight.
-     * Brightness must be already initialized by calling bsp_display_brightness_init() or bsp_display_new()
-     *
-     * @param[in] brightness_percent Brightness in [%]
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   Parameter error
-     */
-    esp_err_t bsp_display_brightness_set(int brightness_percent);
-
-    /**
-     * @brief Turn on display backlight
-     *
-     * Brightness is controlled with PWM signal to a pin controlling backlight.
-     * Brightness must be already initialized by calling bsp_display_brightness_init() or bsp_display_new()
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   Parameter error
-     */
-    esp_err_t bsp_display_backlight_on(void);
-
-    /**
-     * @brief Turn off display backlight
-     *
-     * Brightness is controlled with PWM signal to a pin controlling backlight.
-     * Brightness must be already initialized by calling bsp_display_brightness_init() or bsp_display_new()
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   Parameter error
-     */
-    esp_err_t bsp_display_backlight_off(void);
 
 #ifdef __cplusplus
 }

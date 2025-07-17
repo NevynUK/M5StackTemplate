@@ -17,15 +17,11 @@
 #include "driver/sdmmc_host.h"
 #include "driver/i2s_std.h"
 #include "driver/i2s_tdm.h"
-#include "bsp/config.h"
 #include "bsp/display.h"
 #include "esp_codec_dev.h"
-#include "sdkconfig.h"
 
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
-    #include "lvgl.h"
-    #include "esp_lvgl_port.h"
-#endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
+#include "lvgl.h"
+#include "esp_lvgl_port.h"
 
 /**************************************************************************************************
  *  BSP Capabilities
@@ -102,25 +98,6 @@ extern "C"
      */
     esp_err_t bsp_i2c_init(void);
 
-    /**
-     * @brief Deinit I2C driver and free its resources
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   I2C parameter error
-     *
-     */
-    esp_err_t bsp_i2c_deinit(void);
-
-    /**
-     * @brief Get I2C driver handle
-     *
-     * @return
-     *      - I2C handle
-     *
-     */
-    i2c_master_bus_handle_t bsp_i2c_get_handle(void);
-
 /**************************************************************************************************
  *
  * LCD interface
@@ -135,8 +112,6 @@ extern "C"
  * Display's backlight must be enabled explicitly by calling bsp_display_backlight_on()
  **************************************************************************************************/
 #define BSP_LCD_PIXEL_CLOCK_MHZ (80)
-
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
 
     #define BSP_LCD_DRAW_BUFF_SIZE (BSP_LCD_H_RES * 50) // Frame buffer size in pixels
     #define BSP_LCD_DRAW_BUFF_DOUBLE (0)
@@ -165,16 +140,6 @@ extern "C"
      * This function initializes SPI, display controller and starts LVGL handling task.
      * LCD backlight must be enabled separately by calling bsp_display_brightness_set()
      *
-     * @return Pointer to LVGL display or NULL when error occured
-     */
-    lv_display_t *bsp_display_start(void);
-
-    /**
-     * @brief Initialize display
-     *
-     * This function initializes SPI, display controller and starts LVGL handling task.
-     * LCD backlight must be enabled separately by calling bsp_display_brightness_set()
-     *
      * @param cfg display configuration
      *
      * @return Pointer to LVGL display or NULL when error occured
@@ -189,32 +154,6 @@ extern "C"
      * @return Pointer to LVGL input device or NULL when not initialized
      */
     lv_indev_t *bsp_display_get_input_dev(void);
-
-    /**
-     * @brief Take LVGL mutex
-     *
-     * @param timeout_ms Timeout in [ms]. 0 will block indefinitely.
-     * @return true  Mutex was taken
-     * @return false Mutex was NOT taken
-     */
-    bool bsp_display_lock(uint32_t timeout_ms);
-
-    /**
-     * @brief Give LVGL mutex
-     *
-     */
-    void bsp_display_unlock(void);
-
-    /**
-     * @brief Rotate screen
-     *
-     * Display must be already initialized by calling bsp_display_start()
-     *
-     * @param[in] disp Pointer to LVGL display
-     * @param[in] rotation Angle of the display rotation
-     */
-    void bsp_display_rotate(lv_display_t *disp, lv_disp_rotation_t rotation);
-#endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
 
     void bsp_reset_tp();
 
