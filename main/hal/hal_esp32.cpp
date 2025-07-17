@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include "hal/hal_esp32.h"
-extern "C"
-{
-#include <rx8130.h>
-}
 
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
@@ -15,38 +11,38 @@ extern "C"
 #include <bsp/m5stack_tab5.h>
 #include <lv_demos.h>
 
-extern esp_lcd_touch_handle_t _lcd_touch_handle;
+// extern esp_lcd_touch_handle_t _lcd_touch_handle;
 
 static const std::string _tag = "hal";
 
-static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
-{
-    if (_lcd_touch_handle == NULL)
-    {
-        data->state = LV_INDEV_STATE_REL;
-        return;
-    }
+// static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+// {
+//     if (_lcd_touch_handle == NULL)
+//     {
+//         data->state = LV_INDEV_STATE_REL;
+//         return;
+//     }
 
-    uint16_t touch_x[1];
-    uint16_t touch_y[1];
-    uint16_t touch_strength[1];
-    uint8_t touch_cnt = 0;
+//     uint16_t touch_x[1];
+//     uint16_t touch_y[1];
+//     uint16_t touch_strength[1];
+//     uint8_t touch_cnt = 0;
 
-    esp_lcd_touch_read_data(_lcd_touch_handle);
-    bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
-    // mclog::tagInfo(_tag, "touchpad pressed: {}", touchpad_pressed);
+//     esp_lcd_touch_read_data(_lcd_touch_handle);
+//     bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
+//     // mclog::tagInfo(_tag, "touchpad pressed: {}", touchpad_pressed);
 
-    if (!touchpad_pressed)
-    {
-        data->state = LV_INDEV_STATE_REL;
-    }
-    else
-    {
-        data->state = LV_INDEV_STATE_PR;
-        data->point.x = touch_x[0];
-        data->point.y = touch_y[0];
-    }
-}
+//     if (!touchpad_pressed)
+//     {
+//         data->state = LV_INDEV_STATE_REL;
+//     }
+//     else
+//     {
+//         data->state = LV_INDEV_STATE_PR;
+//         data->point.x = touch_x[0];
+//         data->point.y = touch_y[0];
+//     }
+// }
 
 /* -------------------------------------------------------------------------- */
 /*                                    I2C                                     */
@@ -209,7 +205,7 @@ void HalEsp32::init()
 
     ConfigureIoExpanders();
 
-    bsp_reset_tp();
+    // bsp_reset_tp();
     bsp_display_cfg_t cfg =
     {
         .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
@@ -232,10 +228,10 @@ void HalEsp32::init()
     bsp_display_backlight_on();
 
     // Touchpad lvgl indev
-    lvTouchpad = lv_indev_create();
-    lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
-    lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
-    lv_indev_set_display(lvTouchpad, lvDisp);
+    // lvTouchpad = lv_indev_create();
+    // lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
+    // lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
+    // lv_indev_set_display(lvTouchpad, lvDisp);
 
     bsp_display_unlock();
 }

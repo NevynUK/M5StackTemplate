@@ -11,7 +11,6 @@
 #include <HalBase.h>
 #include <ina226.hpp>
 #include <lvgl.h>
-#include <rx8130.h>
 
 class HalEsp32 : public hal::HalBase
 {
@@ -52,7 +51,6 @@ public:
     void init() override;
 
     INA226 ina226;
-    RX8130_Class rx8130;
     lv_disp_t *lvDisp = nullptr;
     lv_indev_t *lvKeyboard = nullptr;
 
