@@ -17,15 +17,11 @@
 #include "driver/sdmmc_host.h"
 #include "driver/i2s_std.h"
 #include "driver/i2s_tdm.h"
-#include "bsp/config.h"
 #include "bsp/display.h"
 #include "esp_codec_dev.h"
-#include "sdkconfig.h"
 
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
-    #include "lvgl.h"
-    #include "esp_lvgl_port.h"
-#endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
+#include "lvgl.h"
+#include "esp_lvgl_port.h"
 
 /**************************************************************************************************
  *  BSP Capabilities
@@ -136,8 +132,6 @@ extern "C"
  **************************************************************************************************/
 #define BSP_LCD_PIXEL_CLOCK_MHZ (80)
 
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
-
     #define BSP_LCD_DRAW_BUFF_SIZE (BSP_LCD_H_RES * 50) // Frame buffer size in pixels
     #define BSP_LCD_DRAW_BUFF_DOUBLE (0)
 
@@ -214,7 +208,6 @@ extern "C"
      * @param[in] rotation Angle of the display rotation
      */
     void bsp_display_rotate(lv_display_t *disp, lv_disp_rotation_t rotation);
-#endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
 
     void bsp_reset_tp();
 

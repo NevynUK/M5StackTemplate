@@ -5,6 +5,7 @@
  */
 
 #include "sdkconfig.h"
+
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "esp_err.h"
@@ -30,9 +31,7 @@
 
 static const char *TAG = "M5STACK_TAB5";
 
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
 static lv_indev_t *disp_indev = NULL;
-#endif // (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
 
 // sys i2c
 static bool i2c_initialized = false;
@@ -354,7 +353,6 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     return esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, ret_touch);
 }
 
-#if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
 static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
 {
     assert(cfg != NULL);
@@ -503,4 +501,4 @@ void bsp_display_unlock(void)
 {
     lvgl_port_unlock();
 }
-#endif // (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
+
