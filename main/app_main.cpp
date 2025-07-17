@@ -3,8 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "hal/hal_esp32.h"
-#include <HalBase.h>
 #include <memory>
 #include <cstring>
 #include <freertos/FreeRTOS.h>
@@ -17,6 +15,8 @@
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
 
+#include "hal/hal_esp32.hpp"
+#include <HalBase.h>
 #include "Utils.hpp"
 
 extern "C" void app_main(void)

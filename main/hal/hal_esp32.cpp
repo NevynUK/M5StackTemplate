@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "hal/hal_esp32.h"
+#include "hal/hal_esp32.hpp"
 
 #include <esp_timer.h>
 #include "esp_log.h"
