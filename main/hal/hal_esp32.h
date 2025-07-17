@@ -66,9 +66,6 @@ public:
     void updateImuData() override;
     void clearImuIrq() override;
 
-    void clearRtcIrq() override;
-    void setRtcTime(tm time) override;
-
     void setChargeQcEnable(bool enable) override;
     bool getChargeQcEnable() override;
     void setChargeEnable(bool enable) override;

@@ -368,37 +368,6 @@ void HalEsp32::lvglUnlock()
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                     RTC                                    */
-/* -------------------------------------------------------------------------- */
-void HalEsp32::clearRtcIrq()
-{
-    mclog::tagInfo(_tag, "clear rtc irq");
-    rx8130.clearIrqFlags();
-    rx8130.disableIrq();
-}
-
-void HalEsp32::setRtcTime(tm time)
-{
-    mclog::tagInfo(_tag, "set rtc time to {}/{}/{} {:02d}:{:02d}:{:02d}", time.tm_year + 1900, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
-    rx8130.setTime(&time);
-    delay(50);
-
-    update_system_time();
-}
-
-void HalEsp32::update_system_time()
-{
-    mclog::tagInfo(_tag, "update system time");
-    struct tm time;
-    rx8130.getTime(&time);
-    mclog::tagInfo(_tag, "sync to rtc time: {}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}", time.tm_year + 1900, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
-    struct timeval now;
-    now.tv_sec = mktime(&time);
-    now.tv_usec = 0;
-    settimeofday(&now, NULL);
-}
-
-/* -------------------------------------------------------------------------- */
 /*                                   SD Card                                  */
 /* -------------------------------------------------------------------------- */
 #include <dirent.h>
