@@ -344,47 +344,11 @@ static const gpio_num_t _driver_gpios[] = {
 // }
 
 /* -------------------------------------------------------------------------- */
-/*                                   System                                   */
-/* -------------------------------------------------------------------------- */
-#include <driver/temperature_sensor.h>
-static temperature_sensor_handle_t _temp_sensor = nullptr;
-
-void HalEsp32::delay(uint32_t ms)
-{
-    vTaskDelay(pdMS_TO_TICKS(ms));
-}
-
-uint32_t HalEsp32::millis()
-{
-    return esp_timer_get_time() / 1000;
-}
-
-int HalEsp32::getCpuTemp()
-{
-    if (_temp_sensor == nullptr)
-    {
-        temperature_sensor_config_t temp_sensor_config =
-        {
-            .range_min = 20,
-            .range_max = 100,
-        };
-        temperature_sensor_install(&temp_sensor_config, &_temp_sensor);
-        temperature_sensor_enable(_temp_sensor);
-    }
-
-    float temp = 0;
-    temperature_sensor_get_celsius(_temp_sensor, &temp);
-
-    return temp;
-}
-
-/* -------------------------------------------------------------------------- */
 /*                                   Display                                  */
 /* -------------------------------------------------------------------------- */
 void HalEsp32::setDisplayBrightness(uint8_t brightness)
 {
     _current_lcd_brightness = std::clamp((int) brightness, 0, 100);
-    mclog::tagInfo("hal", "set display brightness: {}%", _current_lcd_brightness);
     bsp_display_brightness_set(_current_lcd_brightness);
 }
 

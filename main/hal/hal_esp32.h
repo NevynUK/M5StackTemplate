@@ -51,10 +51,6 @@ public:
 
     void init() override;
 
-    void delay(uint32_t ms) override;
-    uint32_t millis() override;
-    int getCpuTemp() override;
-
     INA226 ina226;
     RX8130_Class rx8130;
     lv_disp_t *lvDisp = nullptr;
