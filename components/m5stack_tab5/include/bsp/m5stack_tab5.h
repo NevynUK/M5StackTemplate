@@ -130,26 +130,6 @@ extern "C"
     esp_err_t bsp_grove_i2c_init(void);
     esp_err_t bsp_grove_i2c_deinit(void);
     i2c_master_bus_handle_t bsp_grove_i2c_get_handle(void);
-
-    /**************************************************************************************************
-     *
-     * I2S audio interface
-     *
-     * There are two devices connected to the I2S peripheral:
-     *  - Codec ES8311 for output(playback) and input(recording) path
-     *
-     * For speaker initialization use bsp_audio_codec_speaker_init() which is inside initialize I2S with bsp_audio_init().
-     * For microphone initialization use bsp_audio_codec_microphone_init() which is inside initialize I2S with
-     *bsp_audio_init(). After speaker or microphone initialization, use functions from esp_codec_dev for play/record audio.
-     * Example audio play:
-     * \code{.c}
-     * esp_codec_dev_set_out_vol(spk_codec_dev, DEFAULT_VOLUME);
-     * esp_codec_dev_open(spk_codec_dev, &fs);
-     * esp_codec_dev_write(spk_codec_dev, wav_bytes, bytes_read_from_spiffs);
-     * esp_codec_dev_close(spk_codec_dev);
-     * \endcode
-     **************************************************************************************************/
-
     
 /**************************************************************************************************
  *
@@ -247,18 +227,6 @@ extern "C"
 #endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
 
     void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle);
-
-    void bsp_set_charge_qc_en(bool en);
-
-    void bsp_set_charge_en(bool en);
-
-    void bsp_set_usb_5v_en(bool en);
-
-    void bsp_set_ext_5v_en(bool en);
-
-    void bsp_generate_poweroff_signal();
-
-    bool bsp_headphone_detect();
 
     void bsp_set_ext_antenna_enable(bool en);
 
