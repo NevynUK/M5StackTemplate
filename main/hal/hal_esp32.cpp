@@ -274,7 +274,7 @@ static const gpio_num_t _driver_gpios[] = {
 /* -------------------------------------------------------------------------- */
 void HalEsp32::setDisplayBrightness(uint8_t brightness)
 {
-    _current_lcd_brightness = std::clamp((int) brightness, 0, 100);
+    _current_lcd_brightness = std::clamp(brightness, (uint8_t) 0, (uint8_t) 100);
     bsp_display_brightness_set(_current_lcd_brightness);
 }
 
