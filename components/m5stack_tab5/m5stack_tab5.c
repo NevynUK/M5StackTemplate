@@ -47,42 +47,6 @@ static i2c_master_bus_handle_t ext_i2c_bus_handle = NULL;
 static bool grove_i2c_initialized = false;
 static i2c_master_bus_handle_t grove_i2c_bus_handle = NULL;
 
-//==================================================================================
-// Camera output clock configuration
-//==================================================================================
-
-esp_err_t bsp_cam_osc_init(void)
-{
-    ledc_timer_config_t timer_conf;
-    timer_conf.duty_resolution = LEDC_TIMER_1_BIT;
-    timer_conf.freq_hz = 24000000; // <<<< change this to the frequency you want
-    timer_conf.speed_mode = LEDC_LOW_SPEED_MODE;
-    timer_conf.deconfigure = false;
-    timer_conf.clk_cfg = LEDC_AUTO_CLK;
-    timer_conf.timer_num = LEDC_TIMER_0;
-    esp_err_t err = ledc_timer_config(&timer_conf);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "ledc_timer_config failed for freq %d, rc=%x", 24000000, err);
-    }
-
-    ledc_channel_config_t ch_conf;
-    ch_conf.gpio_num = 36; // Camera clock input
-    ch_conf.speed_mode = LEDC_LOW_SPEED_MODE;
-    ch_conf.channel = LEDC_CHANNEL_0;
-    ch_conf.intr_type = LEDC_INTR_DISABLE;
-    ch_conf.timer_sel = LEDC_TIMER_0;
-    ch_conf.duty = 1;
-    ch_conf.hpoint = 0;
-    ch_conf.sleep_mode = LEDC_SLEEP_MODE_KEEP_ALIVE;
-    err = ledc_channel_config(&ch_conf);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "ledc_channel_config failed, rc=%x", err);
-    }
-
-    return ESP_OK;
-}
 
 void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle)
 {

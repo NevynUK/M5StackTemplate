@@ -62,10 +62,6 @@ public:
     void lvglLock() override;
     void lvglUnlock() override;
 
-    void startCameraCapture(lv_obj_t *imgCanvas) override;
-    void stopCameraCapture() override;
-    bool isCameraCapturing() override;
-
     void setExtAntennaEnable(bool enable) override;
     bool getExtAntennaEnable() override;
     void startWifiAp() override;

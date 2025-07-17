@@ -208,9 +208,6 @@ void HalEsp32::init()
 {
     mclog::tagInfo(_tag, "init");
 
-    // mclog::tagInfo(_tag, "camera init");
-    // bsp_cam_osc_init();
-
     mclog::tagInfo(_tag, "i2c init");
     ConfigureI2C();
 

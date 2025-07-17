@@ -76,20 +76,6 @@ namespace hal
         {
         }
 
-        /* --------------------------------- Camera --------------------------------- */
-        virtual void startCameraCapture(lv_obj_t *imgCanvas)
-        {
-        }
-
-        virtual void stopCameraCapture()
-        {
-        }
-
-        virtual bool isCameraCapturing()
-        {
-            return false;
-        }
-
         /* ---------------------------------- USB-A --------------------------------- */
         struct HidMouseData_t
         {
