@@ -99,16 +99,6 @@ extern "C"
     esp_err_t bsp_i2c_init(void);
 
     /**
-     * @brief Deinit I2C driver and free its resources
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   I2C parameter error
-     *
-     */
-    esp_err_t bsp_i2c_deinit(void);
-
-    /**
      * @brief Get I2C driver handle
      *
      * @return
@@ -152,16 +142,6 @@ extern "C"
             unsigned int sw_rotate:1;   /*!< Use software rotation (slower), The feature is unavailable under avoid-tear mode */
         } flags;
     } bsp_display_cfg_t;
-
-    /**
-     * @brief Initialize display
-     *
-     * This function initializes SPI, display controller and starts LVGL handling task.
-     * LCD backlight must be enabled separately by calling bsp_display_brightness_set()
-     *
-     * @return Pointer to LVGL display or NULL when error occured
-     */
-    lv_display_t *bsp_display_start(void);
 
     /**
      * @brief Initialize display

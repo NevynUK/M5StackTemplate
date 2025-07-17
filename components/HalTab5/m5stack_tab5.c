@@ -69,18 +69,10 @@ esp_err_t bsp_i2c_init(void)
     return ESP_OK;
 }
 
-esp_err_t bsp_i2c_deinit(void)
-{
-    BSP_ERROR_CHECK_RETURN_ERR(i2c_del_master_bus(i2c_handle));
-    i2c_initialized = false;
-    return ESP_OK;
-}
-
 i2c_master_bus_handle_t bsp_i2c_get_handle(void)
 {
     return i2c_handle;
 }
-
 
 void bsp_reset_tp()
 {
@@ -130,18 +122,6 @@ static esp_err_t bsp_enable_dsi_phy_power(void)
 #endif // BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
 
     return ESP_OK;
-}
-
-esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_handle_t *ret_panel, esp_lcd_panel_io_handle_t *ret_io)
-{
-    esp_err_t ret = ESP_OK;
-    bsp_lcd_handles_t handles;
-    ret = bsp_display_new_with_handles(config, &handles);
-
-    *ret_panel = handles.panel;
-    *ret_io = handles.io;
-
-    return ret;
 }
 
 #include "ili9881_init_data.c"
@@ -373,27 +353,6 @@ static lv_indev_t *bsp_display_indev_init(lv_display_t *disp)
     };
 
     return lvgl_port_add_touch(&touch_cfg);
-}
-
-lv_display_t *bsp_display_start(void)
-{
-    bsp_display_cfg_t cfg =
-    {
-        .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
-        .buffer_size = BSP_LCD_DRAW_BUFF_SIZE,
-        .double_buffer = BSP_LCD_DRAW_BUFF_DOUBLE,
-        .flags = 
-        {
-    #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
-            .buff_dma = false,
-    #else
-            .buff_dma = true,
-    #endif
-            .buff_spiram = false,
-            .sw_rotate = true,
-        }
-    };
-    return bsp_display_start_with_config(&cfg);
 }
 
 lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
