@@ -217,11 +217,7 @@ esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_hand
     return ret;
 }
 
-#define LCD_MIPI_DSI_USE_ILI9881C
-
-#if defined(LCD_MIPI_DSI_USE_ILI9881C) && !defined(LCD_MIPI_DSI_USE_ST7703)
-    #include "ili9881_init_data.c"
-#endif
+#include "ili9881_init_data.c"
 
 esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles)
 {
@@ -253,7 +249,6 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     };
     ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, TAG, "New panel IO failed");
 
-#if defined(LCD_MIPI_DSI_USE_ILI9881C) && !defined(LCD_MIPI_DSI_USE_ST7703)
     ESP_LOGI(TAG, "Install LCD driver of ili9881c");
     esp_lcd_dpi_panel_config_t dpi_config =
     {
@@ -300,48 +295,6 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
     //  ESP_ERROR_CHECK(esp_lcd_panel_mirror(disp_panel, false, true));
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(disp_panel, true));
-
-#elif defined(LCD_MIPI_DSI_USE_ST7703) && !defined(LCD_MIPI_DSI_USE_ILI9881C)
-    ESP_LOGI(TAG, "Install LCD driver of ST7703");
-    esp_lcd_dpi_panel_config_t dpi_config = {
-        .virtual_channel = 0,
-        .dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT,
-        .dpi_clock_freq_mhz = 60,                      // LCD_MIPI_DSI_DPI_CLK_MHZ_ST7703,
-        .pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565, // LCD_COLOR_PIXEL_FORMAT_RGB888,
-        .num_fbs = 1,
-        .video_timing =
-        {
-            .h_size = BSP_LCD_H_RES, // lcd_param.width,
-            .v_size = BSP_LCD_V_RES, // lcd_param.height,
-            .hsync_back_porch = 40,
-            .hsync_pulse_width = 10,
-            .hsync_front_porch = 40,
-            .vsync_back_porch = 16,
-            .vsync_pulse_width = 4,
-            .vsync_front_porch = 16,
-        },
-        //.flags.use_dma2d = true, // ??? When enabled, need to wait for previous draw to complete
-    };
-
-    st7703_vendor_config_t vendor_config =
-    {
-        .flags.use_mipi_interface = 1,
-        .mipi_config =
-        {
-            .dsi_bus = mipi_dsi_bus,
-            .dpi_config = &dpi_config,
-        },
-    };
-    esp_lcd_panel_dev_config_t lcd_dev_config =
-    {
-        .bits_per_pixel = 16, // 24,
-        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
-        .reset_gpio_num = -1,
-        .vendor_config = &vendor_config,
-    };
-    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_st7703(io, &lcd_dev_config, &disp_panel), err, TAG, "New LCD panel EK79007 failed");
-    ESP_GOTO_ON_ERROR(esp_lcd_panel_init(disp_panel), err, TAG, "LCD panel init failed");
-#endif
 
     /* Return all handles */
     ret_handles->io = io;
