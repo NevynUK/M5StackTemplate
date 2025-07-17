@@ -129,31 +129,3 @@ namespace hal
     bool Check();
 
 } // namespace hal
-
-/**
- * @brief Get the HAL instance
- *
- * @return hal::HalBase&
- */
-inline hal::HalBase *GetHAL()
-{
-    return hal::Get();
-}
-
-/**
- * @brief
- *
- */
-class LvglLockGuard
-{
-public:
-    LvglLockGuard()
-    {
-        GetHAL()->lvglLock();
-    }
-
-    ~LvglLockGuard()
-    {
-        GetHAL()->lvglUnlock();
-    }
-};
