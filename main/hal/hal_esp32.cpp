@@ -6,9 +6,15 @@
 #include "hal/hal_esp32.h"
 
 #include <esp_timer.h>
+#include "esp_log.h"
+#include "esp_err.h"
+#include "esp_check.h"
+#include "driver/ledc.h"
+
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <bsp/m5stack_tab5.h>
+
 #include <lv_demos.h>
 
 // extern esp_lcd_touch_handle_t _lcd_touch_handle;
@@ -223,9 +229,10 @@ void HalEsp32::init()
         }
     };
     printf("Buffer size: %u\n", (unsigned int) cfg.buffer_size);
+    initialiseBrightnessControl();
     lvDisp = bsp_display_start_with_config(&cfg);
     lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
-    bsp_display_backlight_on();
+    setDisplayBrightness(100);
 
     // Touchpad lvgl indev
     // lvTouchpad = lv_indev_create();
@@ -269,13 +276,49 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                   Display                                  */
-/* -------------------------------------------------------------------------- */
-void HalEsp32::setDisplayBrightness(uint8_t brightness)
+esp_err_t HalEsp32::initialiseBrightnessControl(void)
+{
+    const ledc_timer_config_t lcd_backlight_timer =
+    {
+        .speed_mode = LEDC_LOW_SPEED_MODE,
+        .duty_resolution = LEDC_TIMER_12_BIT,
+        .timer_num = LEDC_TIMER_0,
+        .freq_hz = 5000,
+        .clk_cfg = LEDC_AUTO_CLK
+    };
+    ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
+
+    const ledc_channel_config_t lcd_backlight_channel =
+    {
+        .gpio_num = BSP_LCD_BACKLIGHT,
+        .speed_mode = LEDC_LOW_SPEED_MODE,
+        .channel = LEDC_CHANNEL_1,
+        .intr_type = LEDC_INTR_DISABLE,
+        .timer_sel = LEDC_TIMER_0,
+        .duty = 0,
+        .hpoint = 0
+    };
+
+    ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Set the display brightness
+ *
+ * @param brightness Brightness level from 0 to 100.
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
+esp_err_t HalEsp32::setDisplayBrightness(uint8_t brightness)
 {
     _current_lcd_brightness = std::clamp(brightness, (uint8_t) 0, (uint8_t) 100);
-    bsp_display_brightness_set(_current_lcd_brightness);
+    ESP_LOGI(COMPONENT_NAME, "Setting LCD backlight: %d%%", _current_lcd_brightness);
+    // uint32_t duty_cycle = (1023 * _current_lcd_brightness) / 100; // LEDC resolution set to 10bits, thus: 100% = 1023
+    uint32_t duty_cycle = (4095 * _current_lcd_brightness) / 100; // LEDC resolution set to 12bits, thus: 100% = 4095
+    ESP_RETURN_ON_ERROR(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, duty_cycle), COMPONENT_NAME, "Failed to set LEDC duty");
+    ESP_RETURN_ON_ERROR(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1), COMPONENT_NAME, "Failed to update LEDC duty");
+    return ESP_OK;
 }
 
 uint8_t HalEsp32::getDisplayBrightness()

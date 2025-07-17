@@ -8,9 +8,12 @@
 #include <memory>
 #include <queue>
 #include <string>
-#include <lvgl.h>
 #include <mutex>
 #include <vector>
+
+#include <esp_err.h>
+
+#include <lvgl.h>
 
 /**
  * @brief Hardware abstraction layer
@@ -45,7 +48,9 @@ namespace hal
         {
         }
 
-        /* --------------------------------- Display -------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                                   Display                                  */
+        /* -------------------------------------------------------------------------- */
         virtual int getDisplayWidth()
         {
             return 1280;
@@ -56,8 +61,14 @@ namespace hal
             return 720;
         }
 
-        virtual void setDisplayBrightness(uint8_t brightness)
+        virtual esp_err_t initialiseBrightnessControl()
         {
+            return ESP_FAIL;
+        }
+
+        virtual esp_err_t setDisplayBrightness(uint8_t brightness)
+        {
+            return ESP_FAIL;
         }
 
         virtual uint8_t getDisplayBrightness()

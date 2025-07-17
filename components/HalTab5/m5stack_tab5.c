@@ -114,78 +114,6 @@ void bsp_reset_tp()
 // lcd st7703 1280x720  gt911
 //==================================================================================
 // Bit number used to represent command and parameter
-#define LCD_LEDC_CH LEDC_CHANNEL_1 // CONFIG_BSP_DISPLAY_BRIGHTNESS_LEDC_CH
-
-esp_err_t bsp_display_brightness_init(void)
-{
-    // gpio_config_t io_conf = {};
-
-    // io_conf.intr_type = GPIO_INTR_DISABLE;   //disable interrupt
-    // io_conf.mode = GPIO_MODE_OUTPUT;         //set as output mode
-    // io_conf.pin_bit_mask = 1 << BSP_LCD_BACKLIGHT; //select pin
-    // io_conf.pull_down_en = 0;                //disable pull-down mode
-    // io_conf.pull_up_en = 0;                  //disable pull-up mode
-    // gpio_config(&io_conf);                   //configure GPIO with the given settings
-
-    // gpio_set_level(BSP_LCD_BACKLIGHT, 1);
-
-    // Setup LEDC peripheral for PWM backlight control
-    const ledc_timer_config_t lcd_backlight_timer =
-    {
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        //  .duty_resolution = LEDC_TIMER_10_BIT,
-        .duty_resolution = LEDC_TIMER_12_BIT,
-        .timer_num = LEDC_TIMER_0,
-        .freq_hz = 5000,
-        // .freq_hz = 20000,
-        .clk_cfg = LEDC_AUTO_CLK
-    };
-    ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
-
-    const ledc_channel_config_t lcd_backlight_channel =
-    {
-        .gpio_num = BSP_LCD_BACKLIGHT,
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .channel = LCD_LEDC_CH,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_0,
-        .duty = 0,
-        .hpoint = 0
-    };
-
-    ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
-
-    return ESP_OK;
-}
-
-esp_err_t bsp_display_brightness_set(int brightness_percent)
-{
-    if (brightness_percent > 100)
-    {
-        brightness_percent = 100;
-    }
-    if (brightness_percent < 0)
-    {
-        brightness_percent = 0;
-    }
-
-    ESP_LOGI(TAG, "Setting LCD backlight: %d%%", brightness_percent);
-    // uint32_t duty_cycle = (1023 * brightness_percent) / 100; // LEDC resolution set to 10bits, thus: 100% = 1023
-    uint32_t duty_cycle = (4095 * brightness_percent) / 100; // LEDC resolution set to 12bits, thus: 100% = 4095
-    BSP_ERROR_CHECK_RETURN_ERR(ledc_set_duty(LEDC_LOW_SPEED_MODE, LCD_LEDC_CH, duty_cycle));
-    BSP_ERROR_CHECK_RETURN_ERR(ledc_update_duty(LEDC_LOW_SPEED_MODE, LCD_LEDC_CH));
-    return ESP_OK;
-}
-
-esp_err_t bsp_display_backlight_off(void)
-{
-    return bsp_display_brightness_set(0);
-}
-
-esp_err_t bsp_display_backlight_on(void)
-{
-    return bsp_display_brightness_set(100);
-}
 
 static esp_err_t bsp_enable_dsi_phy_power(void)
 {
@@ -224,7 +152,7 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     esp_lcd_panel_io_handle_t io = NULL;
     esp_lcd_panel_handle_t disp_panel = NULL;
 
-    ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
+    // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
     ESP_RETURN_ON_ERROR(bsp_enable_dsi_phy_power(), TAG, "DSI PHY power failed");
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
@@ -474,8 +402,6 @@ lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
 
     assert(cfg != NULL);
     BSP_ERROR_CHECK_RETURN_NULL(lvgl_port_init(&cfg->lvgl_port_cfg));
-
-    BSP_ERROR_CHECK_RETURN_NULL(bsp_display_brightness_init());
 
     BSP_NULL_CHECK(disp = bsp_display_lcd_init(cfg), NULL);
     BSP_NULL_CHECK(disp_indev = bsp_display_indev_init(disp), NULL);

@@ -54,7 +54,8 @@ public:
     lv_disp_t *lvDisp = nullptr;
     lv_indev_t *lvKeyboard = nullptr;
 
-    void setDisplayBrightness(uint8_t brightness) override;
+    esp_err_t initialiseBrightnessControl(void) override;
+    esp_err_t setDisplayBrightness(uint8_t brightness) override;
     uint8_t getDisplayBrightness() override;
 
     void lvglLock() override;
@@ -169,7 +170,6 @@ private:
      * @brief Handle for the second PI4IOE expander.
      */
     i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
-
 
     void set_gpio_output_capability();
     uint8_t _current_lcd_brightness = 100;
