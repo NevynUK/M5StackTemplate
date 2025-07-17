@@ -74,9 +74,9 @@ extern "C" void app_main(void)
 
     while (true)
     {
-        hal->setDisplayBrightness(100);
+        hal->SetDisplayBrightness(100);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        hal->setDisplayBrightness(0);
+        hal->SetDisplayBrightness(0);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 

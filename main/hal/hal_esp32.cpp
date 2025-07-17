@@ -229,10 +229,10 @@ void HalEsp32::init()
         }
     };
     printf("Buffer size: %u\n", (unsigned int) cfg.buffer_size);
-    initialiseBrightnessControl();
+    InitialiseBrightnessControl();
     lvDisp = bsp_display_start_with_config(&cfg);
     lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
-    setDisplayBrightness(100);
+    SetDisplayBrightness(100);
 
     // Touchpad lvgl indev
     // lvTouchpad = lv_indev_create();
@@ -276,7 +276,7 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
-esp_err_t HalEsp32::initialiseBrightnessControl(void)
+esp_err_t HalEsp32::InitialiseBrightnessControl(void)
 {
     const ledc_timer_config_t lcd_backlight_timer =
     {
@@ -310,7 +310,7 @@ esp_err_t HalEsp32::initialiseBrightnessControl(void)
  * @param brightness Brightness level from 0 to 100.
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-esp_err_t HalEsp32::setDisplayBrightness(uint8_t brightness)
+esp_err_t HalEsp32::SetDisplayBrightness(uint8_t brightness)
 {
     _current_lcd_brightness = std::clamp(brightness, (uint8_t) 0, (uint8_t) 100);
     ESP_LOGI(COMPONENT_NAME, "Setting LCD backlight: %d%%", _current_lcd_brightness);
@@ -321,7 +321,7 @@ esp_err_t HalEsp32::setDisplayBrightness(uint8_t brightness)
     return ESP_OK;
 }
 
-uint8_t HalEsp32::getDisplayBrightness()
+uint8_t HalEsp32::GetDisplayBrightness()
 {
     return _current_lcd_brightness;
 }

@@ -54,9 +54,9 @@ public:
     lv_disp_t *lvDisp = nullptr;
     lv_indev_t *lvKeyboard = nullptr;
 
-    esp_err_t initialiseBrightnessControl(void) override;
-    esp_err_t setDisplayBrightness(uint8_t brightness) override;
-    uint8_t getDisplayBrightness() override;
+    esp_err_t InitialiseBrightnessControl(void) override;
+    esp_err_t SetDisplayBrightness(uint8_t brightness) override;
+    uint8_t GetDisplayBrightness() override;
 
     void lvglLock() override;
     void lvglUnlock() override;

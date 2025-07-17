@@ -61,17 +61,17 @@ namespace hal
             return 720;
         }
 
-        virtual esp_err_t initialiseBrightnessControl()
+        virtual esp_err_t InitialiseBrightnessControl()
         {
             return ESP_FAIL;
         }
 
-        virtual esp_err_t setDisplayBrightness(uint8_t brightness)
+        virtual esp_err_t SetDisplayBrightness(uint8_t brightness)
         {
             return ESP_FAIL;
         }
 
-        virtual uint8_t getDisplayBrightness()
+        virtual uint8_t GetDisplayBrightness()
         {
             return 0;
         }
