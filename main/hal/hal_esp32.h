@@ -66,8 +66,6 @@ public:
     bool getExtAntennaEnable() override;
     void startWifiAp() override;
 
-    bool usbCDetect() override;
-    bool usbADetect() override;
     void initPortAI2c() override;
     void deinitPortAI2c() override;
     void gpioInitOutput(uint8_t pin) override;

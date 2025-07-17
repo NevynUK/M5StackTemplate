@@ -76,18 +76,6 @@ namespace hal
         {
         }
 
-        /* ---------------------------------- USB-A --------------------------------- */
-        struct HidMouseData_t
-        {
-            std::mutex mutex;
-            int x = 0;
-            int y = 0;
-            bool btnLeft = false;
-            bool btnRight = false;
-        };
-
-        HidMouseData_t hidMouseData;
-
         // [MIC-L, AEC, MIC-R, MIC-HP]
         /* --------------------------------- Network -------------------------------- */
         virtual void setExtAntennaEnable(bool enable)

@@ -234,49 +234,6 @@ extern "C"
 
     void bsp_reset_tp();
 
-    bool bsp_usb_c_detect();
-
-    bool bsp_usb_a_detect();
-
-    /**************************************************************************************************
-     *
-     * USB
-     *
-     **************************************************************************************************/
-
-    /**
-     * @brief Power modes of USB Host connector
-     */
-    typedef enum bsp_usb_host_power_mode_t {
-        BSP_USB_HOST_POWER_MODE_USB_DEV, //!< Power from USB DEV port
-    } bsp_usb_host_power_mode_t;
-
-    /**
-     * @brief Start USB host
-     *
-     * This is a one-stop-shop function that will configure the board for USB Host mode
-     * and start USB Host library
-     *
-     * @param[in] mode        USB Host connector power mode (Not used on this board)
-     * @param[in] limit_500mA Limit output current to 500mA (Not used on this board)
-     * @return
-     *     - ESP_OK                 On success
-     *     - ESP_ERR_INVALID_ARG    Parameter error
-     *     - ESP_ERR_NO_MEM         Memory cannot be allocated
-     */
-    esp_err_t bsp_usb_host_start(bsp_usb_host_power_mode_t mode, bool limit_500mA);
-
-    /**
-     * @brief Stop USB host
-     *
-     * USB Host lib will be uninstalled and power from connector removed.
-     *
-     * @return
-     *     - ESP_OK              On success
-     *     - ESP_ERR_INVALID_ARG Parameter error
-     */
-    esp_err_t bsp_usb_host_stop(void);
-
 #ifdef __cplusplus
 }
 #endif

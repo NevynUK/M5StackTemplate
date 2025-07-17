@@ -267,26 +267,6 @@ void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
 }
 
 
-bool bsp_usb_c_detect()
-{
-    uint8_t write_buf[2] = {0};
-    uint8_t read_buf[1] = {0};
-
-    write_buf[0] = PI4IO_REG_IN_STA;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe2, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-
-    // printf("get %02x\n", read_buf[0]);
-
-    // Get bit 6
-    bool ret = false;
-    if (read_buf[0] & 0b01000000)
-    {
-        ret = true;
-    }
-
-    return ret;
-}
-
 void bsp_set_ext_antenna_enable(bool en)
 {
     uint8_t write_buf[2] = {0};
@@ -805,58 +785,3 @@ void bsp_display_unlock(void)
     lvgl_port_unlock();
 }
 #endif // (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
-
-//==================================================================================
-// usb
-//==================================================================================
-static void usb_lib_task(void *arg)
-{
-    while (1)
-    {
-        // Start handling system events
-        uint32_t event_flags;
-        usb_host_lib_handle_events(portMAX_DELAY, &event_flags);
-        if (event_flags & USB_HOST_LIB_EVENT_FLAGS_NO_CLIENTS)
-        {
-            ESP_ERROR_CHECK(usb_host_device_free_all());
-        }
-        if (event_flags & USB_HOST_LIB_EVENT_FLAGS_ALL_FREE)
-        {
-            ESP_LOGI(TAG, "USB: All devices freed");
-            // Continue handling USB events to allow device reconnection
-            // The only way this task can be stopped is by calling bsp_usb_host_stop()
-        }
-    }
-}
-
-esp_err_t bsp_usb_host_start(bsp_usb_host_power_mode_t mode, bool limit_500mA)
-{
-    // Install USB Host driver. Should only be called once in entire application
-    ESP_LOGI(TAG, "Installing USB Host");
-    const usb_host_config_t host_config =
-    {
-        .skip_phy_setup = false,
-        .intr_flags = ESP_INTR_FLAG_LEVEL1,
-    };
-    BSP_ERROR_CHECK_RETURN_ERR(usb_host_install(&host_config));
-
-    // Create a task that will handle USB library events
-    if (xTaskCreate(usb_lib_task, "usb_lib", 4096, NULL, 10, &usb_host_task) != pdTRUE)
-    {
-        ESP_LOGE(TAG, "Creating USB host lib task failed");
-        abort();
-    }
-
-    return ESP_OK;
-}
-
-esp_err_t bsp_usb_host_stop(void)
-{
-    usb_host_uninstall();
-    if (usb_host_task)
-    {
-        vTaskSuspend(usb_host_task);
-        vTaskDelete(usb_host_task);
-    }
-    return ESP_OK;
-}

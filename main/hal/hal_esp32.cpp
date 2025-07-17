@@ -304,15 +304,6 @@ void HalEsp32::lvglUnlock()
     lvgl_port_unlock();
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                  Interface                                 */
-/* -------------------------------------------------------------------------- */
-bool HalEsp32::usbCDetect()
-{
-    return bsp_usb_c_detect();
-    // return false;
-}
-
 void HalEsp32::initPortAI2c()
 {
     mclog::tagInfo(_tag, "init port a i2c");

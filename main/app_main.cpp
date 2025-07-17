@@ -72,23 +72,11 @@ extern "C" void app_main(void)
 
     hal->lvglUnlock();
 
-    uint32_t brightness = 0;
-    int direction = 10;
     while (true)
     {
-        if (brightness >= 100)
-        {
-            direction = -10;
-        }
-        else 
-        {
-            if (brightness == 0)
-            {
-                direction = 10;
-            }
-        }
-        brightness += direction;
-        hal->setDisplayBrightness(brightness);
+        hal->setDisplayBrightness(100);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        hal->setDisplayBrightness(0);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
