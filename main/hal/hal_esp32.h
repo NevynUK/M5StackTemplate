@@ -101,9 +101,6 @@ public:
     bool getExtAntennaEnable() override;
     void startWifiAp() override;
 
-    bool isSdCardMounted() override;
-    std::vector<FileEntry_t> scanSdCard(const std::string &dirPath) override;
-
     bool usbCDetect() override;
     bool usbADetect() override;
     bool headPhoneDetect() override;
