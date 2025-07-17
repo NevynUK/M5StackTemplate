@@ -9,7 +9,6 @@ extern "C"
 #include <rx8130.h>
 }
 
-#include <mooncake_log.h>
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -206,15 +205,10 @@ esp_err_t HalEsp32::ConfigureIoExpanders()
 
 void HalEsp32::init()
 {
-    mclog::tagInfo(_tag, "init");
-
-    mclog::tagInfo(_tag, "i2c init");
     ConfigureI2C();
 
-    mclog::tagInfo(_tag, "io expander init");
     ConfigureIoExpanders();
 
-    mclog::tagInfo(_tag, "display init");
     bsp_reset_tp();
     bsp_display_cfg_t cfg =
     {
@@ -238,7 +232,6 @@ void HalEsp32::init()
     bsp_display_backlight_on();
 
     // Touchpad lvgl indev
-    mclog::tagInfo(_tag, "create lvgl touchpad indev");
     lvTouchpad = lv_indev_create();
     lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
