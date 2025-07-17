@@ -176,13 +176,5 @@ private:
 
 
     void set_gpio_output_capability();
-    void hid_init();
-    void rs485_init();
-    bool wifi_init();
     uint8_t _current_lcd_brightness = 100;
-    bool _charge_qc_enable = false;
-    bool _charge_enable = true;
-    bool _ext_5v_enable = true;
-    bool _usba_5v_enable = true;
-    bool _ext_antenna_enable = false;
 };

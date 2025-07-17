@@ -76,17 +76,6 @@ namespace hal
         {
         }
 
-        /* -------------------------------- Interface ------------------------------- */
-        virtual bool usbCDetect()
-        {
-            return false;
-        }
-
-        virtual bool usbADetect()
-        {
-            return false;
-        }
-
         virtual void initPortAI2c()
         {
         }
@@ -105,29 +94,6 @@ namespace hal
 
         virtual void gpioReset(uint8_t pin)
         {
-        }
-
-        /* ------------------------------ UART monitor ------------------------------ */
-        struct UartMonitorData_t
-        {
-            std::mutex mutex;
-            std::queue<uint8_t> rxQueue;
-            std::queue<uint8_t> txQueue;
-        };
-
-        UartMonitorData_t uartMonitorData;
-
-        virtual void uartMonitorSend(std::string msg, bool newLine = true)
-        {
-            std::lock_guard<std::mutex> lock(uartMonitorData.mutex);
-            for (auto c: msg)
-            {
-                uartMonitorData.txQueue.push(c);
-            }
-            if (newLine)
-            {
-                uartMonitorData.txQueue.push('\n');
-            }
         }
     };
 
