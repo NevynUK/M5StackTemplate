@@ -45,21 +45,6 @@ namespace hal
         {
         }
 
-        /* --------------------------------- System --------------------------------- */
-        virtual void delay(uint32_t ms)
-        {
-        }
-
-        virtual uint32_t millis()
-        {
-            return 0;
-        }
-
-        virtual int getCpuTemp()
-        {
-            return 0.0f;
-        }
-
         /* --------------------------------- Display -------------------------------- */
         virtual int getDisplayWidth()
         {
@@ -91,107 +76,6 @@ namespace hal
         {
         }
 
-        /* ---------------------------------- Power --------------------------------- */
-        struct PMData_t
-        {
-            float busVoltage = 0.0f;
-            float busPower = 0.0f;
-            float shuntVoltage = 0.0f;
-            float shuntCurrent = 0.0f;
-        };
-
-        PMData_t powerMonitorData;
-
-        virtual void updatePowerMonitorData()
-        {
-        }
-
-        virtual void setChargeQcEnable(bool enable)
-        {
-        }
-
-        virtual bool getChargeQcEnable()
-        {
-            return false;
-        }
-
-        virtual void setChargeEnable(bool enable)
-        {
-        }
-
-        virtual bool getChargeEnable()
-        {
-            return false;
-        }
-
-        virtual void setUsb5vEnable(bool enable)
-        {
-        }
-
-        virtual bool getUsb5vEnable()
-        {
-            return false;
-        }
-
-        virtual void setExt5vEnable(bool enable)
-        {
-        }
-
-        virtual bool getExt5vEnable()
-        {
-            return false;
-        }
-
-        virtual void powerOff()
-        {
-        }
-
-        virtual void sleepAndTouchWakeup()
-        {
-        }
-
-        virtual void sleepAndShakeWakeup()
-        {
-        }
-
-        virtual void sleepAndRtcWakeup()
-        {
-        }
-
-        /* ----------------------------------- IMU ---------------------------------- */
-        struct IMUData_t
-        {
-            float accelX = 0.0f;
-            float accelY = 0.0f;
-            float accelZ = 0.0f;
-            float gyroX = 0.0f;
-            float gyroY = 0.0f;
-            float gyroZ = 0.0f;
-        };
-
-        IMUData_t imuData;
-
-        virtual void updateImuData()
-        {
-        }
-
-        virtual void clearImuIrq()
-        {
-        }
-
-        /* ----------------------------------- RTC ---------------------------------- */
-        virtual void getRtcTime(tm *time)
-        {
-        }
-
-        virtual void setRtcTime(tm time)
-        {
-        }
-
-        virtual void clearRtcIrq()
-        {
-        }
-
         /* --------------------------------- Camera --------------------------------- */
         virtual void startCameraCapture(lv_obj_t *imgCanvas)
         {
@@ -218,78 +102,7 @@ namespace hal
 
         HidMouseData_t hidMouseData;
 
-        /* ---------------------------------- Audio --------------------------------- */
-        virtual void setSpeakerVolume(uint8_t volume)
-        {
-        }
-
-        virtual uint8_t getSpeakerVolume()
-        {
-            return 0;
-        }
-
         // [MIC-L, AEC, MIC-R, MIC-HP]
-        virtual void audioRecord(std::vector<int16_t> &data, uint16_t durationMs, float gain = 80.0f)
-        {
-        }
-
-        virtual void audioPlay(std::vector<int16_t> &data, bool async = true)
-        {
-        }
-
-        // Mic record test
-        enum MicTestState_t {
-            MIC_TEST_IDLE,
-            MIC_TEST_RECORDING,
-            MIC_TEST_PLAYING,
-        };
-
-        virtual void startDualMicRecordTest()
-        {
-        }
-
-        virtual MicTestState_t getDualMicRecordTestState()
-        {
-            return MIC_TEST_IDLE;
-        }
-
-        virtual void startHeadphoneMicRecordTest()
-        {
-        }
-
-        virtual MicTestState_t getHeadphoneMicRecordTestState()
-        {
-            return MIC_TEST_IDLE;
-        }
-
-        // Play music test
-        enum MusicPlayState_t {
-            MUSIC_PLAY_IDLE,
-            MUSIC_PLAY_PLAYING,
-        };
-
-        virtual void startPlayMusicTest()
-        {
-        }
-
-        virtual MusicPlayState_t getMusicPlayTestState()
-        {
-            return MUSIC_PLAY_IDLE;
-        }
-
-        virtual void stopPlayMusicTest()
-        {
-        }
-
-        // Sfx
-        virtual void playStartupSfx()
-        {
-        }
-
-        virtual void playShutdownSfx()
-        {
-        }
-
         /* --------------------------------- Network -------------------------------- */
         virtual void setExtAntennaEnable(bool enable)
         {
@@ -304,23 +117,6 @@ namespace hal
         {
         }
 
-        /* --------------------------------- SD Card -------------------------------- */
-        struct FileEntry_t
-        {
-            std::string name;
-            bool isDir;
-        };
-
-        virtual bool isSdCardMounted()
-        {
-            return false;
-        }
-
-        virtual std::vector<FileEntry_t> scanSdCard(const std::string &dirPath)
-        {
-            return {};
-        }
-
         /* -------------------------------- Interface ------------------------------- */
         virtual bool usbCDetect()
         {
@@ -330,16 +126,6 @@ namespace hal
         virtual bool usbADetect()
         {
             return false;
-        }
-
-        virtual bool headPhoneDetect()
-        {
-            return false;
-        }
-
-        virtual std::vector<uint8_t> i2cScan(bool isInternal)
-        {
-            return {};
         }
 
         virtual void initPortAI2c()

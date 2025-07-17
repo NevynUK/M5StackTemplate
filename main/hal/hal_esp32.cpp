@@ -213,39 +213,9 @@ void HalEsp32::init()
 
     mclog::tagInfo(_tag, "i2c init");
     ConfigureI2C();
-    // bsp_i2c_init();
 
     mclog::tagInfo(_tag, "io expander init");
-    // i2c_master_bus_handle_t i2c_bus_handle = bsp_i2c_get_handle();
-    // bsp_io_expander_pi4ioe_init(i2c_bus_handle);
     ConfigureIoExpanders();
-
-    // setChargeQcEnable(true);
-    // delay(50);
-    // setChargeEnable(true);
-    // setChargeEnable(false);
-
-    // mclog::tagInfo(_tag, "i2c scan");
-    // bsp_i2c_scan();
-
-    // mclog::tagInfo(_tag, "codec init");
-    // delay(200);
-    // bsp_codec_init();
-
-    // mclog::tagInfo(_tag, "imu init");
-    // imu_init();
-
-    // mclog::tagInfo(_tag, "ina226 init");
-    // ina226.begin(i2c_bus_handle, 0x41);
-    // ina226.configure(INA226_AVERAGES_16, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    // ina226.calibrate(0.005, 8.192);
-    // mclog::tagInfo(_tag, "bus voltage: {}", ina226.readBusVoltage());
-
-    // mclog::tagInfo(_tag, "rx8130 init");
-    // rx8130.begin(i2c_bus_handle, 0x32);
-    // rx8130.initBat();
-    // clearRtcIrq();
-    // update_system_time();
 
     mclog::tagInfo(_tag, "display init");
     bsp_reset_tp();
@@ -276,18 +246,6 @@ void HalEsp32::init()
     lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
     lv_indev_set_display(lvTouchpad, lvDisp);
-
-    // mclog::tagInfo(_tag, "usb host init");
-    // bsp_usb_host_start(BSP_USB_HOST_POWER_MODE_USB_DEV, true);
-
-    // mclog::tagInfo(_tag, "hid init");
-    // hid_init();
-
-    // mclog::tagInfo(_tag, "rs485 init");
-    // rs485_init();
-
-    // mclog::tagInfo(_tag, "set gpio output capability");
-    // set_gpio_output_capability();
 
     bsp_display_unlock();
 }
@@ -325,24 +283,6 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
-// void HalEsp32::set_gpio_output_capability()
-// {
-//     // gpio_set_drive_capability((gpio_num_t)48, GPIO_DRIVE_CAP_0);
-//     for (int i = 0; i < sizeof(_driver_gpios) / sizeof(_driver_gpios[0]); i++)
-//     {
-//         gpio_num_t gpio = _driver_gpios[i];
-//         esp_err_t ret = gpio_set_drive_capability(gpio, GPIO_DRIVE_CAP_0);
-//         if (ret == ESP_OK)
-//         {
-//             printf("GPIO %d drive capability set to GPIO_DRIVE_CAP_0\n", gpio);
-//         }
-//         else
-//         {
-//             printf("Failed to set GPIO %d drive capability: %s\n", gpio, esp_err_to_name(ret));
-//         }
-//     }
-// }
-
 /* -------------------------------------------------------------------------- */
 /*                                   Display                                  */
 /* -------------------------------------------------------------------------- */
@@ -374,45 +314,6 @@ bool HalEsp32::usbCDetect()
 {
     return bsp_usb_c_detect();
     // return false;
-}
-
-bool HalEsp32::headPhoneDetect()
-{
-    return bsp_headphone_detect();
-}
-
-std::vector<uint8_t> HalEsp32::i2cScan(bool isInternal)
-{
-    i2c_master_bus_handle_t i2c_bus_handle;
-    std::vector<uint8_t> addrs;
-
-    if (isInternal)
-    {
-        i2c_bus_handle = bsp_i2c_get_handle();
-    }
-    else
-    {
-        i2c_bus_handle = bsp_ext_i2c_get_handle();
-    }
-
-    esp_err_t ret;
-    uint8_t address;
-
-    for (int i = 16; i < 128; i += 16)
-    {
-        for (int j = 0; j < 16; j++)
-        {
-            fflush(stdout);
-            address = i + j;
-            ret = i2c_master_probe(i2c_bus_handle, address, 50);
-            if (ret == ESP_OK)
-            {
-                addrs.push_back(address);
-            }
-        }
-    }
-
-    return addrs;
 }
 
 void HalEsp32::initPortAI2c()

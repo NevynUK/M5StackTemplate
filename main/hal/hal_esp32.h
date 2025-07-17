@@ -62,40 +62,9 @@ public:
     void lvglLock() override;
     void lvglUnlock() override;
 
-    void updatePowerMonitorData() override;
-    void updateImuData() override;
-    void clearImuIrq() override;
-
-    void setChargeQcEnable(bool enable) override;
-    bool getChargeQcEnable() override;
-    void setChargeEnable(bool enable) override;
-    bool getChargeEnable() override;
-    void setUsb5vEnable(bool enable) override;
-    bool getUsb5vEnable() override;
-    void setExt5vEnable(bool enable) override;
-    bool getExt5vEnable() override;
-    void powerOff() override;
-    void sleepAndTouchWakeup() override;
-    void sleepAndShakeWakeup() override;
-    void sleepAndRtcWakeup() override;
-
     void startCameraCapture(lv_obj_t *imgCanvas) override;
     void stopCameraCapture() override;
     bool isCameraCapturing() override;
-
-    void setSpeakerVolume(uint8_t volume) override;
-    uint8_t getSpeakerVolume() override;
-    void audioRecord(std::vector<int16_t> &data, uint16_t durationMs, float gain = 80.0f) override;
-    void audioPlay(std::vector<int16_t> &data, bool async = true) override;
-    void startDualMicRecordTest() override;
-    MicTestState_t getDualMicRecordTestState() override;
-    void startHeadphoneMicRecordTest() override;
-    MicTestState_t getHeadphoneMicRecordTestState() override;
-    void startPlayMusicTest() override;
-    MusicPlayState_t getMusicPlayTestState() override;
-    void stopPlayMusicTest() override;
-    void playStartupSfx() override;
-    void playShutdownSfx() override;
 
     void setExtAntennaEnable(bool enable) override;
     bool getExtAntennaEnable() override;
@@ -103,8 +72,6 @@ public:
 
     bool usbCDetect() override;
     bool usbADetect() override;
-    bool headPhoneDetect() override;
-    std::vector<uint8_t> i2cScan(bool isInternal) override;
     void initPortAI2c() override;
     void deinitPortAI2c() override;
     void gpioInitOutput(uint8_t pin) override;
@@ -222,14 +189,10 @@ private:
     void hid_init();
     void rs485_init();
     bool wifi_init();
-    void imu_init();
-    void update_system_time();
-
     uint8_t _current_lcd_brightness = 100;
     bool _charge_qc_enable = false;
     bool _charge_enable = true;
     bool _ext_5v_enable = true;
     bool _usba_5v_enable = true;
     bool _ext_antenna_enable = false;
-    bool _sd_card_mounted = false;
 };
