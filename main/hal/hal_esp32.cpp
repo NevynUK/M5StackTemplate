@@ -462,6 +462,9 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
         .lcd_cmd_bits = 8,   // according to the LCD spec
         .lcd_param_bits = 8, // according to the LCD spec
     };
+    //
+    //  TODO: Fix this.
+    //
     // ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, COMPONENT_NAME, "New panel IO failed");
     esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io);
 
@@ -505,6 +508,9 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     ESP_ERROR_CHECK(esp_lcd_new_panel_ili9881c(io, &lcd_dev_config, &disp_panel));
     ESP_ERROR_CHECK(esp_lcd_panel_reset(disp_panel));
     ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
+    //
+    //  TODO: Fix this.
+    //
     //  ESP_ERROR_CHECK(esp_lcd_panel_mirror(disp_panel, false, true));
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(disp_panel, true));
 
@@ -518,6 +524,9 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
 
     return ret;
 
+    //
+    //  TODO: Cleanup code.
+    //
     // if (disp_panel)
     // {
     //     esp_lcd_panel_del(disp_panel);
