@@ -1,8 +1,8 @@
-file(GLOB_RECURSE APP_LAYER_SRCS
-    assets/*.c
-    assets/*.cc
-    assets/*.cpp
-)
+# file(GLOB_RECURSE APP_LAYER_SRCS
+#     assets/*.c
+#     assets/*.cc
+#     assets/*.cpp
+# )
 
 file(GLOB_RECURSE MY_HAL_SRCS
     ./hal/*.c
