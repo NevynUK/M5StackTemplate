@@ -216,8 +216,6 @@ extern "C"
     void bsp_display_rotate(lv_display_t *disp, lv_disp_rotation_t rotation);
 #endif // BSP_CONFIG_NO_GRAPHIC_LIB == 0
 
-    void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle);
-
     void bsp_reset_tp();
 
 #ifdef __cplusplus

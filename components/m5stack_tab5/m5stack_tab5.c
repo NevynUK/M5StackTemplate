@@ -82,140 +82,33 @@ i2c_master_bus_handle_t bsp_i2c_get_handle(void)
     return i2c_handle;
 }
 
-//==================================================================================
-// I/O Exapnder PI4IOE5V6416
-//==================================================================================
-#define I2C_DEV_ADDR_PI4IOE1 0x43 // addr pin low
-#define I2C_DEV_ADDR_PI4IOE2 0x44 // addr pin high
-#define I2C_MASTER_TIMEOUT_MS 50
-
-static i2c_master_dev_handle_t i2c_dev_handle_pi4ioe1;
-static i2c_master_dev_handle_t i2c_dev_handle_pi4ioe2;
-
-// PI4IO registers
-#define PI4IO_REG_CHIP_RESET 0x01
-#define PI4IO_REG_IO_DIR 0x03
-#define PI4IO_REG_OUT_SET 0x05
-#define PI4IO_REG_OUT_H_IM 0x07
-#define PI4IO_REG_IN_DEF_STA 0x09
-#define PI4IO_REG_PULL_EN 0x0B
-#define PI4IO_REG_PULL_SEL 0x0D
-#define PI4IO_REG_IN_STA 0x0F
-#define PI4IO_REG_INT_MASK 0x11
-#define PI4IO_REG_IRQ_STA 0x13
-
-#define setbit(x, y) x |= (0x01 << y)
-#define clrbit(x, y) x &= ~(0x01 << y)
-
-void bsp_io_expander_pi4ioe_init(i2c_master_bus_handle_t bus_handle)
-{
-    uint8_t write_buf[2] = {0};
-    uint8_t read_buf[1] = {0};
-
-    /* */
-    i2c_device_config_t dev_cfg1 =
-    {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = I2C_DEV_ADDR_PI4IOE1,
-        .scl_speed_hz = 400000,
-    };
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg1, &i2c_dev_handle_pi4ioe1));
-
-    write_buf[0] = PI4IO_REG_CHIP_RESET;
-    write_buf[1] = 0xFF;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-    write_buf[0] = PI4IO_REG_CHIP_RESET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe1, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-    write_buf[0] = PI4IO_REG_IO_DIR;
-    write_buf[1] = 0b01111111;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
-    write_buf[0] = PI4IO_REG_OUT_H_IM;
-    write_buf[1] = 0b00000000;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
-    write_buf[0] = PI4IO_REG_PULL_SEL;
-    write_buf[1] = 0b01111111;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
-    write_buf[0] = PI4IO_REG_PULL_EN;
-    write_buf[1] = 0b01111111;
-
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // P7 interrupt enable: 0 enable, 1 disable
-    /* Output Port Register P1(SPK_EN), P2(EXT5V_EN), P4(LCD_RST), P5(TP_RST), P6(CAM)RST output high level */
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    write_buf[1] = 0b01110110;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-
-    /* */
-    i2c_device_config_t dev_cfg2 =
-    {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = I2C_DEV_ADDR_PI4IOE2,
-        .scl_speed_hz = 400000,
-    };
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg2, &i2c_dev_handle_pi4ioe2));
-
-    write_buf[0] = PI4IO_REG_CHIP_RESET;
-    write_buf[1] = 0xFF;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-    write_buf[0] = PI4IO_REG_CHIP_RESET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe2, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
-    write_buf[0] = PI4IO_REG_IO_DIR;
-    write_buf[1] = 0b10111001;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // 0: input 1: output
-    write_buf[0] = PI4IO_REG_OUT_H_IM;
-    write_buf[1] = 0b00000110;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // Disable High-Impedance for used pins
-    write_buf[0] = PI4IO_REG_PULL_SEL;
-    write_buf[1] = 0b10111001;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // pull up/down select, 0 down, 1 up
-    write_buf[0] = PI4IO_REG_PULL_EN;
-    write_buf[1] = 0b11111001;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS);                                       // pull up/down enable, 0 disable, 1 enable
-    write_buf[0] = PI4IO_REG_IN_DEF_STA;
-    write_buf[1] = 0b01000000;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS); // P6 default high level
-    write_buf[0] = PI4IO_REG_INT_MASK;
-    write_buf[1] = 0b10111111;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2,
-                        I2C_MASTER_TIMEOUT_MS); // P6 interrupt enable: 0 enable, 1 disable
-    /* Output Port Register P0(WLAN_PWR_EN), P3(USB5V_EN), P7(CHG_EN) output high level */
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    // write_buf[1] = 0b10001001;
-    write_buf[1] = 0b00001001;
-    i2c_master_transmit(i2c_dev_handle_pi4ioe2, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-}
 
 void bsp_reset_tp()
 {
-    ESP_LOGI(TAG, "reset tp");
+    // ESP_LOGI(TAG, "reset tp");
 
-    ESP_LOGI(TAG, "reset gpio %d", GPIO_NUM_23);
-    gpio_reset_pin(GPIO_NUM_23);
+    // ESP_LOGI(TAG, "reset gpio %d", GPIO_NUM_23);
+    // gpio_reset_pin(GPIO_NUM_23);
 
-    uint8_t write_buf[2] = {0};
-    uint8_t read_buf[1] = {0};
+    // uint8_t write_buf[2] = {0};
+    // uint8_t read_buf[1] = {0};
 
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    i2c_master_transmit_receive(i2c_dev_handle_pi4ioe1, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // i2c_master_transmit_receive(i2c_dev_handle_pi4ioe1, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
 
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    write_buf[1] = read_buf[0];
-    clrbit(write_buf[1], 4);
-    clrbit(write_buf[1], 5);
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // write_buf[1] = read_buf[0];
+    // clrbit(write_buf[1], 4);
+    // clrbit(write_buf[1], 5);
+    // i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    // vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    write_buf[0] = PI4IO_REG_OUT_SET;
-    write_buf[1] = read_buf[0];
-    setbit(write_buf[1], 4);
-    setbit(write_buf[1], 5);
-    i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // write_buf[1] = read_buf[0];
+    // setbit(write_buf[1], 4);
+    // setbit(write_buf[1], 5);
+    // i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    // vTaskDelay(100 / portTICK_PERIOD_MS);
 }
 
 //==================================================================================
