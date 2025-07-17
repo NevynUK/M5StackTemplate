@@ -304,18 +304,6 @@ void HalEsp32::lvglUnlock()
     lvgl_port_unlock();
 }
 
-void HalEsp32::initPortAI2c()
-{
-    mclog::tagInfo(_tag, "init port a i2c");
-    bsp_ext_i2c_init();
-}
-
-void HalEsp32::deinitPortAI2c()
-{
-    mclog::tagInfo(_tag, "deinit port a i2c");
-    bsp_ext_i2c_deinit();
-}
-
 void HalEsp32::gpioInitOutput(uint8_t pin)
 {
     gpio_set_pull_mode((gpio_num_t) pin, GPIO_PULLUP_ONLY);

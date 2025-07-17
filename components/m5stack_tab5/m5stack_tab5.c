@@ -34,19 +34,9 @@ static const char *TAG = "M5STACK_TAB5";
 static lv_indev_t *disp_indev = NULL;
 #endif // (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
 
-// USB Host Library task
-static TaskHandle_t usb_host_task;
-
 // sys i2c
 static bool i2c_initialized = false;
 static i2c_master_bus_handle_t i2c_handle = NULL;
-// ext i2c
-static bool ext_i2c_initialized = false;
-static i2c_master_bus_handle_t ext_i2c_bus_handle = NULL;
-// grove i2c
-static bool grove_i2c_initialized = false;
-static i2c_master_bus_handle_t grove_i2c_bus_handle = NULL;
-
 
 void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle)
 {
@@ -90,72 +80,6 @@ esp_err_t bsp_i2c_deinit(void)
 i2c_master_bus_handle_t bsp_i2c_get_handle(void)
 {
     return i2c_handle;
-}
-
-esp_err_t bsp_ext_i2c_init(void)
-{
-    if (ext_i2c_initialized)
-    {
-        return ESP_OK;
-    }
-
-    i2c_master_bus_config_t i2c_mst_config =
-    {
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .i2c_port = BSP_EXT_I2C_NUM,
-        .scl_io_num = BSP_EXT_I2C_SCL,
-        .sda_io_num = BSP_EXT_I2C_SDA,
-        .flags.enable_internal_pullup = true,
-    };
-    i2c_new_master_bus(&i2c_mst_config, &ext_i2c_bus_handle);
-
-    ext_i2c_initialized = true;
-
-    return ESP_OK;
-}
-
-esp_err_t bsp_ext_i2c_deinit(void)
-{
-    ext_i2c_initialized = false;
-    return i2c_del_master_bus(ext_i2c_bus_handle);
-}
-
-i2c_master_bus_handle_t bsp_ext_i2c_get_handle(void)
-{
-    return ext_i2c_bus_handle;
-}
-
-esp_err_t bsp_grove_i2c_init(void)
-{
-    if (grove_i2c_initialized)
-    {
-        return ESP_OK;
-    }
-
-    i2c_master_bus_config_t i2c_mst_config =
-    {
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .i2c_port = BSP_EXT_I2C_NUM,
-        .scl_io_num = 54, // BSP_EXT_I2C_SCL,
-        .sda_io_num = 53, // BSP_EXT_I2C_SDA,
-        .flags.enable_internal_pullup = true,
-    };
-    i2c_new_master_bus(&i2c_mst_config, &grove_i2c_bus_handle);
-
-    grove_i2c_initialized = true;
-
-    return ESP_OK;
-}
-
-esp_err_t bsp_grove_i2c_deinit(void)
-{
-    grove_i2c_initialized = false;
-    return i2c_del_master_bus(grove_i2c_bus_handle);
-}
-
-i2c_master_bus_handle_t bsp_grove_i2c_get_handle(void)
-{
-    return grove_i2c_bus_handle;
 }
 
 //==================================================================================

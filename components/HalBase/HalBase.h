@@ -76,14 +76,6 @@ namespace hal
         {
         }
 
-        virtual void initPortAI2c()
-        {
-        }
-
-        virtual void deinitPortAI2c()
-        {
-        }
-
         virtual void gpioInitOutput(uint8_t pin)
         {
         }

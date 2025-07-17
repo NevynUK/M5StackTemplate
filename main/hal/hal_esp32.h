@@ -62,8 +62,6 @@ public:
     void lvglLock() override;
     void lvglUnlock() override;
 
-    void initPortAI2c() override;
-    void deinitPortAI2c() override;
     void gpioInitOutput(uint8_t pin) override;
     void gpioSetLevel(uint8_t pin, bool level) override;
     void gpioReset(uint8_t pin) override;
