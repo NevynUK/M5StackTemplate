@@ -155,16 +155,6 @@ extern "C"
      */
     lv_indev_t *bsp_display_get_input_dev(void);
 
-    /**
-     * @brief Rotate screen
-     *
-     * Display must be already initialized by calling bsp_display_start()
-     *
-     * @param[in] disp Pointer to LVGL display
-     * @param[in] rotation Angle of the display rotation
-     */
-    void bsp_display_rotate(lv_display_t *disp, lv_disp_rotation_t rotation);
-
     void bsp_reset_tp();
 
 #ifdef __cplusplus
