@@ -58,9 +58,6 @@ public:
     esp_err_t SetDisplayBrightness(uint8_t brightness) override;
     uint8_t GetDisplayBrightness() override;
 
-    void lvglLock() override;
-    void lvglUnlock() override;
-
     void gpioInitOutput(uint8_t pin) override;
     void gpioSetLevel(uint8_t pin, bool level) override;
     void gpioReset(uint8_t pin) override;

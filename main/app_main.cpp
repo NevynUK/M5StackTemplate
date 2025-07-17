@@ -54,7 +54,7 @@ extern "C" void app_main(void)
     // Display *display = Display::GetInstance();
     // display->Setup();
 
-    hal->lvglLock();
+    lvgl_port_lock(0);
     /**
      * @brief Pointer to the screen object to be used in drawing operations.
      */
@@ -70,7 +70,7 @@ extern "C" void app_main(void)
     lv_obj_set_style_radius(rectangle, 0, 0);
     lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
 
-    hal->lvglUnlock();
+    lvgl_port_unlock();
 
     while (true)
     {

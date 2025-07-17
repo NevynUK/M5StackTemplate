@@ -326,16 +326,6 @@ uint8_t HalEsp32::GetDisplayBrightness()
     return _current_lcd_brightness;
 }
 
-void HalEsp32::lvglLock()
-{
-    lvgl_port_lock(0);
-}
-
-void HalEsp32::lvglUnlock()
-{
-    lvgl_port_unlock();
-}
-
 void HalEsp32::gpioInitOutput(uint8_t pin)
 {
     gpio_set_pull_mode((gpio_num_t) pin, GPIO_PULLUP_ONLY);
