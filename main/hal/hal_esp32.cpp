@@ -240,7 +240,7 @@ void HalEsp32::init()
     // lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
     // lv_indev_set_display(lvTouchpad, lvDisp);
 
-    bsp_display_unlock();
+    lvgl_port_unlock();
 }
 
 static const gpio_num_t _driver_gpios[] = {

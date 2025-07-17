@@ -165,21 +165,6 @@ extern "C"
     lv_indev_t *bsp_display_get_input_dev(void);
 
     /**
-     * @brief Take LVGL mutex
-     *
-     * @param timeout_ms Timeout in [ms]. 0 will block indefinitely.
-     * @return true  Mutex was taken
-     * @return false Mutex was NOT taken
-     */
-    bool bsp_display_lock(uint32_t timeout_ms);
-
-    /**
-     * @brief Give LVGL mutex
-     *
-     */
-    void bsp_display_unlock(void);
-
-    /**
      * @brief Rotate screen
      *
      * Display must be already initialized by calling bsp_display_start()
