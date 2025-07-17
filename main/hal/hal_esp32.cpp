@@ -15,11 +15,7 @@
 #include <freertos/task.h>
 #include <bsp/m5stack_tab5.h>
 
-#include <lv_demos.h>
-
 // extern esp_lcd_touch_handle_t _lcd_touch_handle;
-
-static const std::string _tag = "hal";
 
 // static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 // {
@@ -36,7 +32,6 @@ static const std::string _tag = "hal";
 
 //     esp_lcd_touch_read_data(_lcd_touch_handle);
 //     bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
-//     // mclog::tagInfo(_tag, "touchpad pressed: {}", touchpad_pressed);
 
 //     if (!touchpad_pressed)
 //     {
@@ -228,7 +223,6 @@ void HalEsp32::init()
             .sw_rotate = true,
         }
     };
-    printf("Buffer size: %u\n", (unsigned int) cfg.buffer_size);
     InitialiseBrightnessControl();
     lvDisp = bsp_display_start_with_config(&cfg);
     lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);

@@ -20,7 +20,6 @@
 #include "sd_pwr_ctrl_by_on_chip_ldo.h"
 #include "freertos/task.h"
 #include "sdmmc_cmd.h"
-#include "esp_lcd_st7703.h"
 #include "esp_lcd_ili9881c.h"
 #include "bsp/m5stack_tab5.h"
 #include "bsp/display.h"
