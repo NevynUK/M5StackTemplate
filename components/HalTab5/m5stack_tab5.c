@@ -69,11 +69,6 @@ esp_err_t bsp_i2c_init(void)
     return ESP_OK;
 }
 
-i2c_master_bus_handle_t bsp_i2c_get_handle(void)
-{
-    return i2c_handle;
-}
-
 void bsp_reset_tp()
 {
     // ESP_LOGI(TAG, "reset tp");
@@ -370,9 +365,4 @@ lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
 lv_indev_t *bsp_display_get_input_dev(void)
 {
     return disp_indev;
-}
-
-void bsp_display_rotate(lv_display_t *disp, lv_disp_rotation_t rotation)
-{
-    lv_disp_set_rotation(disp, rotation);
 }

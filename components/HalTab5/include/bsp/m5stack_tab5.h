@@ -98,15 +98,6 @@ extern "C"
      */
     esp_err_t bsp_i2c_init(void);
 
-    /**
-     * @brief Get I2C driver handle
-     *
-     * @return
-     *      - I2C handle
-     *
-     */
-    i2c_master_bus_handle_t bsp_i2c_get_handle(void);
-
 /**************************************************************************************************
  *
  * LCD interface
