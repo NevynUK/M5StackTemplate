@@ -15,6 +15,50 @@
 #include <freertos/task.h>
 #include <bsp/m5stack_tab5.h>
 
+
+#include "driver/gpio.h"
+#include "driver/ledc.h"
+#include "esp_err.h"
+#include "esp_log.h"
+#include "esp_check.h"
+#include "esp_spiffs.h"
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_mipi_dsi.h"
+#include "esp_ldo_regulator.h"
+#include "esp_vfs_fat.h"
+#include "usb/usb_host.h"
+#include "sd_pwr_ctrl_by_on_chip_ldo.h"
+#include "freertos/task.h"
+#include "sdmmc_cmd.h"
+#include "esp_lcd_ili9881c.h"
+#include "bsp/m5stack_tab5.h"
+#include "bsp/display.h"
+#include "bsp/touch.h"
+#include "esp_lcd_touch_gt911.h"
+#include "bsp_err_check.h"
+#include "esp_codec_dev_defaults.h"
+
+
+static const char *COMPONENT_NAME = "M5STACK_TAB5";
+
+// sys i2c
+static bool i2c_initialized = false;
+static i2c_master_bus_handle_t i2c_handle = NULL;
+
+void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle)
+{
+    i2c_handle = bus_handle;
+    i2c_initialized = true;
+}
+
+
+#define BSP_ERROR_CHECK_RETURN_ERR(x) ESP_ERROR_CHECK(x)
+#define BSP_ERROR_CHECK_RETURN_NULL(x) ESP_ERROR_CHECK(x)
+#define BSP_ERROR_CHECK(x, ret) ESP_ERROR_CHECK(x)
+#define BSP_NULL_CHECK(x, ret) assert(x)
+#define BSP_NULL_CHECK_GOTO(x, goto_tag) assert(x)
+
+
 // extern esp_lcd_touch_handle_t _lcd_touch_handle;
 
 // static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
@@ -45,11 +89,13 @@
 //     }
 // }
 
+static lv_indev_t *disp_indev = NULL;
+
+
+
 /* -------------------------------------------------------------------------- */
 /*                                    I2C                                     */
 /* -------------------------------------------------------------------------- */
-
-extern "C" void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle);
 
 /**
  * @brief Configure the I2C bus.
@@ -334,4 +380,265 @@ void HalEsp32::gpioSetLevel(uint8_t pin, bool level)
 void HalEsp32::gpioReset(uint8_t pin)
 {
     gpio_set_level((gpio_num_t) pin, false);
+}
+
+void bsp_reset_tp()
+{
+    // ESP_LOGI(COMPONENT_NAME, "reset tp");
+
+    // ESP_LOGI(COMPONENT_NAME, "reset gpio %d", GPIO_NUM_23);
+    // gpio_reset_pin(GPIO_NUM_23);
+
+    // uint8_t write_buf[2] = {0};
+    // uint8_t read_buf[1] = {0};
+
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // i2c_master_transmit_receive(i2c_dev_handle_pi4ioe1, write_buf, 1, read_buf, 1, I2C_MASTER_TIMEOUT_MS);
+
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // write_buf[1] = read_buf[0];
+    // clrbit(write_buf[1], 4);
+    // clrbit(write_buf[1], 5);
+    // i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    // vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    // write_buf[0] = PI4IO_REG_OUT_SET;
+    // write_buf[1] = read_buf[0];
+    // setbit(write_buf[1], 4);
+    // setbit(write_buf[1], 5);
+    // i2c_master_transmit(i2c_dev_handle_pi4ioe1, write_buf, 2, I2C_MASTER_TIMEOUT_MS);
+    // vTaskDelay(100 / portTICK_PERIOD_MS);
+}
+
+//==================================================================================
+// lcd st7703 1280x720  gt911
+//==================================================================================
+// Bit number used to represent command and parameter
+
+static esp_err_t bsp_enable_dsi_phy_power(void)
+{
+#if BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
+    // Turn on the power for MIPI DSI PHY, so it can go from "No Power" state to "Shutdown" state
+    static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
+    esp_ldo_channel_config_t ldo_cfg =
+    {
+        .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
+        .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
+    };
+    ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), COMPONENT_NAME, "Acquire LDO channel for DPHY failed");
+    ESP_LOGI(COMPONENT_NAME, "MIPI DSI PHY Powered on");
+#endif // BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
+
+    return ESP_OK;
+}
+
+#include "ili9881_init_data.c"
+
+esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles)
+{
+    esp_err_t ret = ESP_OK;
+    esp_lcd_panel_io_handle_t io = NULL;
+    esp_lcd_panel_handle_t disp_panel = NULL;
+
+    // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), COMPONENT_NAME, "Brightness init failed");
+    ESP_RETURN_ON_ERROR(bsp_enable_dsi_phy_power(), COMPONENT_NAME, "DSI PHY power failed");
+
+    /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
+    esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
+    esp_lcd_dsi_bus_config_t bus_config =
+    {
+        .bus_id = 0,
+        .num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM,
+        .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
+        .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
+    };
+    ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_config, &mipi_dsi_bus), COMPONENT_NAME, "New DSI bus init failed");
+
+    ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
+    // we use DBI interface to send LCD commands and parameters
+    esp_lcd_dbi_io_config_t dbi_config =
+    {
+        .virtual_channel = 0,
+        .lcd_cmd_bits = 8,   // according to the LCD spec
+        .lcd_param_bits = 8, // according to the LCD spec
+    };
+    // ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, COMPONENT_NAME, "New panel IO failed");
+    esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io);
+
+    ESP_LOGI(COMPONENT_NAME, "Install LCD driver of ili9881c");
+    esp_lcd_dpi_panel_config_t dpi_config = {};
+    dpi_config.virtual_channel = 0;
+    dpi_config.dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT;
+    dpi_config.dpi_clock_freq_mhz = 60; // 720*1280 RGB24 60Hz RGB24 // 80
+    dpi_config.pixel_format = LCD_COLOR_PIXEL_FORMAT_RGB565;
+    dpi_config.num_fbs = 1;
+    dpi_config.video_timing = {};
+    dpi_config.video_timing.h_size = BSP_LCD_H_RES;
+    dpi_config.video_timing.v_size = BSP_LCD_V_RES;
+    dpi_config.video_timing.hsync_back_porch = 140;
+    dpi_config.video_timing.hsync_pulse_width = 40;
+    dpi_config.video_timing.hsync_front_porch = 40;
+    dpi_config.video_timing.vsync_back_porch = 20;
+    dpi_config.video_timing.vsync_pulse_width = 4;
+    dpi_config.video_timing.vsync_front_porch = 20;
+    dpi_config.flags = {};
+    dpi_config.flags.use_dma2d = true;
+
+    ili9881c_vendor_config_t vendor_config =
+    {
+        .init_cmds = tab5_lcd_ili9881c_specific_init_code_default,
+        .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
+        .mipi_config =
+        {
+            .dsi_bus = mipi_dsi_bus,
+            .dpi_config = &dpi_config,
+            .lane_num = 2,
+        },
+    };
+
+    esp_lcd_panel_dev_config_t lcd_dev_config = {};
+    lcd_dev_config.bits_per_pixel = 16;
+    lcd_dev_config.rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB;
+    lcd_dev_config.reset_gpio_num = -1;
+    lcd_dev_config.vendor_config = &vendor_config;
+
+    ESP_ERROR_CHECK(esp_lcd_new_panel_ili9881c(io, &lcd_dev_config, &disp_panel));
+    ESP_ERROR_CHECK(esp_lcd_panel_reset(disp_panel));
+    ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
+    //  ESP_ERROR_CHECK(esp_lcd_panel_mirror(disp_panel, false, true));
+    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(disp_panel, true));
+
+    /* Return all handles */
+    ret_handles->io = io;
+    ret_handles->mipi_dsi_bus = mipi_dsi_bus;
+    ret_handles->panel = disp_panel;
+    ret_handles->control = NULL;
+
+    ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
+
+    return ret;
+
+    // if (disp_panel)
+    // {
+    //     esp_lcd_panel_del(disp_panel);
+    // }
+    // if (io)
+    // {
+    //     esp_lcd_panel_io_del(io);
+    // }
+    // if (mipi_dsi_bus)
+    // {
+    //     esp_lcd_del_dsi_bus(mipi_dsi_bus);
+    // }
+    // return ret;
+}
+
+esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch)
+{
+    /* Initilize I2C */
+    // BSP_ERROR_CHECK_RETURN_ERR(bsp_i2c_init());
+
+    /* Initialize touch */
+    const esp_lcd_touch_config_t tp_cfg =
+    {
+        .x_max = BSP_LCD_H_RES,
+        .y_max = BSP_LCD_V_RES,
+        .rst_gpio_num = GPIO_NUM_NC, // -1, // BSP_LCD_TOUCH_RST, // NC
+        .int_gpio_num = GPIO_NUM_23, // 23, // BSP_LCD_TOUCH_INT,
+        .levels =
+        {
+            .reset = 0,
+            .interrupt = 0,
+        },
+        .flags =
+        {
+            .swap_xy = 0,
+            .mirror_x = 0,
+            .mirror_y = 0,
+        },
+    };
+    esp_lcd_panel_io_handle_t tp_io_handle = NULL;
+    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
+    tp_io_config.dev_addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS_BACKUP; // Change GT911 address
+    tp_io_config.scl_speed_hz = CONFIG_BSP_I2C_CLK_SPEED_HZ;
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_i2c(i2c_handle, &tp_io_config, &tp_io_handle), COMPONENT_NAME, "");
+    return esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, ret_touch);
+}
+
+static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
+{
+    assert(cfg != NULL);
+    bsp_lcd_handles_t lcd_panels;
+    BSP_ERROR_CHECK_RETURN_NULL(bsp_display_new_with_handles(NULL, &lcd_panels));
+
+    /* Add LCD screen */
+    ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
+    lvgl_port_display_cfg_t disp_cfg = {};
+    disp_cfg.io_handle = lcd_panels.io;
+    disp_cfg.panel_handle = lcd_panels.panel;
+    disp_cfg.control_handle = lcd_panels.control;
+    disp_cfg.buffer_size = cfg->buffer_size;
+    disp_cfg.double_buffer = cfg->double_buffer;
+    disp_cfg.hres = BSP_LCD_H_RES;
+    disp_cfg.vres = BSP_LCD_V_RES;
+    disp_cfg.monochrome = false;
+    disp_cfg.rotation = {};
+    disp_cfg.rotation.swap_xy = false;
+    disp_cfg.rotation.mirror_x = false;
+    disp_cfg.rotation.mirror_y = false;
+    disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
+    disp_cfg.flags = {};
+    disp_cfg.flags.buff_dma = cfg->flags.buff_dma;
+    disp_cfg.flags.buff_spiram = cfg->flags.buff_spiram;
+    disp_cfg.flags.swap_bytes = (BSP_LCD_BIGENDIAN ? true : false);
+    disp_cfg.flags.sw_rotate = cfg->flags.sw_rotate; /* Only SW rotation is supported for 90° and 270° */
+
+    lvgl_port_display_dsi_cfg_t dpi_cfg = {};
+    dpi_cfg.flags.avoid_tearing = false;
+
+    return lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
+}
+
+static esp_lcd_touch_handle_t _touch_handle;
+
+esp_lcd_touch_handle_t bsp_display_get_touch_handle(void)
+{
+    return _touch_handle;
+}
+
+esp_lcd_touch_handle_t _lcd_touch_handle;
+
+static lv_indev_t *bsp_display_indev_init(lv_display_t *disp)
+{
+    esp_lcd_touch_handle_t tp;
+    BSP_ERROR_CHECK_RETURN_NULL(bsp_touch_new(NULL, &tp));
+    esp_lcd_touch_exit_sleep(tp); // !!!
+    assert(tp);
+    _lcd_touch_handle = tp;
+
+    /* Add touch input (for selected screen) */
+    const lvgl_port_touch_cfg_t touch_cfg =
+    {
+        .disp = disp,
+        .handle = tp,
+    };
+
+    return lvgl_port_add_touch(&touch_cfg);
+}
+
+lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
+{
+    lv_display_t *disp;
+
+    assert(cfg != NULL);
+    BSP_ERROR_CHECK_RETURN_NULL(lvgl_port_init(&cfg->lvgl_port_cfg));
+
+    BSP_NULL_CHECK(disp = bsp_display_lcd_init(cfg), NULL);
+    BSP_NULL_CHECK(disp_indev = bsp_display_indev_init(disp), NULL);
+    return disp;
+}
+
+lv_indev_t *bsp_display_get_input_dev(void)
+{
+    return disp_indev;
 }

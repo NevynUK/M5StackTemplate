@@ -3,7 +3,6 @@ idf_component_register(
     SRCS "m5stack_tab5.c"
     INCLUDE_DIRS "include"
     INCLUDE_DIRS "include/bsp"
-    PRIV_INCLUDE_DIRS "priv_include"
     REQUIRES 
         driver 
         esp_lcd
