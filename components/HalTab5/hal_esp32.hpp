@@ -8,8 +8,10 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#include "driver/i2c_master.h"
+
 #include <HalBase.h>
-#include <ina226.hpp>
+// #include <ina226.hpp>
 #include <lvgl.h>
 
 class HalEsp32 : public hal::HalBase
@@ -50,7 +52,7 @@ public:
 
     void init() override;
 
-    INA226 ina226;
+    // INA226 ina226;
     lv_disp_t *lvDisp = nullptr;
     lv_indev_t *lvKeyboard = nullptr;
 
