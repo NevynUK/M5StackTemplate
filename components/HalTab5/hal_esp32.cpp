@@ -29,8 +29,6 @@
 #include "freertos/task.h"
 #include "sdmmc_cmd.h"
 #include "esp_lcd_ili9881c.h"
-#include "bsp/display.h"
-#include "bsp/touch.h"
 #include "esp_lcd_touch_gt911.h"
 #include "bsp_err_check.h"
 #include "esp_codec_dev_defaults.h"
