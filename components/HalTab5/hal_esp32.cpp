@@ -13,8 +13,6 @@
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include <bsp/m5stack_tab5.h>
-
 
 #include "driver/gpio.h"
 #include "driver/ledc.h"
@@ -31,7 +29,6 @@
 #include "freertos/task.h"
 #include "sdmmc_cmd.h"
 #include "esp_lcd_ili9881c.h"
-#include "bsp/m5stack_tab5.h"
 #include "bsp/display.h"
 #include "bsp/touch.h"
 #include "esp_lcd_touch_gt911.h"
