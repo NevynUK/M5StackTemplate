@@ -1,7 +1,7 @@
 
 idf_component_register(
     SRCS "hal_esp32.cpp"
-    INCLUDE_DIRS "." "include"
+    INCLUDE_DIRS "."
     REQUIRES 
         driver 
         esp_lcd
