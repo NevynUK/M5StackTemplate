@@ -35,7 +35,7 @@
 
 using namespace HAL;
 
-static const char *COMPONENT_NAME = "M5STACK_TAB5";
+static const char *COMPONENT_NAME = "HalTab5";
 
 // sys i2c
 static bool i2c_initialized = false;

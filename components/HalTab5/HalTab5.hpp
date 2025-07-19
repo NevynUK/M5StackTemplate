@@ -271,7 +271,7 @@ namespace HAL
     class HalEsp32 : public HAL::HalBase
     {
     public:
-        const char *COMPONENT_NAME = "HalEsp32";
+        const char *COMPONENT_NAME = "HalTab5";
 
         /* -------------------------------------------------------------------------- */
         /*                                    I2C                                     */

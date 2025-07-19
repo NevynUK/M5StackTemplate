@@ -32,7 +32,7 @@ namespace HAL
         /**
          * @brief Name of this class for logging purposes.
          */
-        const char *COMPONENT_NAME = "HalEsp32";
+        const char *COMPONENT_NAME = "HalBase";
 
         /**
          * @brief Destroy the Hal Base object.
