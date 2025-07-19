@@ -317,6 +317,20 @@ namespace HAL
         lv_indev_t *lvKeyboard = nullptr;
 
         /**
+         * @brief Get the Display Width object.
+         * 
+         * @return uint32_t Width of the display.
+         */
+        uint32_t GetDisplayWidth() override;
+
+        /**
+         * @brief Get the display height.
+         *
+         * @return uint32_t Display height in pixels.
+         */
+        uint32_t GetDisplayHeight() override;
+
+        /**
          * @brief Initialise the brightness control.
          *
          * @return esp_err_t ESP_OK on success, or an error code on failure.

@@ -315,6 +315,31 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
+/**
+ * @brief Get the Display Width object.
+ * 
+ * @return uint32_t Width of the display.
+ */
+uint32_t HalTab5::GetDisplayWidth()
+{
+    return BSP_LCD_H_RES;
+}
+
+/**
+ * @brief Get the display height.
+ *
+ * @return uint32_t Display height in pixels.
+ */
+uint32_t HalTab5::GetDisplayHeight()
+{
+    return BSP_LCD_V_RES;
+}
+
+/**
+ * @brief Initialise the brightness control.
+ *
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
 esp_err_t HalTab5::InitialiseBrightnessControl(void)
 {
     const ledc_timer_config_t lcd_backlight_timer =
@@ -360,6 +385,11 @@ esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightness)
     return ESP_OK;
 }
 
+/**
+ * @brief Get the display brightness.
+ *
+ * @return uint8_t Brightness level from 0 to 100.
+ */
 uint8_t HalTab5::GetDisplayBrightness()
 {
     return _current_lcd_brightness;
