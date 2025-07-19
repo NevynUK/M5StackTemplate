@@ -32,6 +32,43 @@ extern "C" void app_main(void)
     lvgl_port_init(&lvglConfig);
     hal->Configure();
 
+    /* Add LCD screen */
+    lvgl_port_display_cfg_t disp_cfg = {};
+    disp_cfg.io_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetIoHandle();
+    disp_cfg.panel_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetPanelHandle();
+    disp_cfg.control_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetControlHandle();
+    disp_cfg.buffer_size = hal->GetDisplayHeight() * hal->GetDisplayWidth();
+    disp_cfg.double_buffer = true;
+    disp_cfg.hres = hal->GetDisplayWidth();
+    disp_cfg.vres = hal->GetDisplayHeight();
+    disp_cfg.monochrome = false;
+    disp_cfg.rotation = {};
+    disp_cfg.rotation.swap_xy = false;
+    disp_cfg.rotation.mirror_x = false;
+    disp_cfg.rotation.mirror_y = false;
+    disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
+    disp_cfg.flags = {};
+    disp_cfg.flags.buff_dma = true;
+    disp_cfg.flags.buff_spiram = true;
+    disp_cfg.flags.swap_bytes = (BSP_LCD_BIGENDIAN ? true : false);
+    disp_cfg.flags.sw_rotate = true; /* Only SW rotation is supported for 90° and 270° */
+
+    lvgl_port_display_dsi_cfg_t dpi_cfg = {};
+    dpi_cfg.flags.avoid_tearing = false;
+
+    lv_disp_t *lvDisp = lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
+    lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
+    hal->SetDisplayBrightness(100);
+
+    // Touchpad lvgl indev
+    // lvTouchpad = lv_indev_create();
+    // lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
+    // lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
+    // lv_indev_set_display(lvTouchpad, lvDisp);
+
+    lvgl_port_unlock();
+
+
     esp_chip_info_t chip_info;
     uint32_t flash_size;
 

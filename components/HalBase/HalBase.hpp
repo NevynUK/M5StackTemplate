@@ -89,7 +89,7 @@ namespace HAL
          * @param cfg Display configuration.
          * @return lv_display_t* Pointer to the LVGL display object.
          */
-        virtual lv_display_t *ConfigureDisplay(const bsp_display_cfg_t *cfg)
+        virtual esp_err_t ConfigureDisplay(const bsp_display_cfg_t *cfg)
         {
             throw NotImplementedException(__FUNCTION__);
         }

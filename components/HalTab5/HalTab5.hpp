@@ -288,7 +288,7 @@ namespace HAL
          * @param cfg Display configuration.
          * @return lv_display_t* Pointer to the LVGL display object.
          */
-        lv_display_t *ConfigureDisplay(const bsp_display_cfg_t *cfg);
+        esp_err_t ConfigureDisplay(const bsp_display_cfg_t *cfg);
 
         /**
          * @brief Get the Display Width object.
@@ -323,6 +323,14 @@ namespace HAL
          * @return int Display height in pixels.
          */
         uint8_t GetDisplayBrightness() override;
+
+        esp_lcd_panel_io_handle_t GetIoHandle() const;
+        
+        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
+
+        esp_lcd_panel_handle_t GetPanelHandle() const;
+
+        esp_lcd_panel_handle_t GetControlHandle() const;
 
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
@@ -467,16 +475,6 @@ namespace HAL
          * @brief Handle for the control panel.
          */
         esp_lcd_panel_handle_t _controlHandle;
-
-        esp_lcd_panel_io_handle_t GetIoHandle() const;
-        
-        esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
-
-        esp_lcd_panel_handle_t GetPanelHandle() const;
-
-        esp_lcd_panel_handle_t GetControlHandle() const;
-
-        esp_err_t NewDisplay(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles);
 
         void set_gpio_output_capability();
     };
