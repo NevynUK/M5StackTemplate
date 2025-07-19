@@ -487,7 +487,6 @@ void HalTab5::Configure()
     // bsp_reset_tp();
     bsp_display_cfg_t cfg =
     {
-        .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
         .buffer_size = BSP_LCD_H_RES * BSP_LCD_V_RES,
         .double_buffer = true,
         .flags = 
@@ -624,12 +623,31 @@ uint8_t HalTab5::GetDisplayBrightness()
     return _current_lcd_brightness;
 }
 
+esp_lcd_panel_io_handle_t HalTab5::GetIoHandle() const
+{
+    return _ioHandle;
+}
+
+esp_lcd_dsi_bus_handle_t HalTab5::GetMipiDsiBusHandle() const
+{
+    return _mipiDsiBusHandle;
+}
+
+esp_lcd_panel_handle_t HalTab5::GetPanelHandle() const
+{
+    return _panelHandle;
+}
+
+esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
+{
+    return _controlHandle;
+}
+
 lv_display_t *HalTab5::ConfigureDisplay(const bsp_display_cfg_t *cfg)
 {
-    lv_display_t *disp;
+    lv_display_t *disp = nullptr;
 
     assert(cfg != NULL);
-    // BSP_ERROR_CHECK_RETURN_NULL(lvgl_port_init(&cfg->lvgl_port_cfg));
 
     bsp_lcd_handles_t lcd_panels;
     BSP_ERROR_CHECK_RETURN_NULL(NewDisplay(NULL, &lcd_panels));

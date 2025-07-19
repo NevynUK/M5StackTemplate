@@ -29,7 +29,6 @@
  */
 typedef struct
 {
-    lvgl_port_cfg_t lvgl_port_cfg; /*!< LVGL port configuration */
     uint32_t buffer_size;          /*!< Size of the buffer for the screen in pixels */
     bool double_buffer;            /*!< True, if should be allocated two buffers */
 
