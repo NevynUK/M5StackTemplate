@@ -187,26 +187,6 @@ extern "C"
      */
     esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch);
 
-    /**************************************************************************************************
-     *
-     * I2C interface
-     *
-     * There are multiple devices connected to I2C peripheral:
-     *  - Codec ES8311 (configuration only)
-     *  - LCD Touch controller
-     **************************************************************************************************/
-
-    /**
-     * @brief Init I2C driver
-     *
-     * @return
-     *      - ESP_OK                On success
-     *      - ESP_ERR_INVALID_ARG   I2C parameter error
-     *      - ESP_FAIL              I2C driver installation error
-     *
-     */
-    esp_err_t bsp_i2c_init(void);
-
 /**************************************************************************************************
  *
  * LCD interface
@@ -224,24 +204,6 @@ extern "C"
 
     #define BSP_LCD_DRAW_BUFF_SIZE (BSP_LCD_H_RES * 50) // Frame buffer size in pixels
     #define BSP_LCD_DRAW_BUFF_DOUBLE (0)
-
-    /**
-     * @brief BSP display configuration structure
-     *
-     */
-    typedef struct
-    {
-        lvgl_port_cfg_t lvgl_port_cfg; /*!< LVGL port configuration */
-        uint32_t buffer_size;          /*!< Size of the buffer for the screen in pixels */
-        bool double_buffer;            /*!< True, if should be allocated two buffers */
-
-        struct
-        {
-            unsigned int buff_dma:1;    /*!< Allocated LVGL buffer will be DMA capable */
-            unsigned int buff_spiram:1; /*!< Allocated LVGL buffer will be in PSRAM */
-            unsigned int sw_rotate:1;   /*!< Use software rotation (slower), The feature is unavailable under avoid-tear mode */
-        } flags;
-    } bsp_display_cfg_t;
 
     /**
      * @brief Initialize display
@@ -319,6 +281,14 @@ namespace HAL
 
         lv_disp_t *lvDisp = nullptr;
         lv_indev_t *lvKeyboard = nullptr;
+
+        /**
+         * @brief Configure the display.
+         *
+         * @param cfg Display configuration.
+         * @return lv_display_t* Pointer to the LVGL display object.
+         */
+        lv_display_t *ConfigureDisplay(const bsp_display_cfg_t *cfg);
 
         /**
          * @brief Get the Display Width object.
@@ -473,6 +443,10 @@ namespace HAL
          * This is a value from 0 to 100, where 0 is off and 100 is maximum brightness.
          */
         uint8_t _current_lcd_brightness = 100;
+
+        /* -------------------------------------------------------------------------- */
+        /*                          Private Display Methods                           */
+        /* -------------------------------------------------------------------------- */
 
         void set_gpio_output_capability();
     };

@@ -19,8 +19,28 @@
 #include <esp_err.h>
 
 #include <lvgl.h>
+#include <esp_lvgl_port.h>
 
 #include "NotImplementedException.hpp"
+
+/**
+ * @brief BSP display configuration structure
+ *
+ */
+typedef struct
+{
+    lvgl_port_cfg_t lvgl_port_cfg; /*!< LVGL port configuration */
+    uint32_t buffer_size;          /*!< Size of the buffer for the screen in pixels */
+    bool double_buffer;            /*!< True, if should be allocated two buffers */
+
+    struct
+    {
+        unsigned int buff_dma:1;    /*!< Allocated LVGL buffer will be DMA capable */
+        unsigned int buff_spiram:1; /*!< Allocated LVGL buffer will be in PSRAM */
+        unsigned int sw_rotate:1;   /*!< Use software rotation (slower), The feature is unavailable under avoid-tear mode */
+    } flags;
+} bsp_display_cfg_t;
+
 
 /**
  * @brief Namespace for the Hardware Abstraction Layer (HAL).
@@ -63,6 +83,17 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                                   Display                                  */
         /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the display.
+         *
+         * @param cfg Display configuration.
+         * @return lv_display_t* Pointer to the LVGL display object.
+         */
+        virtual lv_display_t *ConfigureDisplay(const bsp_display_cfg_t *cfg)
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
 
         /**
          * @brief Get the Display Width object.
