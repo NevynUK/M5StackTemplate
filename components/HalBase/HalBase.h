@@ -66,7 +66,7 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                                   Display                                  */
         /* -------------------------------------------------------------------------- */
-        
+
         /**
          * @brief Get the Display Width object.
          * 
@@ -88,6 +88,16 @@ namespace HAL
         }
 
         /**
+         * @brief Get the display brightness.
+         *
+         * @return uint8_t Brightness level from 0 to 100.
+         */
+        virtual uint8_t GetDisplayBrightness()
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
+        /**
          * @brief Set the display brightness.
          *
          * @param brightness Brightness level from 0 to 100.
@@ -103,11 +113,6 @@ namespace HAL
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
         virtual esp_err_t InitialiseBrightnessControl()
-        {
-            throw NotImplementedException(__FUNCTION__);
-        }
-
-        virtual uint8_t GetDisplayBrightness()
         {
             throw NotImplementedException(__FUNCTION__);
         }
