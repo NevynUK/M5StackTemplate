@@ -324,12 +324,32 @@ namespace HAL
          */
         uint8_t GetDisplayBrightness() override;
 
+        /**
+         * @brief Get the IO handle for the display.
+         * 
+         * @return esp_lcd_panel_io_handle_t 
+         */
         esp_lcd_panel_io_handle_t GetIoHandle() const;
         
+        /**
+         * @brief Get the MIPI DSI bus handle for the display.
+         * 
+         * @return esp_lcd_dsi_bus_handle_t 
+         */
         esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
 
+        /**
+         * @brief Get the panel handle for the display.
+         * 
+         * @return esp_lcd_panel_handle_t 
+         */
         esp_lcd_panel_handle_t GetPanelHandle() const;
 
+        /**
+         * @brief Get the control handle for the display.
+         * 
+         * @return esp_lcd_panel_handle_t 
+         */
         esp_lcd_panel_handle_t GetControlHandle() const;
 
         /* -------------------------------------------------------------------------- */
@@ -453,7 +473,7 @@ namespace HAL
         uint8_t _current_lcd_brightness = 100;
 
         /* -------------------------------------------------------------------------- */
-        /*                          Private Display Methods                           */
+        /*                       Private Display Data Methods                         */
         /* -------------------------------------------------------------------------- */
 
         /**
@@ -476,6 +496,11 @@ namespace HAL
          */
         esp_lcd_panel_handle_t _controlHandle;
 
+        /**
+         * @brief Enable MIPI DSI PHY power
+         * 
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
         esp_err_t EnableDsiPhyPower(void);
 
         void set_gpio_output_capability();

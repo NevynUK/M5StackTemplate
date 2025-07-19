@@ -89,28 +89,6 @@ void bsp_reset_tp()
     // vTaskDelay(100 / portTICK_PERIOD_MS);
 }
 
-//==================================================================================
-// lcd st7703 1280x720  gt911
-//==================================================================================
-// Bit number used to represent command and parameter
-
-esp_err_t HalTab5::EnableDsiPhyPower(void)
-{
-#if BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
-    // Turn on the power for MIPI DSI PHY, so it can go from "No Power" state to "Shutdown" state
-    static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
-    esp_ldo_channel_config_t ldo_cfg =
-    {
-        .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
-        .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
-    };
-    ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), COMPONENT_NAME, "Acquire LDO channel for DPHY failed");
-    ESP_LOGI(COMPONENT_NAME, "MIPI DSI PHY Powered on");
-#endif // BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
-
-    return ESP_OK;
-}
-
 #include "ili9881_init_data.c"
 
 esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch)
@@ -488,26 +466,70 @@ uint8_t HalTab5::GetDisplayBrightness()
     return _current_lcd_brightness;
 }
 
+/**
+ * @brief Get the IO handle for the display.
+ * 
+ * @return esp_lcd_panel_io_handle_t 
+ */
 esp_lcd_panel_io_handle_t HalTab5::GetIoHandle() const
 {
     return _ioHandle;
 }
 
+/**
+ * @brief Get the MIPI DSI bus handle for the display.
+ * 
+ * @return esp_lcd_dsi_bus_handle_t 
+ */
 esp_lcd_dsi_bus_handle_t HalTab5::GetMipiDsiBusHandle() const
 {
     return _mipiDsiBusHandle;
 }
 
+/**
+ * @brief Get the panel handle for the display.
+ * 
+ * @return esp_lcd_panel_handle_t 
+ */
 esp_lcd_panel_handle_t HalTab5::GetPanelHandle() const
 {
     return _panelHandle;
 }
 
+/**
+ * @brief Get the control handle for the display.
+ * 
+ * @return esp_lcd_panel_handle_t 
+ */
 esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
 {
     return _controlHandle;
 }
 
+/**
+ * @brief Enable MIPI DSI PHY power
+ * 
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
+esp_err_t HalTab5::EnableDsiPhyPower(void)
+{
+    static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
+    esp_ldo_channel_config_t ldo_cfg =
+    {
+        .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
+        .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
+    };
+    ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), COMPONENT_NAME, "Acquire LDO channel for DPHY failed");
+    ESP_LOGI(COMPONENT_NAME, "MIPI DSI PHY Powered on");
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Configure the display.
+ * 
+ * @return esp_err_t ESP_OK on success, or an error code on failure.
+ */
 esp_err_t HalTab5::ConfigureDisplay()
 {
     esp_err_t ret = ESP_OK;
@@ -597,6 +619,10 @@ esp_err_t HalTab5::ConfigureDisplay()
 
     return ESP_OK;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   GPIO                                     */
+/* -------------------------------------------------------------------------- */
 
 void HalTab5::gpioInitOutput(uint8_t pin)
 {
