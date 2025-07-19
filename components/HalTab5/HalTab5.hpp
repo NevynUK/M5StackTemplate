@@ -9,21 +9,13 @@
  */
 #pragma once
 
-#include "esp_err.h"
-#include "esp_log.h"
+#include <sdkconfig.h>
 
+#include "esp_err.h"
 #include "driver/i2c_master.h"
+#include "esp_lcd_mipi_dsi.h"
 
 #include <HalBase.hpp>
-#include <lvgl.h>
-#include "esp_lvgl_port.h"
-
-#include "esp_lcd_types.h"
-#include "esp_lcd_mipi_dsi.h"
-#include "sdkconfig.h"
-
-#include "esp_lcd_touch.h"
-
 
 /**************************************************************************************************
  *  BSP Capabilities
@@ -204,18 +196,6 @@ extern "C"
 
     #define BSP_LCD_DRAW_BUFF_SIZE (BSP_LCD_H_RES * 50) // Frame buffer size in pixels
     #define BSP_LCD_DRAW_BUFF_DOUBLE (0)
-
-    /**
-     * @brief Initialize display
-     *
-     * This function initializes SPI, display controller and starts LVGL handling task.
-     * LCD backlight must be enabled separately by calling bsp_display_brightness_set()
-     *
-     * @param cfg display configuration
-     *
-     * @return Pointer to LVGL display or NULL when error occured
-     */
-    lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg);
 
     /**
      * @brief Get pointer to input device (touch, buttons, ...)

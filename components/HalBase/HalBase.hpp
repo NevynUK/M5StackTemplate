@@ -10,11 +10,11 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
-#include <queue>
-#include <string>
-#include <mutex>
-#include <vector>
+// #include <memory>
+// #include <queue>
+// #include <string>
+// #include <mutex>
+// #include <vector>
 
 #include <esp_err.h>
 
@@ -23,22 +23,28 @@
 
 #include "NotImplementedException.hpp"
 
+#define BSP_ERROR_CHECK_RETURN_ERR(x) ESP_ERROR_CHECK(x)
+#define BSP_ERROR_CHECK_RETURN_NULL(x) ESP_ERROR_CHECK(x)
+#define BSP_ERROR_CHECK(x, ret) ESP_ERROR_CHECK(x)
+#define BSP_NULL_CHECK(x, ret) assert(x)
+#define BSP_NULL_CHECK_GOTO(x, goto_tag) assert(x)
+
 /**
  * @brief BSP display configuration structure
  *
  */
-typedef struct
-{
-    uint32_t buffer_size;          /*!< Size of the buffer for the screen in pixels */
-    bool double_buffer;            /*!< True, if should be allocated two buffers */
+// typedef struct
+// {
+//     uint32_t buffer_size;          /*!< Size of the buffer for the screen in pixels */
+//     bool double_buffer;            /*!< True, if should be allocated two buffers */
 
-    struct
-    {
-        unsigned int buff_dma:1;    /*!< Allocated LVGL buffer will be DMA capable */
-        unsigned int buff_spiram:1; /*!< Allocated LVGL buffer will be in PSRAM */
-        unsigned int sw_rotate:1;   /*!< Use software rotation (slower), The feature is unavailable under avoid-tear mode */
-    } flags;
-} bsp_display_cfg_t;
+//     struct
+//     {
+//         unsigned int buff_dma:1;    /*!< Allocated LVGL buffer will be DMA capable */
+//         unsigned int buff_spiram:1; /*!< Allocated LVGL buffer will be in PSRAM */
+//         unsigned int sw_rotate:1;   /*!< Use software rotation (slower), The feature is unavailable under avoid-tear mode */
+//     } flags;
+// } bsp_display_cfg_t;
 
 
 /**

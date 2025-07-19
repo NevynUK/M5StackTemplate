@@ -9,16 +9,15 @@
  */
 #include <sdkconfig.h>
 
+#include <algorithm>
+
 #include "esp_log.h"
 #include "esp_err.h"
 #include "esp_check.h"
 #include "driver/ledc.h"
-#include "esp_lcd_panel_ops.h"
 #include "esp_lcd_mipi_dsi.h"
 #include "esp_ldo_regulator.h"
 #include "esp_lcd_ili9881c.h"
-#include "esp_lcd_touch_gt911.h"
-#include "esp_codec_dev_defaults.h"
 
 #include "HalTab5.hpp"
 

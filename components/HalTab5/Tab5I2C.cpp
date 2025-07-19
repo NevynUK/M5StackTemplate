@@ -11,17 +11,12 @@
 
 #include "esp_log.h"
 #include "esp_err.h"
-#include "esp_check.h"
-
-#include <freertos/FreeRTOS.h>
-
-#include "driver/gpio.h"
 
 #include "HalTab5.hpp"
 
-using namespace HAL;
-
 extern void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle);
+
+using namespace HAL;
 
  /**
  * @brief Configure the I2C bus.
