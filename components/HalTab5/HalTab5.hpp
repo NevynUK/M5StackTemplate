@@ -1,7 +1,11 @@
-/*
- * SPDX-FileCopyrightText: 2025 M5Stack Technology CO LTD
+/**
+ * @file HalTab5.hpp
+ * @author Mark Stevens
+ * @brief Hardware Abstraction Layer for the M5Stack Tab5.
+ * @version 0.1
+ * @date 2025-07-19
  *
- * SPDX-License-Identifier: MIT
+ * @copyright Copyright (c) 2025
  */
 #pragma once
 

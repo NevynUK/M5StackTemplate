@@ -1,7 +1,11 @@
-/*
- * SPDX-FileCopyrightText: 2025 M5Stack Technology CO LTD
+/**
+ * @file app_main.cpp
+ * @author Mark Stevens
+ * @brief 
+ * @version 0.1
+ * @date 2025-07-19
  *
- * SPDX-License-Identifier: MIT
+ * @copyright Copyright (c) 2025
  */
 #include <memory>
 #include <cstring>
