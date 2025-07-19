@@ -266,8 +266,14 @@ extern "C"
 }
 #endif
 
+/**
+ * @brief Namespace for the Hardware Abstraction Layer (HAL).
+ */
 namespace HAL
 {
+    /**
+     * @brief Implementation of the Hardware Abstraction Layer for the M5Stack Tab5 device.
+     */
     class HalTab5 : public HalBase
     {
     public:
@@ -275,6 +281,11 @@ namespace HAL
          * @brief Name of this class for logging purposes.
          */
         const char *COMPONENT_NAME = "HalTab5";
+
+        /**
+         * @brief Configure and initialise the hardware.
+         */
+        void Configure() override;
 
         /* -------------------------------------------------------------------------- */
         /*                                    I2C                                     */
@@ -301,11 +312,6 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                            Display Methods                                 */
         /* -------------------------------------------------------------------------- */
-
-        /**
-         * @brief Configure and initialise the hardware.
-         */
-        void Configure() override;
 
         lv_disp_t *lvDisp = nullptr;
         lv_indev_t *lvKeyboard = nullptr;
@@ -443,7 +449,13 @@ namespace HAL
          */
         i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
 
-        void set_gpio_output_capability();
+        /**
+         * @brief Current LCD brightness level.
+         *
+         * This is a value from 0 to 100, where 0 is off and 100 is maximum brightness.
+         */
         uint8_t _current_lcd_brightness = 100;
+
+        void set_gpio_output_capability();
     };
 }

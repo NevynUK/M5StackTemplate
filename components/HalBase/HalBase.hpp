@@ -19,7 +19,7 @@
 #include "NotImplementedException.hpp"
 
 /**
- * @brief Name space for the hardware abstraction layer (HAL).
+ * @brief Namespace for the Hardware Abstraction Layer (HAL).
  */
 namespace HAL
 {
@@ -30,7 +30,7 @@ namespace HAL
     {
     public:
         /**
-         * @brief Destroy the Hal Base object.
+         * @brief Destroy the HalBase object.
          */
         virtual ~HalBase() = default;
 
