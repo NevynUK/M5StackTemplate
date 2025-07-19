@@ -267,163 +267,178 @@ extern "C"
 }
 #endif
 
-
-class HalEsp32 : public hal::HalBase
+namespace HAL
 {
-public:
-    const char *COMPONENT_NAME = "HalEsp32";
-
-    std::string type() override
+    class HalEsp32 : public HAL::HalBase
     {
-        return "Tab5";
-    }
+    public:
+        const char *COMPONENT_NAME = "HalEsp32";
 
-    /* -------------------------------------------------------------------------- */
-    /*                                    I2C                                     */
-    /* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
 
-    /**
-     * @brief Configure the I2C bus.
-     *
-     * @return esp_err_t ESP_OK on success, or an error code on failure.
-     */
-    esp_err_t ConfigureI2C();
+        /**
+         * @brief Configure the I2C bus.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureI2C() override;
 
-    /* -------------------------------------------------------------------------- */
-    /*                               IO Expanders                                 */
-    /* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                               IO Expanders                                 */
+        /* -------------------------------------------------------------------------- */
 
-    /**
-     * @brief Configure the IO Expanders.
-     *
-     * @return esp_err_t ESP_OK on success, or an error code on failure.
-     */
-    esp_err_t ConfigureIoExpanders();
+        /**
+         * @brief Configure the IO Expanders.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureIoExpanders();
 
-    /* -------------------------------------------------------------------------- */
-    /*                            Display Methods                                 */
-    /* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                            Display Methods                                 */
+        /* -------------------------------------------------------------------------- */
 
-    void init() override;
+        void init() override;
 
-    // INA226 ina226;
-    lv_disp_t *lvDisp = nullptr;
-    lv_indev_t *lvKeyboard = nullptr;
+        lv_disp_t *lvDisp = nullptr;
+        lv_indev_t *lvKeyboard = nullptr;
 
-    esp_err_t InitialiseBrightnessControl(void) override;
-    esp_err_t SetDisplayBrightness(uint8_t brightness) override;
-    uint8_t GetDisplayBrightness() override;
+        /**
+         * @brief Initialise the brightness control.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t InitialiseBrightnessControl(void) override;
+                /**
+         * @brief Set the display brightness.
+         *
+         * @param brightness Brightness level from 0 to 100.
+         */
+        esp_err_t SetDisplayBrightness(uint8_t brightness) override;
 
-    void gpioInitOutput(uint8_t pin) override;
-    void gpioSetLevel(uint8_t pin, bool level) override;
-    void gpioReset(uint8_t pin) override;
+        /**
+         * @brief Get the display height.
+         *
+         * @return int Display height in pixels.
+         */
+        uint8_t GetDisplayBrightness() override;
 
-private:
-    /* -------------------------------------------------------------------------- */
-    /*                        Private I2C Methods and Data                        */
-    /* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                                   GPIO                                     */
+        /* -------------------------------------------------------------------------- */
+        void gpioInitOutput(uint8_t pin) override;
+        void gpioSetLevel(uint8_t pin, bool level) override;
+        void gpioReset(uint8_t pin) override;
 
-    /**
-     * @brief Port number for the I2C master bus.
-     */
-    const i2c_port_num_t MASTER_I2C_PORT_NUMBER = 0;
+    private:
+        /* -------------------------------------------------------------------------- */
+        /*                        Private I2C Methods and Data                        */
+        /* -------------------------------------------------------------------------- */
 
-    /**
-     * @brief GPIO number for the I2C master SDA line.
-     */
-    const gpio_num_t MASTER_I2C_SDA_GPIO = GPIO_NUM_31;
+        /**
+         * @brief Port number for the I2C master bus.
+         */
+        const i2c_port_num_t MASTER_I2C_PORT_NUMBER = 0;
 
-    /**
-     * @brief GPIO number for the I2C master SCL line.
-     */
-    const gpio_num_t MASTER_I2C_SCL_GPIO = GPIO_NUM_32;
+        /**
+         * @brief GPIO number for the I2C master SDA line.
+         */
+        const gpio_num_t MASTER_I2C_SDA_GPIO = GPIO_NUM_31;
 
-    /**
-     * @brief I2C master bus handle.
-     */
-    i2c_master_bus_handle_t _i2cHandle = nullptr;
+        /**
+         * @brief GPIO number for the I2C master SCL line.
+         */
+        const gpio_num_t MASTER_I2C_SCL_GPIO = GPIO_NUM_32;
 
-    /* -------------------------------------------------------------------------- */
-    /*                    Private IO Expanders Data and Methods                   */
-    /*                                                                            */
-    /* Chip: PI4IOE5V6416                                                         */
-    /* Datasheet: https://www.diodes.com/datasheet/download/PI4IOE5V6416.pdf      */
-    /*                                                                            */
-    /* -------------------------------------------------------------------------- */
+        /**
+         * @brief I2C master bus handle.
+         */
+        i2c_master_bus_handle_t _i2cHandle = nullptr;
 
-    /**
-     * @brief I2C device addresses for the first PI4IOE expander.
-     */
-    const uint8_t I2C_DEV_ADDR_PI4IOE1 = 0x43;
+        /* -------------------------------------------------------------------------- */
+        /*                    Private IO Expanders Data and Methods                   */
+        /*                                                                            */
+        /* Chip: PI4IOE5V6416                                                         */
+        /* Datasheet: https://www.diodes.com/datasheet/download/PI4IOE5V6416.pdf      */
+        /*                                                                            */
+        /* -------------------------------------------------------------------------- */
 
-    /**
-     * @brief I2C device address for the second PI4IOE expander.
-     */
-    const uint8_t I2C_DEV_ADDR_PI4IOE2 = 0x44;
+        /**
+         * @brief I2C device addresses for the first PI4IOE expander.
+         */
+        const uint8_t I2C_DEV_ADDR_PI4IOE1 = 0x43;
 
-    /**
-     * @brief I2C master timeout in milliseconds.
-     */
-    const uint8_t I2C_MASTER_TIMEOUT_MS = 50;
+        /**
+         * @brief I2C device address for the second PI4IOE expander.
+         */
+        const uint8_t I2C_DEV_ADDR_PI4IOE2 = 0x44;
 
-    /**
-     * @brief Reset register address
-     */
-    const uint8_t PI4IO_REG_CHIP_RESET = 0x01;
+        /**
+         * @brief I2C master timeout in milliseconds.
+         */
+        const uint8_t I2C_MASTER_TIMEOUT_MS = 50;
 
-    /**
-     * @brief IO register address.
-     */
-    const uint8_t PI4IO_REG_IO_DIR = 0x03;
+        /**
+         * @brief Reset register address
+         */
+        const uint8_t PI4IO_REG_CHIP_RESET = 0x01;
+
+        /**
+         * @brief IO register address.
+         */
+        const uint8_t PI4IO_REG_IO_DIR = 0x03;
 
 
-    const uint8_t PI4IO_REG_OUT_SET = 0x05;
+        const uint8_t PI4IO_REG_OUT_SET = 0x05;
 
-    /**
-     * @brief Output high impedance register address.
-     */
-    const uint8_t PI4IO_REG_OUT_H_IM = 0x07;
+        /**
+         * @brief Output high impedance register address.
+         */
+        const uint8_t PI4IO_REG_OUT_H_IM = 0x07;
 
-    /**
-     * @brief Default state register address.
-     */
-    const uint8_t PI4IO_REG_IN_DEF_STA = 0x09;
+        /**
+         * @brief Default state register address.
+         */
+        const uint8_t PI4IO_REG_IN_DEF_STA = 0x09;
 
-    /**
-     * @brief Pull up/down enable register address.
-     */
-    const uint8_t PI4IO_REG_PULL_EN = 0x0B;
+        /**
+         * @brief Pull up/down enable register address.
+         */
+        const uint8_t PI4IO_REG_PULL_EN = 0x0B;
 
-    /**
-     * @brief Pull up/down selection.
-     */
-    const uint8_t PI4IO_REG_PULL_SEL = 0x0D;
+        /**
+         * @brief Pull up/down selection.
+         */
+        const uint8_t PI4IO_REG_PULL_SEL = 0x0D;
 
-    /**
-     * @brief Set the state for a pin.
-     */
-    const uint8_t PI4IO_REG_IN_STA = 0x0F;
+        /**
+         * @brief Set the state for a pin.
+         */
+        const uint8_t PI4IO_REG_IN_STA = 0x0F;
 
-    /**
-     * @brief Interrupt mask register address.
-     */
-    const uint8_t PI4IO_REG_INT_MASK = 0x11;
+        /**
+         * @brief Interrupt mask register address.
+         */
+        const uint8_t PI4IO_REG_INT_MASK = 0x11;
 
-    /**
-     * @brief Interrupt status register address.
-     */
-    const uint8_t PI4IO_REG_IRQ_STA = 0x13;
+        /**
+         * @brief Interrupt status register address.
+         */
+        const uint8_t PI4IO_REG_IRQ_STA = 0x13;
 
-    /**
-     * @brief Handle for the first PI4IOE expander.
-     */
-    i2c_master_dev_handle_t _pi4ioe1Handle = nullptr;
+        /**
+         * @brief Handle for the first PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe1Handle = nullptr;
 
-    /**
-     * @brief Handle for the second PI4IOE expander.
-     */
-    i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
+        /**
+         * @brief Handle for the second PI4IOE expander.
+         */
+        i2c_master_dev_handle_t _pi4ioe2Handle = nullptr;
 
-    void set_gpio_output_capability();
-    uint8_t _current_lcd_brightness = 100;
-};
+        void set_gpio_output_capability();
+        uint8_t _current_lcd_brightness = 100;
+    };
+}

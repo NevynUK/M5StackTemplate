@@ -22,7 +22,7 @@
  * @brief Hardware abstraction layer
  *
  */
-namespace hal
+namespace HAL
 {
     /**
      * @brief
@@ -31,17 +31,15 @@ namespace hal
     class HalBase
     {
     public:
-        virtual ~HalBase() = default;
+        /**
+         * @brief Name of this class for logging purposes.
+         */
+        const char *COMPONENT_NAME = "HalEsp32";
 
         /**
-         * @brief
-         *
-         * @return std::string
+         * @brief Destroy the Hal Base object.
          */
-        virtual std::string type()
-        {
-            return "Base";
-        }
+        virtual ~HalBase() = default;
 
         /**
          * @brief
@@ -52,24 +50,59 @@ namespace hal
         }
 
         /* -------------------------------------------------------------------------- */
+        /*                                     I2C                                    */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the I2C bus.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        virtual esp_err_t ConfigureI2C()
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
+        /* -------------------------------------------------------------------------- */
         /*                                   Display                                  */
         /* -------------------------------------------------------------------------- */
-        virtual int getDisplayWidth()
+        
+        /**
+         * @brief Get the Display Width object.
+         * 
+         * @return uint32_t Width of the display.
+         */
+        virtual uint32_t GetDisplayWidth()
         {
             throw NotImplementedException(__FUNCTION__);
         }
 
-        virtual int getDisplayHeight()
+        /**
+         * @brief Get the display height.
+         *
+         * @return uint32_t Display height in pixels.
+         */
+        virtual uint32_t GetDisplayHeight()
         {
             throw NotImplementedException(__FUNCTION__);
         }
 
-        virtual esp_err_t InitialiseBrightnessControl()
-        {
-            throw NotImplementedException(__FUNCTION__);
-        }
-
+        /**
+         * @brief Set the display brightness.
+         *
+         * @param brightness Brightness level from 0 to 100.
+         */
         virtual esp_err_t SetDisplayBrightness(uint8_t brightness)
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
+        /**
+         * @brief Initialise the brightness control.
+         *
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        virtual esp_err_t InitialiseBrightnessControl()
         {
             throw NotImplementedException(__FUNCTION__);
         }
@@ -82,6 +115,9 @@ namespace hal
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
 
+        /* -------------------------------------------------------------------------- */
+        /*                                   GPIO                                     */
+        /* -------------------------------------------------------------------------- */
         virtual void gpioInitOutput(uint8_t pin)
         {
             throw NotImplementedException(__FUNCTION__);

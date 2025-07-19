@@ -30,9 +30,10 @@
 #include "sdmmc_cmd.h"
 #include "esp_lcd_ili9881c.h"
 #include "esp_lcd_touch_gt911.h"
-#include "bsp_err_check.h"
 #include "esp_codec_dev_defaults.h"
 
+
+using namespace HAL;
 
 static const char *COMPONENT_NAME = "M5STACK_TAB5";
 
