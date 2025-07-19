@@ -10,8 +10,7 @@
 
 #include "driver/i2c_master.h"
 
-#include <HalBase.h>
-// #include <ina226.hpp>
+#include <HalBase.hpp>
 #include <lvgl.h>
 #include "esp_lvgl_port.h"
 

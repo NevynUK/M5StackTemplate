@@ -1,6 +1,11 @@
+file(GLOB_RECURSE HAL_SRCS
+    # ./*.c
+    ./*.cc
+    ./*.cpp
+)
 
 idf_component_register(
-    SRCS "hal_esp32.cpp"
+    SRCS ${HAL_SRCS}
     INCLUDE_DIRS "."
     REQUIRES 
         driver 
