@@ -448,6 +448,28 @@ namespace HAL
         /*                          Private Display Methods                           */
         /* -------------------------------------------------------------------------- */
 
+        /**
+         * @brief Handle for the MIPI DSI bus.
+         */
+        esp_lcd_dsi_bus_handle_t _mipiDsiBusHandle;
+
+        /**
+         * @brief Handle for the IO panel.
+         */
+        esp_lcd_panel_io_handle_t _ioHandle;
+
+        /**
+         * @brief Handle for the colour panel.
+         */
+        esp_lcd_panel_handle_t _panelHandle;
+
+        /**
+         * @brief Handle for the control panel.
+         */
+        esp_lcd_panel_handle_t _controlHandle;
+
+        esp_err_t NewDisplay(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles);
+
         void set_gpio_output_capability();
     };
 }

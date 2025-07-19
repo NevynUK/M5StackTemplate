@@ -113,7 +113,7 @@ static esp_err_t bsp_enable_dsi_phy_power(void)
 
 #include "ili9881_init_data.c"
 
-esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles)
+esp_err_t HalTab5::NewDisplay(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles)
 {
     esp_err_t ret = ESP_OK;
     esp_lcd_panel_io_handle_t io = NULL;
@@ -193,11 +193,15 @@ esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_l
     //  ESP_ERROR_CHECK(esp_lcd_panel_mirror(disp_panel, false, true));
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(disp_panel, true));
 
+    _ioHandle = io;
+    _mipiDsiBusHandle = mipi_dsi_bus;
+    _panelHandle = disp_panel;
+    _controlHandle = NULL; // No control panel for this display
     /* Return all handles */
-    ret_handles->io = io;
-    ret_handles->mipi_dsi_bus = mipi_dsi_bus;
-    ret_handles->panel = disp_panel;
-    ret_handles->control = NULL;
+    // ret_handles->io = io;
+    // ret_handles->mipi_dsi_bus = mipi_dsi_bus;
+    // ret_handles->panel = disp_panel;
+    // ret_handles->control = NULL;
 
     ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
 
@@ -284,8 +288,6 @@ lv_indev_t *bsp_display_get_input_dev(void)
 {
     return disp_indev;
 }
-
-
 
 // extern esp_lcd_touch_handle_t _lcd_touch_handle;
 
@@ -622,57 +624,22 @@ uint8_t HalTab5::GetDisplayBrightness()
     return _current_lcd_brightness;
 }
 
-// lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
-// {
-//     assert(cfg != NULL);
-//     bsp_lcd_handles_t lcd_panels;
-//     BSP_ERROR_CHECK_RETURN_NULL(bsp_display_new_with_handles(NULL, &lcd_panels));
-
-//     /* Add LCD screen */
-//     ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
-//     lvgl_port_display_cfg_t disp_cfg = {};
-//     disp_cfg.io_handle = lcd_panels.io;
-//     disp_cfg.panel_handle = lcd_panels.panel;
-//     disp_cfg.control_handle = lcd_panels.control;
-//     disp_cfg.buffer_size = cfg->buffer_size;
-//     disp_cfg.double_buffer = cfg->double_buffer;
-//     disp_cfg.hres = BSP_LCD_H_RES;
-//     disp_cfg.vres = BSP_LCD_V_RES;
-//     disp_cfg.monochrome = false;
-//     disp_cfg.rotation = {};
-//     disp_cfg.rotation.swap_xy = false;
-//     disp_cfg.rotation.mirror_x = false;
-//     disp_cfg.rotation.mirror_y = false;
-//     disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
-//     disp_cfg.flags = {};
-//     disp_cfg.flags.buff_dma = cfg->flags.buff_dma;
-//     disp_cfg.flags.buff_spiram = cfg->flags.buff_spiram;
-//     disp_cfg.flags.swap_bytes = (BSP_LCD_BIGENDIAN ? true : false);
-//     disp_cfg.flags.sw_rotate = cfg->flags.sw_rotate; /* Only SW rotation is supported for 90° and 270° */
-
-//     lvgl_port_display_dsi_cfg_t dpi_cfg = {};
-//     dpi_cfg.flags.avoid_tearing = false;
-
-//     return lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
-// }
-
-
 lv_display_t *HalTab5::ConfigureDisplay(const bsp_display_cfg_t *cfg)
 {
     lv_display_t *disp;
 
     assert(cfg != NULL);
-    BSP_ERROR_CHECK_RETURN_NULL(lvgl_port_init(&cfg->lvgl_port_cfg));
+    // BSP_ERROR_CHECK_RETURN_NULL(lvgl_port_init(&cfg->lvgl_port_cfg));
 
     bsp_lcd_handles_t lcd_panels;
-    BSP_ERROR_CHECK_RETURN_NULL(bsp_display_new_with_handles(NULL, &lcd_panels));
+    BSP_ERROR_CHECK_RETURN_NULL(NewDisplay(NULL, &lcd_panels));
 
     /* Add LCD screen */
     ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
     lvgl_port_display_cfg_t disp_cfg = {};
-    disp_cfg.io_handle = lcd_panels.io;
-    disp_cfg.panel_handle = lcd_panels.panel;
-    disp_cfg.control_handle = lcd_panels.control;
+    disp_cfg.io_handle = _ioHandle;
+    disp_cfg.panel_handle = _panelHandle;
+    disp_cfg.control_handle = _controlHandle;
     disp_cfg.buffer_size = cfg->buffer_size;
     disp_cfg.double_buffer = cfg->double_buffer;
     disp_cfg.hres = BSP_LCD_H_RES;
@@ -697,7 +664,6 @@ lv_display_t *HalTab5::ConfigureDisplay(const bsp_display_cfg_t *cfg)
     BSP_NULL_CHECK(disp_indev = bsp_display_indev_init(disp), NULL);
     return disp;
 }
-
 
 void HalTab5::gpioInitOutput(uint8_t pin)
 {

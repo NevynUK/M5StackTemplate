@@ -28,6 +28,8 @@ extern "C" void app_main(void)
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
     std::unique_ptr<HAL::HalBase> hal = std::make_unique<HAL::HalTab5>();
+    lvgl_port_cfg_t lvglConfig = ESP_LVGL_PORT_INIT_CONFIG();
+    lvgl_port_init(&lvglConfig);
     hal->Configure();
 
     esp_chip_info_t chip_info;
