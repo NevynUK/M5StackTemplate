@@ -300,7 +300,10 @@ namespace HAL
         /*                            Display Methods                                 */
         /* -------------------------------------------------------------------------- */
 
-        void init() override;
+        /**
+         * @brief Configure and initialise the hardware.
+         */
+        void Configure() override;
 
         lv_disp_t *lvDisp = nullptr;
         lv_indev_t *lvKeyboard = nullptr;

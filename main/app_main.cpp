@@ -25,7 +25,7 @@ extern "C" void app_main(void)
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
     std::unique_ptr<HAL::HalBase> hal = std::make_unique<HAL::HalEsp32>();
-    hal->init();
+    hal->Configure();
 
     esp_chip_info_t chip_info;
     uint32_t flash_size;

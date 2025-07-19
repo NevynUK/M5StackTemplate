@@ -19,14 +19,12 @@
 #include "NotImplementedException.hpp"
 
 /**
- * @brief Hardware abstraction layer
- *
+ * @brief Name space for the hardware abstraction layer (HAL).
  */
 namespace HAL
 {
     /**
-     * @brief
-     *
+     * @brief Base class for hardware abstraction layer.
      */
     class HalBase
     {
@@ -42,9 +40,9 @@ namespace HAL
         virtual ~HalBase() = default;
 
         /**
-         * @brief
+         * @brief Configure and initialise the hardware.
          */
-        virtual void init()
+        virtual void Configure()
         {
             throw NotImplementedException(__FUNCTION__);
         }

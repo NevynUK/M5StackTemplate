@@ -242,7 +242,10 @@ esp_err_t HalEsp32::ConfigureIoExpanders()
     return ESP_OK;
 }
 
-void HalEsp32::init()
+/**
+ * @brief Configure and initialise the hardware.
+ */
+void HalEsp32::Configure()
 {
     ConfigureI2C();
 
