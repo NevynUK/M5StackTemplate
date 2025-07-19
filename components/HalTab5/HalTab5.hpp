@@ -476,6 +476,8 @@ namespace HAL
          */
         esp_lcd_panel_handle_t _controlHandle;
 
+        esp_err_t EnableDsiPhyPower(void);
+
         void set_gpio_output_capability();
     };
 }

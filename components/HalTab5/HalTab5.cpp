@@ -94,7 +94,7 @@ void bsp_reset_tp()
 //==================================================================================
 // Bit number used to represent command and parameter
 
-static esp_err_t bsp_enable_dsi_phy_power(void)
+esp_err_t HalTab5::EnableDsiPhyPower(void)
 {
 #if BSP_MIPI_DSI_PHY_PWR_LDO_CHAN > 0
     // Turn on the power for MIPI DSI PHY, so it can go from "No Power" state to "Shutdown" state
@@ -515,7 +515,7 @@ esp_err_t HalTab5::ConfigureDisplay()
     esp_lcd_panel_handle_t disp_panel = NULL;
 
     // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), COMPONENT_NAME, "Brightness init failed");
-    ESP_RETURN_ON_ERROR(bsp_enable_dsi_phy_power(), COMPONENT_NAME, "DSI PHY power failed");
+    ESP_RETURN_ON_ERROR(EnableDsiPhyPower(), COMPONENT_NAME, "DSI PHY power failed");
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
     esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
