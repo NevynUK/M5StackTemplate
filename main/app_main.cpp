@@ -15,6 +15,7 @@
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
 
+#include "HalBase.h"
 #include "hal_esp32.hpp"
 #include <HalBase.h>
 #include "Utils.hpp"
