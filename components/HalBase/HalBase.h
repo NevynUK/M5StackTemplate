@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 #pragma once
+
 #include <cstdint>
 #include <memory>
 #include <queue>
@@ -14,6 +15,8 @@
 #include <esp_err.h>
 
 #include <lvgl.h>
+
+#include "NotImplementedException.hpp"
 
 /**
  * @brief Hardware abstraction layer
@@ -42,10 +45,10 @@ namespace hal
 
         /**
          * @brief
-         *
          */
         virtual void init()
         {
+            throw NotImplementedException(__FUNCTION__);
         }
 
         /* -------------------------------------------------------------------------- */
@@ -53,27 +56,27 @@ namespace hal
         /* -------------------------------------------------------------------------- */
         virtual int getDisplayWidth()
         {
-            return 1280;
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual int getDisplayHeight()
         {
-            return 720;
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual esp_err_t InitialiseBrightnessControl()
         {
-            return ESP_FAIL;
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual esp_err_t SetDisplayBrightness(uint8_t brightness)
         {
-            return ESP_FAIL;
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual uint8_t GetDisplayBrightness()
         {
-            return 0;
+            throw NotImplementedException(__FUNCTION__);
         }
 
         /* ---------------------------------- Lvgl ---------------------------------- */
@@ -81,14 +84,17 @@ namespace hal
 
         virtual void gpioInitOutput(uint8_t pin)
         {
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual void gpioSetLevel(uint8_t pin, bool level)
         {
+            throw NotImplementedException(__FUNCTION__);
         }
 
         virtual void gpioReset(uint8_t pin)
         {
+            throw NotImplementedException(__FUNCTION__);
         }
     };
 } // namespace hal
