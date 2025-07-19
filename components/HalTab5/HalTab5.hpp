@@ -288,7 +288,7 @@ namespace HAL
          * @param cfg Display configuration.
          * @return lv_display_t* Pointer to the LVGL display object.
          */
-        esp_err_t ConfigureDisplay(const bsp_display_cfg_t *cfg);
+        esp_err_t ConfigureDisplay();
 
         /**
          * @brief Get the Display Width object.

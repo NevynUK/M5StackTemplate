@@ -371,21 +371,8 @@ void HalTab5::Configure()
     ConfigureI2C();
 
     ConfigureIoExpanders();
-
-    // bsp_reset_tp();
-    bsp_display_cfg_t cfg =
-    {
-        .buffer_size = BSP_LCD_H_RES * BSP_LCD_V_RES,
-        .double_buffer = true,
-        .flags = 
-        {
-            .buff_dma = true,
-            .buff_spiram = true,
-            .sw_rotate = true,
-        }
-    };
     InitialiseBrightnessControl();
-    ESP_ERROR_CHECK(ConfigureDisplay(&cfg));
+    ESP_ERROR_CHECK(ConfigureDisplay());
 }
 
 static const gpio_num_t _driver_gpios[] = {
@@ -521,12 +508,8 @@ esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
     return _controlHandle;
 }
 
-esp_err_t HalTab5::ConfigureDisplay(const bsp_display_cfg_t *cfg)
+esp_err_t HalTab5::ConfigureDisplay()
 {
-    lv_display_t *disp = nullptr;
-
-    assert(cfg != NULL);
-
     esp_err_t ret = ESP_OK;
     esp_lcd_panel_io_handle_t io = NULL;
     esp_lcd_panel_handle_t disp_panel = NULL;
@@ -608,12 +591,7 @@ esp_err_t HalTab5::ConfigureDisplay(const bsp_display_cfg_t *cfg)
     _ioHandle = io;
     _mipiDsiBusHandle = mipi_dsi_bus;
     _panelHandle = disp_panel;
-    _controlHandle = NULL; // No control panel for this display
-    /* Return all handles */
-    // ret_handles->io = io;
-    // ret_handles->mipi_dsi_bus = mipi_dsi_bus;
-    // ret_handles->panel = disp_panel;
-    // ret_handles->control = NULL;
+    _controlHandle = NULL;
 
     ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
 
