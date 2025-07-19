@@ -30,11 +30,6 @@ namespace HAL
     {
     public:
         /**
-         * @brief Name of this class for logging purposes.
-         */
-        const char *COMPONENT_NAME = "HalBase";
-
-        /**
          * @brief Destroy the Hal Base object.
          */
         virtual ~HalBase() = default;

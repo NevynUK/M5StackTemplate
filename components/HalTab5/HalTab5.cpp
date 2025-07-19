@@ -98,7 +98,7 @@ static lv_indev_t *disp_indev = NULL;
  *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-esp_err_t HalEsp32::ConfigureI2C()
+esp_err_t HalTab5::ConfigureI2C()
 {
     if (_i2cHandle)
     {
@@ -131,7 +131,7 @@ esp_err_t HalEsp32::ConfigureI2C()
  *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-esp_err_t HalEsp32::ConfigureIoExpanders()
+esp_err_t HalTab5::ConfigureIoExpanders()
 {
     ConfigureI2C();
 
@@ -245,7 +245,7 @@ esp_err_t HalEsp32::ConfigureIoExpanders()
 /**
  * @brief Configure and initialise the hardware.
  */
-void HalEsp32::Configure()
+void HalTab5::Configure()
 {
     ConfigureI2C();
 
@@ -315,7 +315,7 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
-esp_err_t HalEsp32::InitialiseBrightnessControl(void)
+esp_err_t HalTab5::InitialiseBrightnessControl(void)
 {
     const ledc_timer_config_t lcd_backlight_timer =
     {
@@ -349,7 +349,7 @@ esp_err_t HalEsp32::InitialiseBrightnessControl(void)
  * @param brightness Brightness level from 0 to 100.
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-esp_err_t HalEsp32::SetDisplayBrightness(uint8_t brightness)
+esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightness)
 {
     _current_lcd_brightness = std::clamp(brightness, (uint8_t) 0, (uint8_t) 100);
     ESP_LOGI(COMPONENT_NAME, "Setting LCD backlight: %d%%", _current_lcd_brightness);
@@ -360,23 +360,23 @@ esp_err_t HalEsp32::SetDisplayBrightness(uint8_t brightness)
     return ESP_OK;
 }
 
-uint8_t HalEsp32::GetDisplayBrightness()
+uint8_t HalTab5::GetDisplayBrightness()
 {
     return _current_lcd_brightness;
 }
 
-void HalEsp32::gpioInitOutput(uint8_t pin)
+void HalTab5::gpioInitOutput(uint8_t pin)
 {
     gpio_set_pull_mode((gpio_num_t) pin, GPIO_PULLUP_ONLY);
     gpio_set_direction((gpio_num_t) pin, GPIO_MODE_OUTPUT);
 }
 
-void HalEsp32::gpioSetLevel(uint8_t pin, bool level)
+void HalTab5::gpioSetLevel(uint8_t pin, bool level)
 {
     gpio_set_level((gpio_num_t) pin, level);
 }
 
-void HalEsp32::gpioReset(uint8_t pin)
+void HalTab5::gpioReset(uint8_t pin)
 {
     gpio_set_level((gpio_num_t) pin, false);
 }

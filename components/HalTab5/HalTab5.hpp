@@ -268,9 +268,12 @@ extern "C"
 
 namespace HAL
 {
-    class HalEsp32 : public HAL::HalBase
+    class HalTab5 : public HalBase
     {
     public:
+        /**
+         * @brief Name of this class for logging purposes.
+         */
         const char *COMPONENT_NAME = "HalTab5";
 
         /* -------------------------------------------------------------------------- */
