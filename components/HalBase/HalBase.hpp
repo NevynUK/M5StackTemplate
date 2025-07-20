@@ -160,6 +160,18 @@ namespace HAL
             throw NotImplementedException(__FUNCTION__);
         }
 
+        /* -------------------------------------------------------------------------- */
+        /*                                 Touch Panel                                */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the touch panel.
+         */
+        virtual esp_err_t ConfigureTouchPanel()
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
         /* ---------------------------------- Lvgl ---------------------------------- */
         lv_indev_t *lvTouchpad = nullptr;
 

@@ -164,17 +164,7 @@ namespace HAL
         /*                                    I2C                                     */
         /* -------------------------------------------------------------------------- */
 
-/* SYS I2C */
-#define BSP_I2C_NUM 0
-#define BSP_I2C_SCL (GPIO_NUM_32)
-#define BSP_I2C_SDA (GPIO_NUM_31)
-
-/* EXT I2C */
-#define BSP_EXT_I2C_NUM 1
-#define BSP_EXT_I2C_SCL (GPIO_NUM_54)
-#define BSP_EXT_I2C_SDA (GPIO_NUM_53)
-
-/**
+        /**
          * @brief Configure the I2C bus.
          *
          * @return esp_err_t ESP_OK on success, or an error code on failure.
@@ -206,16 +196,6 @@ namespace HAL
          *
         */
         const gpio_num_t BSP_LCD_RST = GPIO_NUM_NC;
-
-        /**
-         * @brief GPIO connected to the LCD touch reset.
-         */
-        const gpio_num_t BSP_LCD_TOUCH_RST = GPIO_NUM_NC;
-
-        /**
-         * @brief GPIO connected to the LCD touch interrupt.
-         */
-        const gpio_num_t BSP_LCD_TOUCH_INT = GPIO_NUM_NC;
 
         /**
          * @brief Indicates whether the LCD display uses big-endian color format.
@@ -350,6 +330,37 @@ namespace HAL
         esp_lcd_panel_handle_t GetControlHandle() const;
 
         /* -------------------------------------------------------------------------- */
+        /*                                 Touch Panel                                */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief GPIO connected to the LCD touch reset.
+         */
+        const gpio_num_t BSP_LCD_TOUCH_RST = GPIO_NUM_NC;
+
+        /**
+         * @brief GPIO connected to the LCD touch interrupt.
+         */
+        const gpio_num_t BSP_LCD_TOUCH_INT = GPIO_NUM_23;
+
+        /**
+         * @brief Configure the touch panel.
+         */
+        esp_err_t ConfigureTouchPanel() override;
+
+        /**
+         * @brief Reset the touch panel.
+         */
+        void ResetTouchPanel();
+
+        /**
+         * @brief Get the touch panel handle.
+         * 
+         * @return esp_lcd_touch_handle_t Handle to the touch panel.
+         */
+        esp_lcd_touch_handle_t GetTouchPanelHandle() const;
+
+        /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
         /* -------------------------------------------------------------------------- */
         void gpioInitOutput(uint8_t pin) override;
@@ -357,7 +368,7 @@ namespace HAL
         void gpioReset(uint8_t pin) override;
 
         /* -------------------------------------------------------------------------- */
-        /*                                    I2C                                     */
+        /*                                   Audio                                    */
         /* -------------------------------------------------------------------------- */
         /* Audio */
         #define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
@@ -369,7 +380,7 @@ namespace HAL
 
 
         /* -------------------------------------------------------------------------- */
-        /*                                    I2C                                     */
+        /*                                Micro SD Card                               */
         /* -------------------------------------------------------------------------- */
         /* uSD card */
         #define BSP_SD_D0 (GPIO_NUM_39)
@@ -522,6 +533,15 @@ namespace HAL
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
         esp_err_t EnableDsiPhyPower(void);
+
+        /* -------------------------------------------------------------------------- */
+        /*                    Private Touch Panel Data and Methods                    */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Handle for the touch panel.
+         */
+        esp_lcd_touch_handle_t _touchPanelHandle = nullptr;
 
         void set_gpio_output_capability();
     };

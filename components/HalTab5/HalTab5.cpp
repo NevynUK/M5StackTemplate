@@ -26,5 +26,6 @@ void HalTab5::Configure()
     ConfigureIoExpanders();
     InitialiseBrightnessControl();
     ESP_ERROR_CHECK(ConfigureDisplay());
+    ESP_ERROR_CHECK(ConfigureTouchPanel());
 }
 

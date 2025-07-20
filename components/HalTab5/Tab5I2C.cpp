@@ -14,8 +14,6 @@
 
 #include "HalTab5.hpp"
 
-extern void bsp_fake_i2c_init(i2c_master_bus_handle_t bus_handle);
-
 using namespace HAL;
 
  /**
@@ -43,6 +41,5 @@ esp_err_t HalTab5::ConfigureI2C()
         _i2cHandle = nullptr;
     }
 
-    bsp_fake_i2c_init(_i2cHandle);
     return result;
 }
