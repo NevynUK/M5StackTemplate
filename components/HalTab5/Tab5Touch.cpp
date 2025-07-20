@@ -23,6 +23,16 @@ using namespace HAL;
 #define clrbit(x, y) x &= ~(0x01 << y)
 
 /**
+ * @brief Get the touch panel handle.
+ *
+ * @return esp_lcd_touch_handle_t Handle to the touch panel.
+ */
+esp_lcd_touch_handle_t HalTab5::GetTouchPanelHandle() const
+{
+    return _touchPanelHandle;
+}
+
+/**
  * @brief Configure the touch panel.
  */
 esp_err_t HalTab5::ConfigureTouchPanel()
@@ -30,8 +40,8 @@ esp_err_t HalTab5::ConfigureTouchPanel()
     ConfigureI2C();
     const esp_lcd_touch_config_t tp_cfg =
     {
-        .x_max = BSP_LCD_H_RES,
-        .y_max = BSP_LCD_V_RES,
+        .x_max = (uint16_t) (BSP_LCD_H_RES & 0xFFFF),
+        .y_max = (uint16_t) (BSP_LCD_V_RES & 0xFFFF),
         .rst_gpio_num = BSP_LCD_TOUCH_RST,
         .int_gpio_num = BSP_LCD_TOUCH_INT,
         .levels =

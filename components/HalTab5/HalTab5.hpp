@@ -353,6 +353,13 @@ namespace HAL
          */
         void ResetTouchPanel();
 
+        /**
+         * @brief Get the touch panel handle.
+         * 
+         * @return esp_lcd_touch_handle_t Handle to the touch panel.
+         */
+        esp_lcd_touch_handle_t GetTouchPanelHandle() const;
+
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
         /* -------------------------------------------------------------------------- */
