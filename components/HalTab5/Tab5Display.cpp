@@ -46,6 +46,15 @@ uint32_t HalTab5::GetDisplayHeight()
 }
 
 /**
+ * @brief Check if the display uses big-endian color format.
+ *
+ * @return true if the display uses big-endian format, false otherwise.
+ */
+bool HalTab5::IsDisplayBigEndian() const
+{
+    return BSP_LCD_BIGENDIAN;
+}
+/**
  * @brief Initialise the brightness control.
  *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
@@ -254,7 +263,7 @@ esp_err_t HalTab5::ConfigureDisplay()
     _panelHandle = disp_panel;
     _controlHandle = NULL;
 
-    ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %dx%d", BSP_LCD_H_RES, BSP_LCD_V_RES);
+    ESP_LOGI(COMPONENT_NAME, "Display initialized with resolution %" PRIu32 " x %" PRIu32, BSP_LCD_H_RES, BSP_LCD_V_RES);
 
     return ESP_OK;
 }

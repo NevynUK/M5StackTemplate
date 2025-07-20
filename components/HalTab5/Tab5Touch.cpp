@@ -66,8 +66,8 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     /* Initialize touch */
     const esp_lcd_touch_config_t tp_cfg =
     {
-        .x_max = BSP_LCD_H_RES,
-        .y_max = BSP_LCD_V_RES,
+        // .x_max = BSP_LCD_H_RES,
+        // .y_max = BSP_LCD_V_RES,
         .rst_gpio_num = GPIO_NUM_NC, // -1, // BSP_LCD_TOUCH_RST, // NC
         .int_gpio_num = GPIO_NUM_23, // 23, // BSP_LCD_TOUCH_INT,
         .levels =
