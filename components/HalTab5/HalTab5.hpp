@@ -14,130 +14,9 @@
 #include "esp_err.h"
 #include "driver/i2c_master.h"
 #include "esp_lcd_mipi_dsi.h"
+#include "esp_lcd_touch_gt911.h"
 
 #include <HalBase.hpp>
-
-/**************************************************************************************************
- *  BSP Capabilities
- **************************************************************************************************/
-// #define BSP_CAPS_DISPLAY 1
-// #define BSP_CAPS_TOUCH 1
-// #define BSP_CAPS_BUTTONS 0
-// #define BSP_CAPS_AUDIO 1
-// #define BSP_CAPS_AUDIO_SPEAKER 1
-// #define BSP_CAPS_AUDIO_MIC 1
-// #define BSP_CAPS_SDCARD 1
-// #define BSP_CAPS_IMU 0
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-    /**
-     * @brief BSP display configuration structure
-     *
-     */
-    typedef struct
-    {
-        int dummy;
-    } bsp_display_config_t;
-
-    /**
-     * @brief BSP display return handles
-     *
-     */
-    typedef struct
-    {
-        esp_lcd_dsi_bus_handle_t mipi_dsi_bus; /*!< MIPI DSI bus handle */
-        esp_lcd_panel_io_handle_t io;          /*!< ESP LCD IO handle */
-        esp_lcd_panel_handle_t panel;          /*!< ESP LCD panel (color) handle */
-        esp_lcd_panel_handle_t control;        /*!< ESP LCD panel (control) handle */
-    } bsp_lcd_handles_t;
-
-    /**
-     * @brief Create new display panel
-     *
-     * For maximum flexibility, this function performs only reset and initialization of the display.
-     * You must turn on the display explicitly by calling esp_lcd_panel_disp_on_off().
-     * The display's backlight is not turned on either. You can use bsp_display_backlight_on/off(),
-     * bsp_display_brightness_set() (on supported boards) or implement your own backlight control.
-     *
-     * If you want to free resources allocated by this function, you can use esp_lcd API, ie.:
-     *
-     * \code{.c}
-     * esp_lcd_panel_del(panel);
-     * esp_lcd_panel_del(control);
-     * esp_lcd_panel_io_del(io);
-     * esp_lcd_del_dsi_bus(mipi_dsi_bus);
-     * \endcode
-     *
-     * @param[in]  config    display configuration
-     * @param[out] ret_handles all esp_lcd handles in one structure
-     * @return
-     *      - ESP_OK         On success
-     *      - Else           esp_lcd failure
-     */
-    esp_err_t bsp_display_new_with_handles(const bsp_display_config_t *config, bsp_lcd_handles_t *ret_handles);
-
-    /**
-     * @brief BSP touch configuration structure
-     */
-    typedef struct
-    {
-        void *dummy; /*!< Prepared for future use. */
-    } bsp_touch_config_t;
-
-    /**
-     * @brief Create new touchscreen
-     *
-     * If you want to free resources allocated by this function, you can use esp_lcd_touch API, ie.:
-     *
-     * \code{.c}
-     * esp_lcd_touch_del(tp);
-     * \endcode
-     *
-     * @param[in]  config    touch configuration
-     * @param[out] ret_touch esp_lcd_touch touchscreen handle
-     * @return
-     *      - ESP_OK         On success
-     *      - Else           esp_lcd_touch failure
-     */
-    esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch);
-
-/**************************************************************************************************
- *
- * LCD interface
- *
- * ESP-BOX is shipped with 2.4inch ST7789 display controller.
- * It features 16-bit colors, 320x240 resolution and capacitive touch controller.
- *
- * LVGL is used as graphics library. LVGL is NOT thread safe, therefore the user must take LVGL mutex
- * by calling bsp_display_lock() before calling and LVGL API (lv_...) and then give the mutex with
- * bsp_display_unlock().
- *
- * Display's backlight must be enabled explicitly by calling bsp_display_backlight_on()
- **************************************************************************************************/
-#define BSP_LCD_PIXEL_CLOCK_MHZ (80)
-
-    #define BSP_LCD_DRAW_BUFF_SIZE (BSP_LCD_H_RES * 50) // Frame buffer size in pixels
-    #define BSP_LCD_DRAW_BUFF_DOUBLE (0)
-
-    /**
-     * @brief Get pointer to input device (touch, buttons, ...)
-     *
-     * @note The LVGL input device is initialized in bsp_display_start() function.
-     *
-     * @return Pointer to LVGL input device or NULL when not initialized
-     */
-    lv_indev_t *bsp_display_get_input_dev(void);
-
-    void bsp_reset_tp();
-
-#ifdef __cplusplus
-}
-#endif
 
 /**
  * @brief Namespace for the Hardware Abstraction Layer (HAL).
@@ -248,9 +127,6 @@ namespace HAL
          * @brief LDO voltage in millivolts.
          */
         const int BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV = 2500;
-
-        lv_disp_t *lvDisp = nullptr;
-        lv_indev_t *lvKeyboard = nullptr;
 
         /**
          * @brief Configure the display.

@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2025
  */
 
- #include <sdkconfig.h>
+#include <sdkconfig.h>
 
 #include "esp_log.h"
 #include "esp_err.h"

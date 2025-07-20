@@ -18,6 +18,7 @@
 #include "esp_lcd_mipi_dsi.h"
 #include "esp_ldo_regulator.h"
 #include "esp_lcd_ili9881c.h"
+#include "esp_lcd_panel_ops.h"
 
 #include "HalTab5.hpp"
 
@@ -180,11 +181,9 @@ esp_err_t HalTab5::EnableDsiPhyPower(void)
  */
 esp_err_t HalTab5::ConfigureDisplay()
 {
-    esp_err_t ret = ESP_OK;
     esp_lcd_panel_io_handle_t io = NULL;
     esp_lcd_panel_handle_t disp_panel = NULL;
 
-    // ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), COMPONENT_NAME, "Brightness init failed");
     ESP_RETURN_ON_ERROR(EnableDsiPhyPower(), COMPONENT_NAME, "DSI PHY power failed");
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
