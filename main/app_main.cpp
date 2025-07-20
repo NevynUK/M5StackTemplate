@@ -23,6 +23,35 @@
 #include "HalTab5.hpp"
 #include "Utils.hpp"
 
+//Touch panel callback.
+// static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+// {
+//     if (_lcd_touch_handle == NULL)
+//     {
+//         data->state = LV_INDEV_STATE_REL;
+//         return;
+//     }
+
+//     uint16_t touch_x[1];
+//     uint16_t touch_y[1];
+//     uint16_t touch_strength[1];
+//     uint8_t touch_cnt = 0;
+
+//     esp_lcd_touch_read_data(_lcd_touch_handle);
+//     bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
+
+//     if (!touchpad_pressed)
+//     {
+//         data->state = LV_INDEV_STATE_REL;
+//     }
+//     else
+//     {
+//         data->state = LV_INDEV_STATE_PR;
+//         data->point.x = touch_x[0];
+//         data->point.y = touch_y[0];
+//     }
+// }
+
 extern "C" void app_main(void)
 {
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
@@ -60,6 +89,15 @@ extern "C" void app_main(void)
     lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
     hal->SetDisplayBrightness(100);
 
+
+    /* Add touch input (for selected screen) */
+    // const lvgl_port_touch_cfg_t touch_cfg =
+    // {
+    //     .disp = disp,
+    //     .handle = tp,
+    // };
+
+    // return lvgl_port_add_touch(&touch_cfg);
     // Touchpad lvgl indev
     // lvTouchpad = lv_indev_create();
     // lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
