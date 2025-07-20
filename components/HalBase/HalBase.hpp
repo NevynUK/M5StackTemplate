@@ -15,16 +15,7 @@
 
 #include <esp_err.h>
 
-// #include <lvgl.h>
-// #include <esp_lvgl_port.h>
-
 #include "NotImplementedException.hpp"
-
-#define BSP_ERROR_CHECK_RETURN_ERR(x) ESP_ERROR_CHECK(x)
-#define BSP_ERROR_CHECK_RETURN_NULL(x) ESP_ERROR_CHECK(x)
-#define BSP_ERROR_CHECK(x, ret) ESP_ERROR_CHECK(x)
-#define BSP_NULL_CHECK(x, ret) assert(x)
-#define BSP_NULL_CHECK_GOTO(x, goto_tag) assert(x)
 
 /**
  * @brief Namespace for the Hardware Abstraction Layer (HAL).
