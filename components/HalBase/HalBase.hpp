@@ -134,7 +134,7 @@ namespace HAL
          *
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
-        virtual esp_err_t InitialiseBrightnessControl()
+        virtual esp_err_t ConfigureDisplayBrightnessControl()
         {
             throw NotImplementedException(__FUNCTION__);
         }

@@ -60,7 +60,7 @@ bool HalTab5::IsDisplayBigEndian() const
  *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
-esp_err_t HalTab5::InitialiseBrightnessControl(void)
+esp_err_t HalTab5::ConfigureDisplayBrightnessControl(void)
 {
     const ledc_timer_config_t lcd_backlight_timer =
     {

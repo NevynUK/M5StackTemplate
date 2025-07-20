@@ -162,7 +162,7 @@ namespace HAL
          *
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
-        esp_err_t InitialiseBrightnessControl(void) override;
+        esp_err_t ConfigureDisplayBrightnessControl(void) override;
                 /**
          * @brief Set the display brightness.
          *

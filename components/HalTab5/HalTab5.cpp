@@ -24,7 +24,7 @@ void HalTab5::Configure()
     ConfigureI2C();
 
     ConfigureIoExpanders();
-    InitialiseBrightnessControl();
+    ConfigureDisplayBrightnessControl();
     ESP_ERROR_CHECK(ConfigureDisplay());
     ESP_ERROR_CHECK(ConfigureTouchPanel());
 }
