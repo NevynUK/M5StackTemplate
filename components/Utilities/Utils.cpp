@@ -66,3 +66,59 @@ std::string Utils::NumberWithCommas(uint32_t number)
 {
     return NumberWithCommas(static_cast<uint64_t>(number));
 }
+
+/**
+ * @brief Clear a specific bit in a byte.
+ * 
+ * @param value The byte value.
+ * @param bit The bit position to clear (0-7).
+ */
+void Utils::ClearBit(uint8_t *value, uint8_t bit)
+{
+    if (bit < 8)
+    {
+        *value &= ~(1 << bit);
+    }
+}
+
+/**
+ * @brief Set a specific bit in a byte.
+ * @param value The byte value.
+ * @param bit The bit position to set (0-7).
+ */
+void Utils::SetBit(uint8_t *value, uint8_t bit)
+{
+    if (bit < 8)
+    {
+        *value |= (1 << bit);
+    }
+}
+
+/**
+ * @brief Check if a specific bit is set in a byte.
+ * @param value The byte value.
+ * @param bit The bit position to check (0-7).
+ * @return true If the bit is set.
+ * @return false If the bit is not set.
+ */
+bool Utils::IsBitSet(uint8_t value, uint8_t bit)
+{
+    if (bit < 8)
+    {
+        return (value & (1 << bit)) != 0;
+    }
+    return false;
+}
+
+/**
+ * @brief Toggle a specific bit in a byte.
+ * @param value The byte value.
+ * @param bit The bit position to toggle (0-7).
+ */
+void Utils::ToggleBit(uint8_t *value, uint8_t bit)
+{
+    if (bit < 8)
+    {
+        *value ^= (1 << bit);
+    }
+}
