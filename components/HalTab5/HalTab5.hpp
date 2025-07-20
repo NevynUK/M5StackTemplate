@@ -20,87 +20,14 @@
 /**************************************************************************************************
  *  BSP Capabilities
  **************************************************************************************************/
-#define BSP_CAPS_DISPLAY 1
-#define BSP_CAPS_TOUCH 1
-#define BSP_CAPS_BUTTONS 0
-#define BSP_CAPS_AUDIO 1
-#define BSP_CAPS_AUDIO_SPEAKER 1
-#define BSP_CAPS_AUDIO_MIC 1
-#define BSP_CAPS_SDCARD 1
-#define BSP_CAPS_IMU 0
-
-/**************************************************************************************************
- *  ESP-BOX pinout
- **************************************************************************************************/
-/* SYS I2C */
-#define BSP_I2C_NUM 0
-#define BSP_I2C_SCL (GPIO_NUM_32)
-#define BSP_I2C_SDA (GPIO_NUM_31)
-
-/* EXT I2C */
-#define BSP_EXT_I2C_NUM 1
-#define BSP_EXT_I2C_SCL (GPIO_NUM_54)
-#define BSP_EXT_I2C_SDA (GPIO_NUM_53)
-
-// /* Ext Keyboard */
-// #define TAB5_TCA8418_INT_PIN 50 // Interrupt input
-
-/* Audio */
-#define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
-#define BSP_I2S_MCLK (GPIO_NUM_30)     // Master clock   BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
-#define BSP_I2S_LCLK (GPIO_NUM_29)     // Word select    BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
-#define BSP_I2S_DOUT (GPIO_NUM_26)     // Data output    BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
-#define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
-#define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
-
-/* Display */
-#define BSP_LCD_BACKLIGHT (GPIO_NUM_22)
-#define BSP_LCD_RST (GPIO_NUM_NC)       //
-#define BSP_LCD_TOUCH_RST (GPIO_NUM_NC) // IO Expander control
-#define BSP_LCD_TOUCH_INT (GPIO_NUM_NC) // 23
-
-/* uSD card */
-#define BSP_SD_D0 (GPIO_NUM_39)
-#define BSP_SD_D1 (GPIO_NUM_40)
-#define BSP_SD_D2 (GPIO_NUM_41)
-#define BSP_SD_D3 (GPIO_NUM_42)
-#define BSP_SD_CMD (GPIO_NUM_44)
-#define BSP_SD_CLK (GPIO_NUM_43)
-
-/* Display */
-/* LCD color formats */
-#define ESP_LCD_COLOR_FORMAT_RGB565 (1)
-#define ESP_LCD_COLOR_FORMAT_RGB888 (2)
-
-/* LCD display color format */
-// #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
-// #define BSP_LCD_COLOR_FORMAT        (ESP_LCD_COLOR_FORMAT_RGB888)
-// #else
-#define BSP_LCD_COLOR_FORMAT (ESP_LCD_COLOR_FORMAT_RGB565)
-// #endif
-/* LCD display color bytes endianess */
-#define BSP_LCD_BIGENDIAN (0)
-/* LCD display color bits */
-#define BSP_LCD_BITS_PER_PIXEL (16)
-/* LCD display color space */
-#define BSP_LCD_COLOR_SPACE (ESP_LCD_COLOR_SPACE_RGB)
-
-/* LCD display definition 720x1280 */
-#define BSP_LCD_H_RES (720)
-#define BSP_LCD_V_RES (1280)
-
-#define BSP_LCD_MIPI_DSI_LCD_HSYNC (10)
-#define BSP_LCD_MIPI_DSI_LCD_HBP (40)
-#define BSP_LCD_MIPI_DSI_LCD_HFP (40)
-#define BSP_LCD_MIPI_DSI_LCD_VSYNC (4)
-#define BSP_LCD_MIPI_DSI_LCD_VBP (16)
-#define BSP_LCD_MIPI_DSI_LCD_VFP (16)
-
-#define BSP_LCD_MIPI_DSI_LANE_NUM (2)            // 2 data lanes
-#define BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS (730) // 720*1280 RGB24 60Hz //(900) // 900Mbps
-
-#define BSP_MIPI_DSI_PHY_PWR_LDO_CHAN (3)        // LDO_VO3 is connected to VDD_MIPI_DPHY
-#define BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV (2500)
+// #define BSP_CAPS_DISPLAY 1
+// #define BSP_CAPS_TOUCH 1
+// #define BSP_CAPS_BUTTONS 0
+// #define BSP_CAPS_AUDIO 1
+// #define BSP_CAPS_AUDIO_SPEAKER 1
+// #define BSP_CAPS_AUDIO_MIC 1
+// #define BSP_CAPS_SDCARD 1
+// #define BSP_CAPS_IMU 0
 
 
 #ifdef __cplusplus
@@ -237,7 +164,17 @@ namespace HAL
         /*                                    I2C                                     */
         /* -------------------------------------------------------------------------- */
 
-        /**
+/* SYS I2C */
+#define BSP_I2C_NUM 0
+#define BSP_I2C_SCL (GPIO_NUM_32)
+#define BSP_I2C_SDA (GPIO_NUM_31)
+
+/* EXT I2C */
+#define BSP_EXT_I2C_NUM 1
+#define BSP_EXT_I2C_SCL (GPIO_NUM_54)
+#define BSP_EXT_I2C_SDA (GPIO_NUM_53)
+
+/**
          * @brief Configure the I2C bus.
          *
          * @return esp_err_t ESP_OK on success, or an error code on failure.
@@ -258,6 +195,79 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                            Display Methods                                 */
         /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief GPIO controlling the LCD backlight.
+         */
+        const gpio_num_t BSP_LCD_BACKLIGHT = GPIO_NUM_22;
+
+        /**
+         * @brief GPIO connected to the LCD reset.
+         *
+        */
+        const gpio_num_t BSP_LCD_RST = GPIO_NUM_NC;
+
+        /**
+         * @brief GPIO connected to the LCD touch reset.
+         */
+        const gpio_num_t BSP_LCD_TOUCH_RST = GPIO_NUM_NC;
+
+        /**
+         * @brief GPIO connected to the LCD touch interrupt.
+         */
+        const gpio_num_t BSP_LCD_TOUCH_INT = GPIO_NUM_NC;
+
+        /**
+         * @brief Indicates whether the LCD display uses big-endian color format.
+         */
+        const bool BSP_LCD_BIGENDIAN = false;
+        /**
+         * @brief Number of bits per pixel for the LCD display.
+         */
+        const uint32_t BSP_LCD_BITS_PER_PIXEL = 16;
+
+        /* LCD color formats */
+        // #define ESP_LCD_COLOR_FORMAT_RGB565 (1)
+        // #define ESP_LCD_COLOR_FORMAT_RGB888 (2)
+
+        /* LCD display color format */
+        // #if CONFIG_BSP_LCD_COLOR_FORMAT_RGB888
+        // #define BSP_LCD_COLOR_FORMAT        (ESP_LCD_COLOR_FORMAT_RGB888)
+        // #else
+        // #define BSP_LCD_COLOR_FORMAT (ESP_LCD_COLOR_FORMAT_RGB565)
+        // #endif
+        /* LCD display color space */
+        // #define BSP_LCD_COLOR_SPACE (ESP_LCD_COLOR_SPACE_RGB)
+
+        /**
+         * @brief Horizontal resolution of the display.
+         */
+        const uint32_t BSP_LCD_H_RES = 720;
+
+        /**
+         * @brief Vertical resolution of the display.
+         */
+        const uint32_t BSP_LCD_V_RES = 1280;
+
+        /**
+         * @brief Number of data lanes on the MIPI DSI.
+         */
+        const uint8_t BSP_LCD_MIPI_DSI_LANE_NUM = 2;
+
+        /**
+         * @brief Data rate (in MHz) of the MIPI DSI lanes (720*1280 RGB24 60Hz //(900) // 900Mbps).
+         */
+        const uint32_t BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS = 730;
+
+        /**
+         * @brief LDO channel ID (LDO_VO3 is connected to VDD_MIPI_DPHY)
+         */
+        const int BSP_MIPI_DSI_PHY_PWR_LDO_CHAN = 3;
+
+        /**
+         * @brief LDO voltage in millivolts.
+         */
+        const int BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV = 2500;
 
         lv_disp_t *lvDisp = nullptr;
         lv_indev_t *lvKeyboard = nullptr;
@@ -283,6 +293,13 @@ namespace HAL
          * @return uint32_t Display height in pixels.
          */
         uint32_t GetDisplayHeight() override;
+
+        /**
+         * @brief Check if the display uses big-endian color format.
+         *
+         * @return true if the display uses big-endian format, false otherwise.
+         */
+        bool IsDisplayBigEndian() const override;
 
         /**
          * @brief Initialise the brightness control.
@@ -338,6 +355,29 @@ namespace HAL
         void gpioInitOutput(uint8_t pin) override;
         void gpioSetLevel(uint8_t pin, bool level) override;
         void gpioReset(uint8_t pin) override;
+
+        /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
+        /* Audio */
+        #define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
+        #define BSP_I2S_MCLK (GPIO_NUM_30)     // Master clock   BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
+        #define BSP_I2S_LCLK (GPIO_NUM_29)     // Word select    BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
+        #define BSP_I2S_DOUT (GPIO_NUM_26)     // Data output    BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
+        #define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
+        #define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
+
+
+        /* -------------------------------------------------------------------------- */
+        /*                                    I2C                                     */
+        /* -------------------------------------------------------------------------- */
+        /* uSD card */
+        #define BSP_SD_D0 (GPIO_NUM_39)
+        #define BSP_SD_D1 (GPIO_NUM_40)
+        #define BSP_SD_D2 (GPIO_NUM_41)
+        #define BSP_SD_D3 (GPIO_NUM_42)
+        #define BSP_SD_CMD (GPIO_NUM_44)
+        #define BSP_SD_CLK (GPIO_NUM_43)
 
     private:
         /* -------------------------------------------------------------------------- */
