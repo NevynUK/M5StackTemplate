@@ -121,6 +121,16 @@ namespace HAL
         }
 
         /**
+         * @brief Check if the display uses big-endian color format.
+         *
+         * @return true if the display uses big-endian format, false otherwise.
+         */
+        virtual bool IsDisplayBigEndian() const
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
+        /**
          * @brief Get the display brightness.
          *
          * @return uint8_t Brightness level from 0 to 100.
