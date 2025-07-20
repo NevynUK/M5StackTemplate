@@ -50,8 +50,8 @@ extern "C" void app_main(void)
     disp_cfg.flags = {};
     disp_cfg.flags.buff_dma = true;
     disp_cfg.flags.buff_spiram = true;
-    disp_cfg.flags.swap_bytes = (BSP_LCD_BIGENDIAN ? true : false);
-    disp_cfg.flags.sw_rotate = true; /* Only SW rotation is supported for 90° and 270° */
+    disp_cfg.flags.swap_bytes = hal->IsDisplayBigEndian();
+    disp_cfg.flags.sw_rotate = true;
 
     lvgl_port_display_dsi_cfg_t dpi_cfg = {};
     dpi_cfg.flags.avoid_tearing = false;
