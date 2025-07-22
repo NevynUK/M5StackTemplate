@@ -38,6 +38,7 @@ esp_lcd_touch_handle_t HalTab5::GetTouchPanelHandle() const
 esp_err_t HalTab5::ConfigureTouchPanel()
 {
     ConfigureI2C();
+    ResetTouchPanel();
     const esp_lcd_touch_config_t tp_cfg =
     {
         .x_max = (uint16_t) (BSP_LCD_H_RES & 0xFFFF),
