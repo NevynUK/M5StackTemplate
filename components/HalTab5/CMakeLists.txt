@@ -16,5 +16,6 @@ idf_component_register(
         esp_driver_i2c
         esp_driver_gpio
         HalBase
+        esp_lcd_touch_gt911
     PRIV_REQUIRES usb spiffs fatfs
 )
