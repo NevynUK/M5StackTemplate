@@ -63,5 +63,8 @@
     "functional": "cpp",
     "random": "cpp",
     "type_traits": "cpp"
-  }
+  },
+  "cSpell.words": [
+    "LVGL"
+  ]
 }
