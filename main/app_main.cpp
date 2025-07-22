@@ -22,6 +22,7 @@
 #include "HalBase.hpp"
 #include "HalTab5.hpp"
 #include "Utils.hpp"
+#include "Display.hpp"
 
 //Touch panel callback.
 // static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
@@ -56,39 +57,11 @@ extern "C" void app_main(void)
 {
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
-    std::unique_ptr<HAL::HalBase> hal = std::make_unique<HAL::HalTab5>();
-    lvgl_port_cfg_t lvglConfig = ESP_LVGL_PORT_INIT_CONFIG();
-    lvgl_port_init(&lvglConfig);
+    HAL::HalBase *hal = new HAL::HalTab5();
     hal->Configure();
 
-    /* Add LCD screen */
-    lvgl_port_display_cfg_t disp_cfg = {};
-    disp_cfg.io_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetIoHandle();
-    disp_cfg.panel_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetPanelHandle();
-    disp_cfg.control_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetControlHandle();
-    disp_cfg.buffer_size = hal->GetDisplayHeight() * hal->GetDisplayWidth();
-    disp_cfg.double_buffer = true;
-    disp_cfg.hres = hal->GetDisplayWidth();
-    disp_cfg.vres = hal->GetDisplayHeight();
-    disp_cfg.monochrome = false;
-    disp_cfg.rotation = {};
-    disp_cfg.rotation.swap_xy = false;
-    disp_cfg.rotation.mirror_x = false;
-    disp_cfg.rotation.mirror_y = false;
-    disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
-    disp_cfg.flags = {};
-    disp_cfg.flags.buff_dma = true;
-    disp_cfg.flags.buff_spiram = true;
-    disp_cfg.flags.swap_bytes = hal->IsDisplayBigEndian();
-    disp_cfg.flags.sw_rotate = true;
-
-    lvgl_port_display_dsi_cfg_t dpi_cfg = {};
-    dpi_cfg.flags.avoid_tearing = false;
-
-    lv_disp_t *lvDisp = lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
-    lv_display_set_rotation(lvDisp, LV_DISPLAY_ROTATION_90);
-    hal->SetDisplayBrightness(100);
-
+    Display *display = new Display(hal);
+    display->Configure();
 
     /* Add touch input (for selected screen) */
     // const lvgl_port_touch_cfg_t touch_cfg =
@@ -103,9 +76,6 @@ extern "C" void app_main(void)
     // lv_indev_set_type(lvTouchpad, LV_INDEV_TYPE_POINTER);
     // lv_indev_set_read_cb(lvTouchpad, lvgl_read_cb);
     // lv_indev_set_display(lvTouchpad, lvDisp);
-
-    lvgl_port_unlock();
-
 
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -129,29 +99,10 @@ extern "C" void app_main(void)
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
     // SDCard *sd_card = SDCard::GetInstance();
-    // sd_card->Setup();
+    // sd_card->Configure();
     // ListFiles(sd_card->GetMountPoint());
 
-    // Display *display = Display::GetInstance();
-    // display->Setup();
-
-    lvgl_port_lock(0);
-    /**
-     * @brief Pointer to the screen object to be used in drawing operations.
-     */
-    lv_obj_t *_screen = nullptr;
-
-    _screen = lv_scr_act();
-
-    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
-
-    lv_obj_t *rectangle = lv_obj_create(_screen);
-    lv_obj_set_size(rectangle, 200, 200);
-    lv_obj_set_pos(rectangle, 100, 100);
-    lv_obj_set_style_radius(rectangle, 0, 0);
-    lv_obj_set_style_bg_color(rectangle, lv_color_hex(0xFFFFFF), LV_STATE_DEFAULT);
-
-    lvgl_port_unlock();
+    display->DrawFilledRectangle(100, 100, 300, 200, lv_color_hex(0xFFFFFF));
 
     while (true)
     {
