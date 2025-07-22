@@ -14,10 +14,9 @@
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
 
-namespace HAL
-{
-    class HalBase;
-}
+#include "HalBase.hpp"
+
+using namespace HAL;
 
 class Display
 {
@@ -32,11 +31,10 @@ public:
      * 
      * @param halBase Pointer to the HalBase instance for hardware access.
      */
-    explicit Display(HAL::HalBase *halBase) : _halBase(halBase) {}
+    explicit Display(HalBase *halBase) : _halBase(halBase) {}
     ~Display() = default;
 
-    void Setup();
-    void Teardown();
+    void Configure();
     void SetBrightness(uint8_t brightnessPercent);
     void BacklightOff();
     void BacklightOn();
@@ -61,8 +59,28 @@ private:
     HAL::HalBase *_halBase;
     lv_obj_t *_screen = nullptr;
 
+    /**
+     * @brief Handle for the LCD IO.
+     */
+    esp_lcd_panel_io_handle_t _lcdIOHandle;
+
+    /**
+     * @brief Handle for the PCD panel.
+     */
+    esp_lcd_panel_handle_t _lcdPanelHandle;
+
+    /**
+     * @brief Handle for the touch panel.
+     */
+    // esp_lcd_touch_handle_t _touchPanelHandle;
+
+    /**
+     * @brief Pointer to the screen object to be used in drawing operations.
+     */
+    lv_obj_t *_screen = nullptr;
+
     //
-    //  Disable the default constructor, copy constructor, and assignment operator.
+    //  Disable the default constructor, copy constructor, move and assignment operator.
     //
     Display() = delete;
     Display(const Display &) = delete;

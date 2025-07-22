@@ -131,11 +131,11 @@ extern "C" void app_main(void)
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
     // SDCard *sd_card = SDCard::GetInstance();
-    // sd_card->Setup();
+    // sd_card->Configure();
     // ListFiles(sd_card->GetMountPoint());
 
     // Display *display = Display::GetInstance();
-    // display->Setup();
+    // display->Configure();
 
     lvgl_port_lock(0);
     /**

@@ -30,233 +30,6 @@
 #include "HalBase.hpp"
 
 /**
- * @brief Anonymous namespace for private constants and variables
- */
-namespace
-{
-        /**
-         * @brief Name of the component, used for logging.
-         */
-        const char *COMPONENT_NAME = "lcd";
-
-        /**
-         * @brief Number of bits per pixel for the LCD.
-         */
-        const int LCD_BITS_PIXEL = 16;
-
-        /**
-         * @brief Number of lines in the LCD buffer.
-         */
-        const int LCD_BUF_LINES = 30;
-
-        /**
-         * @brief Enable double buffering for the LCD.
-         */
-        const int LCD_DOUBLE_BUFFER = 1;
-
-        // /**
-        //  * @brief Size of the LCD draw buffer.
-        //  */
-        // const int LCD_DRAWBUF_SIZE = (HORIZONTAL_RESOLUTION * LCD_BUF_LINES);
-
-        /**
-         * @brief Pixel clock frequency for the LCD in Hz.
-         */
-        const int LCD_PIXEL_CLOCK_HZ = (40 * 1000 * 1000);
-
-        /**
-         * @brief Number of bits for LCD commands.
-         */
-        const int LCD_CMD_BITS = 8;
-
-        /**
-         * @brief Number of bits for LCD parameters.
-         */
-        const int LCD_PARAM_BITS = 8;
-
-        /**
-         * @brief SPI host device for the LCD.
-         */
-        const spi_host_device_t LCD_SPI_HOST = SPI2_HOST;
-
-        /**
-         * @brief GPIO number for the LCD SPI clock.
-         */
-        const gpio_num_t LCD_SPI_CLK = GPIO_NUM_14;
-
-        /**
-         * @brief GPIO number for the LCD SPI MOSI.
-         */
-        const gpio_num_t LCD_SPI_MOSI = GPIO_NUM_13;
-
-        /**
-         * @brief GPIO number for the LCD SPI MISO.
-         */
-        const gpio_num_t LCD_SPI_MISO = GPIO_NUM_12;
-
-        /**
-         * @brief GPIO number for the LCD data/command toggle.
-         */
-        const gpio_num_t LCD_DC = GPIO_NUM_2;
-
-        /**
-         * @brief GPIO number for the LCD chip select.
-         */
-        const gpio_num_t LCD_CS = GPIO_NUM_15;
-
-        /**
-         * @brief GPIO number for the LCD reset.
-         */
-        const gpio_num_t LCD_RESET = GPIO_NUM_4;
-
-        /**
-         * @brief GPIO number for the LCD busy signal.
-         */
-        const gpio_num_t LCD_BUSY = GPIO_NUM_NC;
-
-        /**
-         * @brief GPIO number for the LCD backlight.
-         */
-        const gpio_num_t LCD_BACKLIGHT = GPIO_NUM_21;
-
-        /**
-         * @brief LEDC channel for the LCD backlight.
-         */
-        // const ledc_channel_t LCD_BACKLIGHT_LEDC_CH = static_cast<ledc_channel_t>(1);
-
-        /**
-         * @brief Minimum X-axis touch resolution.
-         */
-        const int TOUCH_X_RES_MIN = 0;
-
-        /**
-         * @brief Maximum X-axis touch resolution.
-         */
-        const int TOUCH_X_RES_MAX = 240;
-
-        /**
-         * @brief Minimum Y-axis touch resolution.
-         */
-        const int TOUCH_Y_RES_MIN = 0;
-
-        /**
-         * @brief Maximum Y-axis touch resolution.
-         */
-        const int TOUCH_Y_RES_MAX = 320;
-
-        // /**
-        //  * @brief Clock frequency for the touch controller in Hz.
-        //  */
-        // const int TOUCH_CLOCK_HZ = ESP_LCD_TOUCH_SPI_CLOCK_HZ;
-
-        /**
-         * @brief SPI host device for the touch controller.
-         */
-        const spi_host_device_t TOUCH_SPI = SPI3_HOST;
-
-        /**
-         * @brief GPIO number for the touch controller SPI clock.
-         */
-        const gpio_num_t TOUCH_SPI_CLK = GPIO_NUM_25;
-
-        /**
-         * @brief GPIO number for the touch controller SPI MOSI.
-         */
-        const gpio_num_t TOUCH_SPI_MOSI = GPIO_NUM_32;
-
-        /**
-         * @brief GPIO number for the touch controller SPI MISO.
-         */
-        const gpio_num_t TOUCH_SPI_MISO = GPIO_NUM_39;
-
-        /**
-         * @brief GPIO number for the touch controller chip select.
-         */
-        const gpio_num_t TOUCH_CS = GPIO_NUM_33;
-
-        /**
-         * @brief GPIO number for the touch controller data/command toggle.
-         */
-        const gpio_num_t TOUCH_DC = GPIO_NUM_NC;
-
-        /**
-         * @brief GPIO number for the touch controller reset.
-         */
-        const gpio_num_t TOUCH_RST = GPIO_NUM_NC;
-
-        /**
-         * @brief GPIO number for the touch controller interrupt request.
-         */
-        const gpio_num_t TOUCH_IRQ = GPIO_NUM_36;
-
-        /**
-         * @brief Handle for the LCD IO.
-         */
-        esp_lcd_panel_io_handle_t _lcdIOHandle;
-
-        /**
-         * @brief Handle for the PCD panel.
-         */
-        esp_lcd_panel_handle_t _lcdPanelHandle;
-
-        /**
-         * @brief Handle for the touch panel.
-         */
-        // esp_lcd_touch_handle_t _touchPanelHandle;
-
-        /**
-         * @brief Touch panel configuration.
-         */
-        // lvgl_port_touch_cfg_t _touchPanelConfiguration;
-
-        /**
-         * @brief Pointer to the screen object to be used in drawing operations.
-         */
-        lv_obj_t *_screen = nullptr;
-
-        /**
-         * @brief Initialize the LVGL library.
-         *
-         * @param lcd_io LCD panel IO handle.
-         * @param lcd_panel LCD panel handle.
-         * @return lv_display_t* Pointer to the LVGL display.
-         */
-        lv_display_t *InitialiseLVGL(esp_lcd_panel_io_handle_t lcd_io, esp_lcd_panel_handle_t lcd_panel)
-        {
-            const lvgl_port_cfg_t lvgl_cfg = {.task_priority = 4, .task_stack = 4096, .task_affinity = -1, .task_max_sleep_ms = 500, .timer_period_ms = 5};
-
-            esp_err_t e = lvgl_port_init(&lvgl_cfg);
-
-            if (e != ESP_OK)
-            {
-                ESP_LOGI(COMPONENT_NAME, "lvgl_port_init() failed: %s", esp_err_to_name(e));
-
-                return NULL;
-            }
-
-            // ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
-            lvgl_port_display_cfg_t disp_cfg = {};
-            // disp_cfg.io_handle = lcd_io;
-            // disp_cfg.panel_handle = lcd_panel;
-            // disp_cfg.buffer_size = LCD_DRAWBUF_SIZE;
-            // disp_cfg.double_buffer = LCD_DOUBLE_BUFFER;
-            // disp_cfg.hres = HORIZONTAL_RESOLUTION;
-            // disp_cfg.vres = VERTICAL_RESOLUTION;
-            // disp_cfg.monochrome = false;
-            // disp_cfg.rotation = {};
-            // disp_cfg.rotation.swap_xy = false;
-            // disp_cfg.rotation.mirror_x = LCD_MIRROR_X;
-            // disp_cfg.rotation.mirror_y = LCD_MIRROR_Y;
-            // disp_cfg.flags = {};
-            // disp_cfg.flags.buff_dma = true;
-            // disp_cfg.flags.buff_spiram = false;
-            // disp_cfg.flags.swap_bytes = true;
-
-            return lvgl_port_add_disp(&disp_cfg);
-        }
-} // anonymous namespace
-
-/**
  * @brief Set the brightness of the LCD backlight.
  *
  * @param brightnessPercent Brightness level as a percentage (0-100).
@@ -566,9 +339,50 @@ void Display::DeleteScreen(lv_obj_t *screen)
 }
 
 /**
- * @brief Setup the display and initialise all components.
+ * @brief Initialize the LVGL library.
+ *
+ * @param lcd_io LCD panel IO handle.
+ * @param lcd_panel LCD panel handle.
+ * @return lv_display_t* Pointer to the LVGL display.
  */
-void Display::Setup()
+lv_display_t *InitialiseLVGL(esp_lcd_panel_io_handle_t lcd_io, esp_lcd_panel_handle_t lcd_panel)
+{
+    const lvgl_port_cfg_t lvgl_cfg = {.task_priority = 4, .task_stack = 4096, .task_affinity = -1, .task_max_sleep_ms = 500, .timer_period_ms = 5};
+
+    esp_err_t e = lvgl_port_init(&lvgl_cfg);
+
+    if (e != ESP_OK)
+    {
+        ESP_LOGI(COMPONENT_NAME, "lvgl_port_init() failed: %s", esp_err_to_name(e));
+
+        return NULL;
+    }
+
+    // ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
+    lvgl_port_display_cfg_t disp_cfg = {};
+    // disp_cfg.io_handle = lcd_io;
+    // disp_cfg.panel_handle = lcd_panel;
+    // disp_cfg.buffer_size = LCD_DRAWBUF_SIZE;
+    // disp_cfg.double_buffer = LCD_DOUBLE_BUFFER;
+    // disp_cfg.hres = HORIZONTAL_RESOLUTION;
+    // disp_cfg.vres = VERTICAL_RESOLUTION;
+    // disp_cfg.monochrome = false;
+    // disp_cfg.rotation = {};
+    // disp_cfg.rotation.swap_xy = false;
+    // disp_cfg.rotation.mirror_x = LCD_MIRROR_X;
+    // disp_cfg.rotation.mirror_y = LCD_MIRROR_Y;
+    // disp_cfg.flags = {};
+    // disp_cfg.flags.buff_dma = true;
+    // disp_cfg.flags.buff_spiram = false;
+    // disp_cfg.flags.swap_bytes = true;
+
+    return lvgl_port_add_disp(&disp_cfg);
+}
+
+/**
+ * @brief Configure the display and initialise all components.
+ */
+void Display::Configure()
 {
     // InitialiseBrightness();
 
@@ -580,7 +394,7 @@ void Display::Setup()
     //     esp_restart();
     // }
 
-    // TouchPanel::Setup(&_touchPanelHandle);
+    // TouchPanel::Configure(&_touchPanelHandle);
     // _touchPanelConfiguration.disp = _lvglDisplayHandle;
     // _touchPanelConfiguration.handle = _touchPanelHandle;
     // lvgl_port_add_touch(&_touchPanelConfiguration);
