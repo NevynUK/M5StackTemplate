@@ -22,6 +22,7 @@
 #include "HalBase.hpp"
 #include "HalTab5.hpp"
 #include "Utils.hpp"
+#include "Display.hpp"
 
 //Touch panel callback.
 // static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
@@ -56,16 +57,17 @@ extern "C" void app_main(void)
 {
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
-    std::unique_ptr<HAL::HalBase> hal = std::make_unique<HAL::HalTab5>();
+    HAL::HalBase *hal = new HAL::HalTab5();
     lvgl_port_cfg_t lvglConfig = ESP_LVGL_PORT_INIT_CONFIG();
     lvgl_port_init(&lvglConfig);
     hal->Configure();
+    Display display(hal);
 
     /* Add LCD screen */
     lvgl_port_display_cfg_t disp_cfg = {};
-    disp_cfg.io_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetIoHandle();
-    disp_cfg.panel_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetPanelHandle();
-    disp_cfg.control_handle = static_cast<HAL::HalTab5 *>(hal.get())->GetControlHandle();
+    disp_cfg.io_handle = static_cast<HAL::HalTab5 *>(hal)->GetIoHandle();
+    disp_cfg.panel_handle = static_cast<HAL::HalTab5 *>(hal)->GetPanelHandle();
+    disp_cfg.control_handle = static_cast<HAL::HalTab5 *>(hal)->GetControlHandle();
     disp_cfg.buffer_size = hal->GetDisplayHeight() * hal->GetDisplayWidth();
     disp_cfg.double_buffer = true;
     disp_cfg.hres = hal->GetDisplayWidth();
