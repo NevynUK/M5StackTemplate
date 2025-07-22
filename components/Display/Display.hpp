@@ -57,22 +57,8 @@ public:
  
 private:
     HAL::HalBase *_halBase;
-    lv_obj_t *_screen = nullptr;
 
-    /**
-     * @brief Handle for the LCD IO.
-     */
-    esp_lcd_panel_io_handle_t _lcdIOHandle;
-
-    /**
-     * @brief Handle for the PCD panel.
-     */
-    esp_lcd_panel_handle_t _lcdPanelHandle;
-
-    /**
-     * @brief Handle for the touch panel.
-     */
-    // esp_lcd_touch_handle_t _touchPanelHandle;
+    lv_disp_t *_displayHandle = nullptr;
 
     /**
      * @brief Pointer to the screen object to be used in drawing operations.

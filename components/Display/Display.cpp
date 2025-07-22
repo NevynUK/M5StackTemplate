@@ -28,6 +28,7 @@
 // #include "TouchPanel.hpp"
 #include "Display.hpp"
 #include "HalBase.hpp"
+#include "HalTab5.hpp"
 
 /**
  * @brief Set the brightness of the LCD backlight.
@@ -339,77 +340,43 @@ void Display::DeleteScreen(lv_obj_t *screen)
 }
 
 /**
- * @brief Initialize the LVGL library.
- *
- * @param lcd_io LCD panel IO handle.
- * @param lcd_panel LCD panel handle.
- * @return lv_display_t* Pointer to the LVGL display.
- */
-lv_display_t *InitialiseLVGL(esp_lcd_panel_io_handle_t lcd_io, esp_lcd_panel_handle_t lcd_panel)
-{
-    const lvgl_port_cfg_t lvgl_cfg = {.task_priority = 4, .task_stack = 4096, .task_affinity = -1, .task_max_sleep_ms = 500, .timer_period_ms = 5};
-
-    esp_err_t e = lvgl_port_init(&lvgl_cfg);
-
-    if (e != ESP_OK)
-    {
-        ESP_LOGI(COMPONENT_NAME, "lvgl_port_init() failed: %s", esp_err_to_name(e));
-
-        return NULL;
-    }
-
-    // ESP_LOGD(COMPONENT_NAME, "Add LCD screen");
-    lvgl_port_display_cfg_t disp_cfg = {};
-    // disp_cfg.io_handle = lcd_io;
-    // disp_cfg.panel_handle = lcd_panel;
-    // disp_cfg.buffer_size = LCD_DRAWBUF_SIZE;
-    // disp_cfg.double_buffer = LCD_DOUBLE_BUFFER;
-    // disp_cfg.hres = HORIZONTAL_RESOLUTION;
-    // disp_cfg.vres = VERTICAL_RESOLUTION;
-    // disp_cfg.monochrome = false;
-    // disp_cfg.rotation = {};
-    // disp_cfg.rotation.swap_xy = false;
-    // disp_cfg.rotation.mirror_x = LCD_MIRROR_X;
-    // disp_cfg.rotation.mirror_y = LCD_MIRROR_Y;
-    // disp_cfg.flags = {};
-    // disp_cfg.flags.buff_dma = true;
-    // disp_cfg.flags.buff_spiram = false;
-    // disp_cfg.flags.swap_bytes = true;
-
-    return lvgl_port_add_disp(&disp_cfg);
-}
-
-/**
  * @brief Configure the display and initialise all components.
  */
 void Display::Configure()
 {
-    // InitialiseBrightness();
+    lvgl_port_cfg_t lvglConfig = ESP_LVGL_PORT_INIT_CONFIG();
+    lvgl_port_init(&lvglConfig);
 
-    // InitialiseLCD(&_lcdIOHandle, &_lcdPanelHandle);
-    // _lvglDisplayHandle = InitialiseLVGL(_lcdIOHandle, _lcdPanelHandle);
-    // if (_lvglDisplayHandle == NULL)
-    // {
-    //     printf("fatal error in InitialiseLVGL");
-    //     esp_restart();
-    // }
+    lvgl_port_display_cfg_t disp_cfg = {};
+    disp_cfg.io_handle = static_cast<HalTab5 *>(_halBase)->GetIoHandle();
+    disp_cfg.panel_handle = static_cast<HalTab5 *>(_halBase)->GetPanelHandle();
+    disp_cfg.control_handle = static_cast<HalTab5 *>(_halBase)->GetControlHandle();
+    disp_cfg.buffer_size = _halBase->GetDisplayHeight() * _halBase->GetDisplayWidth();
+    disp_cfg.double_buffer = true;
+    disp_cfg.hres = _halBase->GetDisplayWidth();
+    disp_cfg.vres = _halBase->GetDisplayHeight();
+    disp_cfg.monochrome = false;
+    disp_cfg.rotation = {};
+    disp_cfg.rotation.swap_xy = false;
+    disp_cfg.rotation.mirror_x = false;
+    disp_cfg.rotation.mirror_y = false;
+    disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
+    disp_cfg.flags = {};
+    disp_cfg.flags.buff_dma = true;
+    disp_cfg.flags.buff_spiram = true;
+    disp_cfg.flags.swap_bytes = _halBase->IsDisplayBigEndian();
+    disp_cfg.flags.sw_rotate = true;
 
-    // TouchPanel::Configure(&_touchPanelHandle);
-    // _touchPanelConfiguration.disp = _lvglDisplayHandle;
-    // _touchPanelConfiguration.handle = _touchPanelHandle;
-    // lvgl_port_add_touch(&_touchPanelConfiguration);
+    lvgl_port_display_dsi_cfg_t dpi_cfg = {};
+    dpi_cfg.flags.avoid_tearing = false;
 
-    SetBrightness(75);
-    // Rotate(_lvglDisplayHandle, LV_DISPLAY_ROTATION_90);
+    _displayHandle = lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
+    Rotate(_displayHandle, LV_DISPLAY_ROTATION_90);
+    _halBase->SetDisplayBrightness(100);
 
     _screen = lv_scr_act();
 
     lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
-}
 
-/**
- * @brief Teardown the display and clean up resources.
- */
-void Display::Teardown()
-{
+    lvgl_port_unlock();
 }
