@@ -3,7 +3,7 @@
  * @author Mark Stevens
  * @brief Utility functions.
  * @date 2025-05-25
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 
@@ -17,7 +17,7 @@ namespace Utils
 {
     /**
      * @brief Format a number with commas as thousands separators.
-     * 
+     *
      * @param number The number to format.
      * @return std::string The formatted number.
      */
@@ -25,7 +25,7 @@ namespace Utils
 
     /**
      * @brief Format a number with commas as thousands separators.
-     * 
+     *
      * @param number The number to format.
      * @return std::string The formatted number.
      */
@@ -33,7 +33,7 @@ namespace Utils
 
     /**
      * @brief Clear a specific bit in a byte.
-     * 
+     *
      * @param value The byte value.
      * @param bit The bit position to clear (0-7).
      */
@@ -61,4 +61,4 @@ namespace Utils
      * @param bit The bit position to toggle (0-7).
      */
     void ToggleBit(uint8_t *value, uint8_t bit);
-}
+} // namespace Utils

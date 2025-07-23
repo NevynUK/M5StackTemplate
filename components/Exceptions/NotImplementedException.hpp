@@ -14,10 +14,10 @@ private:
     //  Delete the default constructor and copy/move constructors and assignment operators.
     //
     NotImplementedException() = delete;
-    NotImplementedException(const NotImplementedException&) = delete;
-    NotImplementedException& operator=(const NotImplementedException&) = delete;
-    NotImplementedException(NotImplementedException&&) = delete;
-    NotImplementedException& operator=(NotImplementedException&&) = delete;
+    NotImplementedException(const NotImplementedException &) = delete;
+    NotImplementedException &operator=(const NotImplementedException &) = delete;
+    NotImplementedException(NotImplementedException &&) = delete;
+    NotImplementedException &operator=(NotImplementedException &&) = delete;
 
 public:
     /**
@@ -25,7 +25,7 @@ public:
      *
      * @param function Name of the function that is not implemented.
      */
-    explicit NotImplementedException(const char* function);
+    explicit NotImplementedException(const char *function);
 
     /**
      * @brief Get the error message.

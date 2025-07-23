@@ -1,7 +1,7 @@
 /**
  * @file HalBase.hpp
  * @author Mark Stevens
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2025-07-19
  *
@@ -72,7 +72,7 @@ namespace HAL
 
         /**
          * @brief Get the Display Width object.
-         * 
+         *
          * @return uint32_t Width of the display.
          */
         virtual uint32_t GetDisplayWidth()
@@ -160,4 +160,4 @@ namespace HAL
             throw NotImplementedException(__FUNCTION__);
         }
     };
-} // namespace hal
+} // namespace HAL

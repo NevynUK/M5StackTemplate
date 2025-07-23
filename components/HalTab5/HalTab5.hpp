@@ -73,7 +73,7 @@ namespace HAL
         /**
          * @brief GPIO connected to the LCD reset.
          *
-        */
+         */
         const gpio_num_t BSP_LCD_RST = GPIO_NUM_NC;
 
         /**
@@ -138,7 +138,7 @@ namespace HAL
 
         /**
          * @brief Get the Display Width object.
-         * 
+         *
          * @return uint32_t Width of the display.
          */
         uint32_t GetDisplayWidth() override;
@@ -163,7 +163,7 @@ namespace HAL
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
         esp_err_t ConfigureDisplayBrightnessControl(void) override;
-                /**
+        /**
          * @brief Set the display brightness.
          *
          * @param brightness Brightness level from 0 to 100.
@@ -179,29 +179,29 @@ namespace HAL
 
         /**
          * @brief Get the IO handle for the display.
-         * 
-         * @return esp_lcd_panel_io_handle_t 
+         *
+         * @return esp_lcd_panel_io_handle_t
          */
         esp_lcd_panel_io_handle_t GetIoHandle() const;
-        
+
         /**
          * @brief Get the MIPI DSI bus handle for the display.
-         * 
-         * @return esp_lcd_dsi_bus_handle_t 
+         *
+         * @return esp_lcd_dsi_bus_handle_t
          */
         esp_lcd_dsi_bus_handle_t GetMipiDsiBusHandle() const;
 
         /**
          * @brief Get the panel handle for the display.
-         * 
-         * @return esp_lcd_panel_handle_t 
+         *
+         * @return esp_lcd_panel_handle_t
          */
         esp_lcd_panel_handle_t GetPanelHandle() const;
 
         /**
          * @brief Get the control handle for the display.
-         * 
-         * @return esp_lcd_panel_handle_t 
+         *
+         * @return esp_lcd_panel_handle_t
          */
         esp_lcd_panel_handle_t GetControlHandle() const;
 
@@ -231,7 +231,7 @@ namespace HAL
 
         /**
          * @brief Get the touch panel handle.
-         * 
+         *
          * @return esp_lcd_touch_handle_t Handle to the touch panel.
          */
         esp_lcd_touch_handle_t GetTouchPanelHandle() const;
@@ -243,28 +243,27 @@ namespace HAL
         void gpioSetLevel(uint8_t pin, bool level) override;
         void gpioReset(uint8_t pin) override;
 
-        /* -------------------------------------------------------------------------- */
-        /*                                   Audio                                    */
-        /* -------------------------------------------------------------------------- */
-        /* Audio */
-        #define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
-        #define BSP_I2S_MCLK (GPIO_NUM_30)     // Master clock   BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
-        #define BSP_I2S_LCLK (GPIO_NUM_29)     // Word select    BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
-        #define BSP_I2S_DOUT (GPIO_NUM_26)     // Data output    BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
-        #define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
-        #define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
+/* -------------------------------------------------------------------------- */
+/*                                   Audio                                    */
+/* -------------------------------------------------------------------------- */
+/* Audio */
+#define BSP_I2S_SCLK (GPIO_NUM_27)     // Bit clock      BSP_I2S_BCLK  <--> ES7210/ESP311 I2S_BCLK
+#define BSP_I2S_MCLK (GPIO_NUM_30)     // Master clock   BSP_I2S_MCLK  <--> ES7210/ESP311 I2S_MCLK
+#define BSP_I2S_LCLK (GPIO_NUM_29)     // Word select    BSP_I2S_WR    <--> ES7210/ESP311 I2S_WR
+#define BSP_I2S_DOUT (GPIO_NUM_26)     // Data output    BSP_I2S_DOUT  ---> ES8388        I2S_DSIN
+#define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
+#define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
 
-
-        /* -------------------------------------------------------------------------- */
-        /*                                Micro SD Card                               */
-        /* -------------------------------------------------------------------------- */
-        /* uSD card */
-        #define BSP_SD_D0 (GPIO_NUM_39)
-        #define BSP_SD_D1 (GPIO_NUM_40)
-        #define BSP_SD_D2 (GPIO_NUM_41)
-        #define BSP_SD_D3 (GPIO_NUM_42)
-        #define BSP_SD_CMD (GPIO_NUM_44)
-        #define BSP_SD_CLK (GPIO_NUM_43)
+/* -------------------------------------------------------------------------- */
+/*                                Micro SD Card                               */
+/* -------------------------------------------------------------------------- */
+/* uSD card */
+#define BSP_SD_D0 (GPIO_NUM_39)
+#define BSP_SD_D1 (GPIO_NUM_40)
+#define BSP_SD_D2 (GPIO_NUM_41)
+#define BSP_SD_D3 (GPIO_NUM_42)
+#define BSP_SD_CMD (GPIO_NUM_44)
+#define BSP_SD_CLK (GPIO_NUM_43)
 
     private:
         /* -------------------------------------------------------------------------- */
@@ -323,7 +322,6 @@ namespace HAL
          * @brief IO register address.
          */
         const uint8_t PI4IO_REG_IO_DIR = 0x03;
-
 
         const uint8_t PI4IO_REG_OUT_SET = 0x05;
 
@@ -405,7 +403,7 @@ namespace HAL
 
         /**
          * @brief Enable MIPI DSI PHY power
-         * 
+         *
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
         esp_err_t EnableDsiPhyPower(void);
@@ -421,4 +419,4 @@ namespace HAL
 
         void set_gpio_output_capability();
     };
-}
+} // namespace HAL

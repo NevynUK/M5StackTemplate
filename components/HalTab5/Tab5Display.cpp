@@ -4,7 +4,7 @@
  * @brief Display methods for the Tab5 device.
  * @version 0.1
  * @date 2025-07-19
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 #include <sdkconfig.h>
@@ -28,7 +28,7 @@ using namespace HAL;
 
 /**
  * @brief Get the Display Width object.
- * 
+ *
  * @return uint32_t Width of the display.
  */
 uint32_t HalTab5::GetDisplayWidth()
@@ -55,6 +55,7 @@ bool HalTab5::IsDisplayBigEndian() const
 {
     return BSP_LCD_BIGENDIAN;
 }
+
 /**
  * @brief Initialise the brightness control.
  *
@@ -62,26 +63,10 @@ bool HalTab5::IsDisplayBigEndian() const
  */
 esp_err_t HalTab5::ConfigureDisplayBrightnessControl(void)
 {
-    const ledc_timer_config_t lcd_backlight_timer =
-    {
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_12_BIT,
-        .timer_num = LEDC_TIMER_0,
-        .freq_hz = 5000,
-        .clk_cfg = LEDC_AUTO_CLK
-    };
+    const ledc_timer_config_t lcd_backlight_timer = {.speed_mode = LEDC_LOW_SPEED_MODE, .duty_resolution = LEDC_TIMER_12_BIT, .timer_num = LEDC_TIMER_0, .freq_hz = 5000, .clk_cfg = LEDC_AUTO_CLK};
     ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
 
-    const ledc_channel_config_t lcd_backlight_channel =
-    {
-        .gpio_num = BSP_LCD_BACKLIGHT,
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .channel = LEDC_CHANNEL_1,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_0,
-        .duty = 0,
-        .hpoint = 0
-    };
+    const ledc_channel_config_t lcd_backlight_channel = {.gpio_num = BSP_LCD_BACKLIGHT, .speed_mode = LEDC_LOW_SPEED_MODE, .channel = LEDC_CHANNEL_1, .intr_type = LEDC_INTR_DISABLE, .timer_sel = LEDC_TIMER_0, .duty = 0, .hpoint = 0};
 
     ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
 
@@ -117,8 +102,8 @@ uint8_t HalTab5::GetDisplayBrightness()
 
 /**
  * @brief Get the IO handle for the display.
- * 
- * @return esp_lcd_panel_io_handle_t 
+ *
+ * @return esp_lcd_panel_io_handle_t
  */
 esp_lcd_panel_io_handle_t HalTab5::GetIoHandle() const
 {
@@ -127,8 +112,8 @@ esp_lcd_panel_io_handle_t HalTab5::GetIoHandle() const
 
 /**
  * @brief Get the MIPI DSI bus handle for the display.
- * 
- * @return esp_lcd_dsi_bus_handle_t 
+ *
+ * @return esp_lcd_dsi_bus_handle_t
  */
 esp_lcd_dsi_bus_handle_t HalTab5::GetMipiDsiBusHandle() const
 {
@@ -137,8 +122,8 @@ esp_lcd_dsi_bus_handle_t HalTab5::GetMipiDsiBusHandle() const
 
 /**
  * @brief Get the panel handle for the display.
- * 
- * @return esp_lcd_panel_handle_t 
+ *
+ * @return esp_lcd_panel_handle_t
  */
 esp_lcd_panel_handle_t HalTab5::GetPanelHandle() const
 {
@@ -147,8 +132,8 @@ esp_lcd_panel_handle_t HalTab5::GetPanelHandle() const
 
 /**
  * @brief Get the control handle for the display.
- * 
- * @return esp_lcd_panel_handle_t 
+ *
+ * @return esp_lcd_panel_handle_t
  */
 esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
 {
@@ -157,14 +142,13 @@ esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
 
 /**
  * @brief Enable MIPI DSI PHY power
- * 
+ *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
 esp_err_t HalTab5::EnableDsiPhyPower(void)
 {
     static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
-    esp_ldo_channel_config_t ldo_cfg =
-    {
+    esp_ldo_channel_config_t ldo_cfg = {
         .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
         .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
     };
@@ -176,7 +160,7 @@ esp_err_t HalTab5::EnableDsiPhyPower(void)
 
 /**
  * @brief Configure the display.
- * 
+ *
  * @return esp_err_t ESP_OK on success, or an error code on failure.
  */
 esp_err_t HalTab5::ConfigureDisplay()
@@ -188,8 +172,7 @@ esp_err_t HalTab5::ConfigureDisplay()
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
     esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
-    esp_lcd_dsi_bus_config_t bus_config =
-    {
+    esp_lcd_dsi_bus_config_t bus_config = {
         .bus_id = 0,
         .num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM,
         .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
@@ -199,8 +182,7 @@ esp_err_t HalTab5::ConfigureDisplay()
 
     ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
     // we use DBI interface to send LCD commands and parameters
-    esp_lcd_dbi_io_config_t dbi_config =
-    {
+    esp_lcd_dbi_io_config_t dbi_config = {
         .virtual_channel = 0,
         .lcd_cmd_bits = 8,   // according to the LCD spec
         .lcd_param_bits = 8, // according to the LCD spec
@@ -230,16 +212,15 @@ esp_err_t HalTab5::ConfigureDisplay()
     dpi_config.flags = {};
     dpi_config.flags.use_dma2d = true;
 
-    ili9881c_vendor_config_t vendor_config =
-    {
+    ili9881c_vendor_config_t vendor_config = {
         .init_cmds = tab5_lcd_ili9881c_specific_init_code_default,
         .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
         .mipi_config =
-        {
-            .dsi_bus = mipi_dsi_bus,
-            .dpi_config = &dpi_config,
-            .lane_num = 2,
-        },
+            {
+                .dsi_bus = mipi_dsi_bus,
+                .dpi_config = &dpi_config,
+                .lane_num = 2,
+            },
     };
 
     esp_lcd_panel_dev_config_t lcd_dev_config = {};

@@ -28,10 +28,13 @@ public:
 
     /**
      * @brief Constructor for the Display class.
-     * 
+     *
      * @param halBase Pointer to the HalBase instance for hardware access.
      */
-    explicit Display(HalBase *halBase) : _halBase(halBase) {}
+    explicit Display(HalBase *halBase) : _halBase(halBase)
+    {
+    }
+
     ~Display() = default;
 
     void Configure();
@@ -54,7 +57,6 @@ public:
     lv_obj_t *CreateNewScreen();
     void DeleteScreen(lv_obj_t *screen);
 
- 
 private:
     HAL::HalBase *_halBase;
 

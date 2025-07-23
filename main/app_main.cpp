@@ -1,7 +1,7 @@
 /**
  * @file app_main.cpp
  * @author Mark Stevens
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2025-07-19
  *
@@ -24,14 +24,14 @@
 #include "Utils.hpp"
 #include "Display.hpp"
 
-//Touch panel callback.
-// static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
-// {
-//     if (_lcd_touch_handle == NULL)
-//     {
-//         data->state = LV_INDEV_STATE_REL;
-//         return;
-//     }
+// Touch panel callback.
+//  static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+//  {
+//      if (_lcd_touch_handle == NULL)
+//      {
+//          data->state = LV_INDEV_STATE_REL;
+//          return;
+//      }
 
 //     uint16_t touch_x[1];
 //     uint16_t touch_y[1];

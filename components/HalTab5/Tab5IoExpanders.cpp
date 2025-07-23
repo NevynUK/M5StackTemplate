@@ -4,7 +4,7 @@
  * @brief Implementation of I/O expander methods for the Tab5 device.
  * @version 0.1
  * @date 2025-07-19
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 #include <sdkconfig.h>

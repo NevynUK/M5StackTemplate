@@ -4,7 +4,7 @@
  * @brief Touch screen methods for Tab5
  * @version 0.1
  * @date 2025-07-19
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 
@@ -39,23 +39,22 @@ esp_err_t HalTab5::ConfigureTouchPanel()
 {
     ConfigureI2C();
     ResetTouchPanel();
-    const esp_lcd_touch_config_t tp_cfg =
-    {
+    const esp_lcd_touch_config_t tp_cfg = {
         .x_max = (uint16_t) (BSP_LCD_H_RES & 0xFFFF),
         .y_max = (uint16_t) (BSP_LCD_V_RES & 0xFFFF),
         .rst_gpio_num = BSP_LCD_TOUCH_RST,
         .int_gpio_num = BSP_LCD_TOUCH_INT,
         .levels =
-        {
-            .reset = 0,
-            .interrupt = 0,
-        },
+            {
+                .reset = 0,
+                .interrupt = 0,
+            },
         .flags =
-        {
-            .swap_xy = 0,
-            .mirror_x = 0,
-            .mirror_y = 0,
-        },
+            {
+                .swap_xy = 0,
+                .mirror_x = 0,
+                .mirror_y = 0,
+            },
     };
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
@@ -63,7 +62,7 @@ esp_err_t HalTab5::ConfigureTouchPanel()
     tp_io_config.scl_speed_hz = CONFIG_BSP_I2C_CLK_SPEED_HZ;
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_i2c(_i2cHandle, &tp_io_config, &tp_io_handle), COMPONENT_NAME, "");
     ESP_RETURN_ON_ERROR(esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &_touchPanelHandle), COMPONENT_NAME, "Create GT911 touch panel failed");
-    return(esp_lcd_touch_exit_sleep(_touchPanelHandle));
+    return (esp_lcd_touch_exit_sleep(_touchPanelHandle));
 }
 
 /**
@@ -81,7 +80,7 @@ void HalTab5::ResetTouchPanel()
 
     write_buf[0] = PI4IO_REG_OUT_SET;
     write_buf[1] = read_buf[0];
-    
+
     clrbit(write_buf[1], 4);
     clrbit(write_buf[1], 5);
     i2c_master_transmit(_pi4ioe1Handle, write_buf, 2, I2C_MASTER_TIMEOUT_MS);

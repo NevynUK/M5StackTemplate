@@ -4,7 +4,7 @@
  * @brief Implementation of I2C methods for the Tab5 device.
  * @version 0.1
  * @date 2025-07-19
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 #include <sdkconfig.h>
@@ -16,7 +16,7 @@
 
 using namespace HAL;
 
- /**
+/**
  * @brief Configure the I2C bus.
  *
  * @return esp_err_t ESP_OK on success, or an error code on failure.

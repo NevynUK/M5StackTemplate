@@ -9,51 +9,51 @@
 #include <string.h>
 
 // RX-8130 Register definitions
-#define RX8130_REG_SEC   0x10
-#define RX8130_REG_MIN   0x11
-#define RX8130_REG_HOUR  0x12
-#define RX8130_REG_WDAY  0x13
-#define RX8130_REG_MDAY  0x14
+#define RX8130_REG_SEC 0x10
+#define RX8130_REG_MIN 0x11
+#define RX8130_REG_HOUR 0x12
+#define RX8130_REG_WDAY 0x13
+#define RX8130_REG_MDAY 0x14
 #define RX8130_REG_MONTH 0x15
-#define RX8130_REG_YEAR  0x16
+#define RX8130_REG_YEAR 0x16
 
-#define RX8130_REG_ALMIN   0x17
-#define RX8130_REG_ALHOUR  0x18
-#define RX8130_REG_ALWDAY  0x19
+#define RX8130_REG_ALMIN 0x17
+#define RX8130_REG_ALHOUR 0x18
+#define RX8130_REG_ALWDAY 0x19
 #define RX8130_REG_TCOUNT0 0x1A
 #define RX8130_REG_TCOUNT1 0x1B
-#define RX8130_REG_EXT     0x1C
-#define RX8130_REG_FLAG    0x1D
-#define RX8130_REG_CTRL0   0x1E
-#define RX8130_REG_CTRL1   0x1F
+#define RX8130_REG_EXT 0x1C
+#define RX8130_REG_FLAG 0x1D
+#define RX8130_REG_CTRL0 0x1E
+#define RX8130_REG_CTRL1 0x1F
 
 #define RX8130_REG_END 0x23
 
 // Extension Register (1Ch) bit positions
 #define RX8130_BIT_EXT_TSEL (7 << 0)
 #define RX8130_BIT_EXT_WADA (1 << 3)
-#define RX8130_BIT_EXT_TE   (1 << 4)
+#define RX8130_BIT_EXT_TE (1 << 4)
 #define RX8130_BIT_EXT_USEL (1 << 5)
 #define RX8130_BIT_EXT_FSEL (3 << 6)
 
 // Flag Register (1Dh) bit positions
 #define RX8130_BIT_FLAG_VLF (1 << 1)
-#define RX8130_BIT_FLAG_AF  (1 << 3)
-#define RX8130_BIT_FLAG_TF  (1 << 4)
-#define RX8130_BIT_FLAG_UF  (1 << 5)
+#define RX8130_BIT_FLAG_AF (1 << 3)
+#define RX8130_BIT_FLAG_TF (1 << 4)
+#define RX8130_BIT_FLAG_UF (1 << 5)
 
 // Control 0 Register (1Еh) bit positions
 #define RX8130_BIT_CTRL_TSTP (1 << 2)
-#define RX8130_BIT_CTRL_AIE  (1 << 3)
-#define RX8130_BIT_CTRL_TIE  (1 << 4)
-#define RX8130_BIT_CTRL_UIE  (1 << 5)
+#define RX8130_BIT_CTRL_AIE (1 << 3)
+#define RX8130_BIT_CTRL_TIE (1 << 4)
+#define RX8130_BIT_CTRL_UIE (1 << 5)
 #define RX8130_BIT_CTRL_STOP (1 << 6)
 #define RX8130_BIT_CTRL_TEST (1 << 7)
 
-#define setbit(x, y)     x |= (0x01 << y)
-#define clrbit(x, y)     x &= ~(0x01 << y)
+#define setbit(x, y) x |= (0x01 << y)
+#define clrbit(x, y) x &= ~(0x01 << y)
 #define reversebit(x, y) x ^= (0x01 << y)
-#define getbit(x, y)     ((x) >> (y)&0x01)
+#define getbit(x, y) ((x) >> (y) & 0x01)
 
 static uint8_t bcd2dec(uint8_t val)
 {
@@ -69,12 +69,13 @@ bool RX8130_Class::begin(i2c_master_bus_handle_t busHandle, uint8_t addr)
 {
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address  = addr,
-        .scl_speed_hz    = 400000,
+        .device_address = addr,
+        .scl_speed_hz = 400000,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(busHandle, &dev_cfg, &_i2c_device_handle));
 
-    if (_i2c_device_handle == NULL) {
+    if (_i2c_device_handle == NULL)
+    {
         return false;
     }
 
@@ -91,7 +92,7 @@ void RX8130_Class::initBat()
     printf("rtc bat init: 0x1F: %02X\n", data);
 }
 
-void RX8130_Class::setTime(struct tm* time)
+void RX8130_Class::setTime(struct tm *time)
 {
     uint8_t rbuf = 0;
 
@@ -102,9 +103,7 @@ void RX8130_Class::setTime(struct tm* time)
     rbuf = rbuf | RX8130_BIT_CTRL_STOP;
     writeRegister8(RX8130_REG_CTRL0, rbuf);
 
-    uint8_t date[7] = {dec2bcd(time->tm_sec),       dec2bcd(time->tm_min),  dec2bcd(time->tm_hour),
-                       dec2bcd(time->tm_wday),      dec2bcd(time->tm_mday), dec2bcd(time->tm_mon),
-                       dec2bcd(time->tm_year % 100)};
+    uint8_t date[7] = {dec2bcd(time->tm_sec), dec2bcd(time->tm_min), dec2bcd(time->tm_hour), dec2bcd(time->tm_wday), dec2bcd(time->tm_mday), dec2bcd(time->tm_mon), dec2bcd(time->tm_year % 100)};
 
     writeRegister(RX8130_REG_SEC, date, 7);
 
@@ -114,16 +113,16 @@ void RX8130_Class::setTime(struct tm* time)
     writeRegister8(RX8130_REG_CTRL0, rbuf);
 }
 
-void RX8130_Class::getTime(struct tm* time)
+void RX8130_Class::getTime(struct tm *time)
 {
     uint8_t date[7];
     readRegister(RX8130_REG_SEC, date, 7);
 
-    time->tm_sec  = bcd2dec(date[RX8130_REG_SEC - 0x10] & 0x7f);
-    time->tm_min  = bcd2dec(date[RX8130_REG_MIN - 0x10] & 0x7f);
-    time->tm_hour = bcd2dec(date[RX8130_REG_HOUR - 0x10] & 0x3f);  // only 24-hour clock
+    time->tm_sec = bcd2dec(date[RX8130_REG_SEC - 0x10] & 0x7f);
+    time->tm_min = bcd2dec(date[RX8130_REG_MIN - 0x10] & 0x7f);
+    time->tm_hour = bcd2dec(date[RX8130_REG_HOUR - 0x10] & 0x3f); // only 24-hour clock
     time->tm_mday = bcd2dec(date[RX8130_REG_MDAY - 0x10] & 0x3f);
-    time->tm_mon  = bcd2dec(date[RX8130_REG_MONTH - 0x10] & 0x1f);
+    time->tm_mon = bcd2dec(date[RX8130_REG_MONTH - 0x10] & 0x1f);
     time->tm_year = bcd2dec(date[RX8130_REG_YEAR - 0x10]);
     time->tm_wday = bcd2dec(date[RX8130_REG_WDAY - 0x10] & 0x7f);
 
@@ -140,7 +139,7 @@ void RX8130_Class::disableIrq()
     writeRegister8(RX8130_REG_CTRL0, 0);
 }
 
-void RX8130_Class::setAlarmIrq(struct tm* time)
+void RX8130_Class::setAlarmIrq(struct tm *time)
 {
     uint8_t buf = 0;
 
@@ -179,34 +178,34 @@ void RX8130_Class::setAlarmIrq(struct tm* time)
 }
 
 // RX8130 register addresses
-#define RX8130_REG_SEC                0x10
-#define RX8130_REG_MIN                0x11
-#define RX8130_REG_HOUR               0x12
-#define RX8130_REG_WEEK               0x13
-#define RX8130_REG_DAY                0x14
-#define RX8130_REG_MONTH              0x15
-#define RX8130_REG_YEAR               0x16
-#define RX8130_REG_ALARM_MINUTE       0x17
-#define RX8130_REG_ALARM_HOUR         0x18
-#define RX8130_REG_ALARM_WEEKDAY      0x19
-#define RX8130_REG_TIMER_COUNTER_LOW  0x1A
+#define RX8130_REG_SEC 0x10
+#define RX8130_REG_MIN 0x11
+#define RX8130_REG_HOUR 0x12
+#define RX8130_REG_WEEK 0x13
+#define RX8130_REG_DAY 0x14
+#define RX8130_REG_MONTH 0x15
+#define RX8130_REG_YEAR 0x16
+#define RX8130_REG_ALARM_MINUTE 0x17
+#define RX8130_REG_ALARM_HOUR 0x18
+#define RX8130_REG_ALARM_WEEKDAY 0x19
+#define RX8130_REG_TIMER_COUNTER_LOW 0x1A
 #define RX8130_REG_TIMER_COUNTER_HIGH 0x1B
-#define RX8130_REG_EXTENSION          0x1C
-#define RX8130_REG_FLAG               0x1D
-#define RX8130_REG_CONTROL0           0x1E
-#define RX8130_REG_CONTROL1           0x1F
+#define RX8130_REG_EXTENSION 0x1C
+#define RX8130_REG_FLAG 0x1D
+#define RX8130_REG_CONTROL0 0x1E
+#define RX8130_REG_CONTROL1 0x1F
 
 void RX8130_Class::setTimerIrq(uint16_t seconds)
 {
     uint8_t flag_register = 0;
-    uint8_t buffer[2]     = {0};
-    buffer[0]             = seconds & 0xFF;         // Timer low byte
-    buffer[1]             = (seconds >> 8) & 0xFF;  // Timer high byte
+    uint8_t buffer[2] = {0};
+    buffer[0] = seconds & 0xFF;        // Timer low byte
+    buffer[1] = (seconds >> 8) & 0xFF; // Timer high byte
 
     // Step 1: Disable Timer
     flag_register = readRegister8(RX8130_REG_EXTENSION);
 
-    flag_register &= ~(1 << 4);  // Disable timer (TE = 0)
+    flag_register &= ~(1 << 4); // Disable timer (TE = 0)
     writeRegister8(RX8130_REG_EXTENSION, flag_register);
 
     // Setp 2: Write Timer Counter Register (1Ah, 1Bh)
@@ -215,7 +214,7 @@ void RX8130_Class::setTimerIrq(uint16_t seconds)
     // Step 3: Enable Timer
     flag_register = readRegister8(RX8130_REG_EXTENSION);
 
-    setbit(flag_register, 4);  // Enable timer (TE = 1)
+    setbit(flag_register, 4); // Enable timer (TE = 1)
     clrbit(flag_register, 2);
     setbit(flag_register, 1);
     clrbit(flag_register, 0);
@@ -223,7 +222,7 @@ void RX8130_Class::setTimerIrq(uint16_t seconds)
 
     // Step 4: Enable Timer Interrupt
     flag_register = readRegister8(RX8130_REG_CONTROL0);
-    flag_register |= (1 << 4);  // Enable timer interrupt (TIE = 1)
+    flag_register |= (1 << 4); // Enable timer interrupt (TIE = 1)
     writeRegister8(RX8130_REG_CONTROL0, flag_register);
 }
 
@@ -240,14 +239,14 @@ void RX8130_Class::writeRegister8(uint8_t reg, uint8_t value)
     writeRegister(reg, buf, 1);
 }
 
-void RX8130_Class::readRegister(uint8_t reg, uint8_t* buf, uint8_t len)
+void RX8130_Class::readRegister(uint8_t reg, uint8_t *buf, uint8_t len)
 {
     uint8_t w_buffer[1] = {0};
-    w_buffer[0]         = reg;
+    w_buffer[0] = reg;
     i2c_master_transmit_receive(_i2c_device_handle, w_buffer, 1, buf, len, portMAX_DELAY);
 }
 
-void RX8130_Class::writeRegister(uint8_t reg, uint8_t* buf, uint8_t len)
+void RX8130_Class::writeRegister(uint8_t reg, uint8_t *buf, uint8_t len)
 {
     uint8_t w_buffer[1 + len];
     w_buffer[0] = reg;

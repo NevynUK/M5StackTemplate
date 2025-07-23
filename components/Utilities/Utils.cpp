@@ -3,7 +3,7 @@
  * @author Mark Stevens
  * @brief Utility functions.
  * @date 2025-05-25
- * 
+ *
  * @copyright Copyright (c) 2025
  */
 
@@ -17,13 +17,13 @@
 
 /**
  * @brief Format a number with commas as thousands separators.
- * 
+ *
  * @param number The number to format.
  * @return std::string The formatted number.
  */
 std::string Utils::NumberWithCommas(uint64_t number)
 {
-    uint64_t bufferSize = 27;              // 20 digits, plus 6 commas (max) + terminator.
+    uint64_t bufferSize = 27; // 20 digits, plus 6 commas (max) + terminator.
     char buffer[27];
 
     size_t len = snprintf(buffer, bufferSize, "%" PRIu64, number);
@@ -58,7 +58,7 @@ std::string Utils::NumberWithCommas(uint64_t number)
 
 /**
  * @brief Format a number with commas as thousands separators.
- * 
+ *
  * @param number The number to format.
  * @return std::string The formatted number.
  */
@@ -69,7 +69,7 @@ std::string Utils::NumberWithCommas(uint32_t number)
 
 /**
  * @brief Clear a specific bit in a byte.
- * 
+ *
  * @param value The byte value.
  * @param bit The bit position to clear (0-7).
  */

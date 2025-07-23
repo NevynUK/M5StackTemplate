@@ -28,4 +28,3 @@ void HalTab5::Configure()
     ESP_ERROR_CHECK(ConfigureTouchPanel());
     ESP_ERROR_CHECK(ConfigureDisplay());
 }
-

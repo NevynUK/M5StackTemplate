@@ -8,7 +8,7 @@
  *
  * @param function Name of the function that is not implemented.
  */
-NotImplementedException::NotImplementedException(const char* function) : std::logic_error("Not Implemented")
+NotImplementedException::NotImplementedException(const char *function) : std::logic_error("Not Implemented")
 {
     _functionName = function;
 };

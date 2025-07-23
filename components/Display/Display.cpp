@@ -163,22 +163,22 @@ lv_obj_t *Display::DrawLabel(uint32_t x, uint32_t y, const char *text, lv_color_
  * @return lv_obj_t* Pointer to the label object.
  */
 lv_obj_t *Display::DrawLabel(uint32_t x, uint32_t y, const char *text, const lv_font_t *font, lv_color_t colour)
+{
+    lv_obj_t *label = nullptr;
+
+    if (_screen)
     {
-        lv_obj_t *label = nullptr;
+        lvgl_port_lock(0);
 
-        if (_screen)
-        {
-            lvgl_port_lock(0);
+        label = lv_label_create(_screen);
+        lv_label_set_text(label, text);
+        lv_obj_set_style_text_color(label, colour, LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(label, font, LV_STATE_DEFAULT);
+        lv_obj_set_pos(label, x, y);
 
-            label = lv_label_create(_screen);
-            lv_label_set_text(label, text);
-            lv_obj_set_style_text_color(label, colour, LV_STATE_DEFAULT);
-            lv_obj_set_style_text_font(label, font, LV_STATE_DEFAULT);
-            lv_obj_set_pos(label, x, y);
-
-            lvgl_port_unlock();
-        }
-        return (label);
+        lvgl_port_unlock();
+    }
+    return (label);
 }
 
 /**
@@ -208,7 +208,7 @@ lv_obj_t *Display::DrawFilledCircle(uint32_t x, uint32_t y, uint32_t radius, lv_
         lvgl_port_unlock();
     }
 
-    return(circle);
+    return (circle);
 }
 
 /**
