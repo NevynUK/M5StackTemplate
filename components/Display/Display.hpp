@@ -38,6 +38,8 @@ public:
     ~Display() = default;
 
     void Configure();
+    void Lock(uint32_t timeout = 0);
+    void Unlock();
     void SetBrightness(uint8_t brightnessPercent);
     void BacklightOff();
     void BacklightOn();

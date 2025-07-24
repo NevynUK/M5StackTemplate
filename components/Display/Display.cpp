@@ -6,29 +6,43 @@
 #include <freertos/event_groups.h>
 #include <freertos/semphr.h>
 
-// #include <esp_system.h>
 #include <esp_log.h>
 #include <esp_err.h>
 #include <esp_check.h>
-// #include <esp_lcd_panel_io.h>
-// #include <esp_lcd_panel_vendor.h>
-// #include <esp_lcd_panel_ops.h>
-// #include <esp_timer.h>
-// #include <driver/gpio.h>
-// #include <driver/ledc.h>
-// #include <driver/spi_master.h>
-// #include <esp_lcd_ili9341.h>
 
 #include <lvgl.h>
 #include <esp_lvgl_port.h>
 
-// #include <esp_lcd_touch.h>
-// #include <esp_lcd_touch_xpt2046.h>
-
-// #include "TouchPanel.hpp"
 #include "Display.hpp"
 #include "HalBase.hpp"
 #include "HalTab5.hpp"
+
+/**
+ * @brief Lock LVGL.
+ *
+ * @param timeout Timeout for the lock operation.
+ */
+void Display::Lock(uint32_t timeout)
+{
+    if (_halBase)
+    {
+        if (!lvgl_port_lock(timeout))
+        {
+            ESP_LOGE(COMPONENT_NAME, "Failed to lock LVGL port");
+        }
+    }
+}
+
+/**
+ * @brief Unlock LVGL.
+ */
+void Display::Unlock()
+{
+    if (_halBase)
+    {
+        lvgl_port_unlock();
+    }
+}
 
 /**
  * @brief Set the brightness of the LCD backlight.
@@ -86,7 +100,7 @@ void Display::DrawFilledRectangle(uint32_t x, uint32_t y, uint32_t width, uint32
 {
     if (_screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
 
         lv_obj_t *rectangle = lv_obj_create(_screen);
         lv_obj_set_size(rectangle, width, height);
@@ -94,7 +108,7 @@ void Display::DrawFilledRectangle(uint32_t x, uint32_t y, uint32_t width, uint32
         lv_obj_set_style_radius(rectangle, 0, 0);
         lv_obj_set_style_bg_color(rectangle, colour, LV_STATE_DEFAULT);
 
-        lvgl_port_unlock();
+        Unlock();
     }
 }
 
@@ -111,7 +125,7 @@ void Display::DrawBoxOutline(uint32_t x, uint32_t y, uint32_t width, uint32_t he
 {
     if (_screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
 
         lv_obj_t *box = lv_obj_create(_screen);
         lv_obj_set_size(box, width, height);
@@ -121,7 +135,7 @@ void Display::DrawBoxOutline(uint32_t x, uint32_t y, uint32_t width, uint32_t he
         lv_obj_set_style_border_width(box, 2, LV_STATE_DEFAULT);       // Set the border width as needed
         lv_obj_set_style_bg_opa(box, LV_OPA_TRANSP, LV_STATE_DEFAULT); // Make the background transparent
 
-        lvgl_port_unlock();
+        Unlock();
     }
 }
 
@@ -168,7 +182,7 @@ lv_obj_t *Display::DrawLabel(uint32_t x, uint32_t y, const char *text, const lv_
 
     if (_screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
 
         label = lv_label_create(_screen);
         lv_label_set_text(label, text);
@@ -176,7 +190,7 @@ lv_obj_t *Display::DrawLabel(uint32_t x, uint32_t y, const char *text, const lv_
         lv_obj_set_style_text_font(label, font, LV_STATE_DEFAULT);
         lv_obj_set_pos(label, x, y);
 
-        lvgl_port_unlock();
+        Unlock();
     }
     return (label);
 }
@@ -196,7 +210,7 @@ lv_obj_t *Display::DrawFilledCircle(uint32_t x, uint32_t y, uint32_t radius, lv_
 
     if (_screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
 
         circle = lv_obj_create(_screen);
         lv_obj_set_size(circle, 2 * radius, 2 * radius);
@@ -205,7 +219,7 @@ lv_obj_t *Display::DrawFilledCircle(uint32_t x, uint32_t y, uint32_t radius, lv_
         lv_obj_set_style_bg_color(circle, colour, LV_STATE_DEFAULT);
         lv_obj_set_style_border_width(circle, 0, LV_STATE_DEFAULT);
 
-        lvgl_port_unlock();
+        Unlock();
     }
 
     return (circle);
@@ -229,7 +243,7 @@ std::tuple<lv_obj_t *, lv_obj_t *> Display::DrawButton(uint32_t x, uint32_t y, u
 
     if (_screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
 
         button = lv_btn_create(_screen);
         lv_obj_set_size(button, width, height);
@@ -241,7 +255,7 @@ std::tuple<lv_obj_t *, lv_obj_t *> Display::DrawButton(uint32_t x, uint32_t y, u
         lv_obj_set_style_text_color(label, lv_color_make(255, 255, 0), LV_STATE_DEFAULT);
         lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 
-        lvgl_port_unlock();
+        Unlock();
     }
     return {button, label};
 }
@@ -256,9 +270,9 @@ void Display::SetColour(lv_obj_t *object, lv_color_t colour)
 {
     if (object)
     {
-        lvgl_port_lock(0);
+        Lock(0);
         lv_obj_set_style_bg_color(object, colour, LV_STATE_DEFAULT);
-        lvgl_port_unlock();
+        Unlock();
     }
 }
 
@@ -271,9 +285,9 @@ void Display::Enable(lv_obj_t *object)
 {
     if (object)
     {
-        lvgl_port_lock(0);
+        Lock(0);
         lv_obj_clear_state(object, LV_STATE_DISABLED);
-        lvgl_port_unlock();
+        Unlock();
     }
 }
 
@@ -286,9 +300,9 @@ void Display::Disable(lv_obj_t *object)
 {
     if (object)
     {
-        lvgl_port_lock(0);
+        Lock(0);
         lv_obj_add_state(object, LV_STATE_DISABLED);
-        lvgl_port_unlock();
+        Unlock();
     }
 }
 
@@ -331,9 +345,9 @@ void Display::DeleteScreen(lv_obj_t *screen)
 
     if (screen)
     {
-        lvgl_port_lock(0);
+        Lock(0);
         lv_obj_del(screen);
-        lvgl_port_unlock();
+        Unlock();
     }
 
     ESP_LOGI(COMPONENT_NAME, "DeleteScreen - Exit");
@@ -378,5 +392,5 @@ void Display::Configure()
 
     lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
 
-    lvgl_port_unlock();
+    Unlock();
 }
