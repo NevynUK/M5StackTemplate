@@ -11,6 +11,7 @@
 #include <cstring>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <dirent.h>
 
 #include "esp_chip_info.h"
 #include "esp_flash.h"
@@ -53,12 +54,34 @@
 //     }
 // }
 
+void ScanFileSystem(const std::string &directory)
+{
+    std::string target_path = directory;
+
+    DIR* dir = opendir(target_path.c_str());
+
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != nullptr)
+    {
+        if (std::string(entry->d_name) == "." || std::string(entry->d_name) == "..")
+        {
+            continue;
+        }
+        printf("Found file: %s\n", entry->d_name);
+    }
+
+    closedir(dir);
+}
+
 extern "C" void app_main(void)
 {
     printf("Minimum free heap size: %s bytes\n", Utils::NumberWithCommas(esp_get_minimum_free_heap_size()).c_str());
 
     HAL::HalBase *hal = new HAL::HalTab5();
     hal->Configure();
+
+    hal->ConfigureSdCard();
+    ScanFileSystem("/sdcard/");
 
     Display *display = new Display(hal);
     display->Configure();

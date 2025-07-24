@@ -11,10 +11,15 @@
 
 #include <sdkconfig.h>
 
+#include <string>
+#include <mutex>
+
 #include "esp_err.h"
 #include "driver/i2c_master.h"
 #include "esp_lcd_mipi_dsi.h"
 #include "esp_lcd_touch_gt911.h"
+#include "driver/gpio.h"
+#include "sdmmc_cmd.h"
 
 #include <HalBase.hpp>
 
@@ -60,6 +65,19 @@ namespace HAL
          * @return esp_err_t ESP_OK on success, or an error code on failure.
          */
         esp_err_t ConfigureIoExpanders();
+
+        /* -------------------------------------------------------------------------- */
+        /*                                   SD Card                                  */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the SD card.
+         *
+         * @param mount_point The mount point for the filesystem (default = DEFAULT_MOUNT_POINT).
+         * @param max_files The maximum number of files that can be opened simultaneously (default = 10).
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        esp_err_t ConfigureSdCard(const std::string &mount_point = DEFAULT_MOUNT_POINT, const size_t max_files = 10) override;
 
         /* -------------------------------------------------------------------------- */
         /*                            Display Methods                                 */
@@ -254,17 +272,6 @@ namespace HAL
 #define BSP_I2S_DSIN (GPIO_NUM_28)     // Data input     BSP_I2S_DIN   <--- ES7210        I2S_DOUT
 #define BSP_POWER_AMP_IO (GPIO_NUM_NC) // (GPIO_NUM_53)
 
-/* -------------------------------------------------------------------------- */
-/*                                Micro SD Card                               */
-/* -------------------------------------------------------------------------- */
-/* uSD card */
-#define BSP_SD_D0 (GPIO_NUM_39)
-#define BSP_SD_D1 (GPIO_NUM_40)
-#define BSP_SD_D2 (GPIO_NUM_41)
-#define BSP_SD_D3 (GPIO_NUM_42)
-#define BSP_SD_CMD (GPIO_NUM_44)
-#define BSP_SD_CLK (GPIO_NUM_43)
-
     private:
         /* -------------------------------------------------------------------------- */
         /*                        Private I2C Methods and Data                        */
@@ -376,6 +383,92 @@ namespace HAL
          * This is a value from 0 to 100, where 0 is off and 100 is maximum brightness.
          */
         uint8_t _current_lcd_brightness = 100;
+
+        /* -------------------------------------------------------------------------- */
+        /*                       Private SD Card Data Methods                         */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Default mount point for the SD card.
+         */
+        static const std::string DEFAULT_MOUNT_POINT;
+
+        /**
+         * @brief Power control channel for the SD card.
+         */
+        const int LDO_PROBE_SD_CHAN = 4;
+
+        /**
+         * @brief Power control voltage for the SD card.
+         */
+        const int LDO_PROBE_SD_VOLTAGE_MV = 3300;
+
+        /**
+         * @brief SD Card bus width.
+         */
+        const int SDMMC_BUS_WIDTH = 4;
+
+        /**
+         * @brief SD Card detection pin.
+         */
+        const gpio_num_t GPIO_SDMMC_DET = GPIO_NUM_NC;
+
+        /**
+         * @brief SD Card Clock GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_CLK = GPIO_NUM_43;
+
+        /**
+         * @brief SD Card Command GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_CMD = GPIO_NUM_44;
+
+        /**
+         * @brief SD Card Data 0 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D0 = GPIO_NUM_39;
+
+        /**
+         * @brief SD Card Data 1 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D1 = GPIO_NUM_40;
+
+        /**
+         * @brief SD Card Data 2 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D2 = GPIO_NUM_41;
+
+        /**
+         * @brief SD Card Data 3 GPIO pin.
+         */
+        const gpio_num_t GPIO_SDMMC_D3 = GPIO_NUM_42;
+
+        /**
+         * @brief Mutex for thread safety.
+         */
+        static std::mutex _mutex;
+
+        /**
+         * @brief Pointer to the SD card structure.
+         * 
+         * This structure holds information about the SD card, such as its type, size, and other properties.
+         */
+        sdmmc_card_t *_card = nullptr;
+
+        /**
+         * @brief Power control handle for the SD card.
+         */
+        sd_pwr_ctrl_handle_t pwr_ctrl_handle = nullptr;
+
+        /**
+         * @brief Mount point for the filesystem.
+         */
+        std::string _mountPoint = "";
+
+        /**
+         * @brief Maximum number of files that can be opened simultaneously.
+         */
+        size_t _maxFiles = 0;
 
         /* -------------------------------------------------------------------------- */
         /*                       Private Display Data Methods                         */

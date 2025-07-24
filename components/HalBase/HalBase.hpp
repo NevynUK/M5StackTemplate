@@ -56,6 +56,22 @@ namespace HAL
         }
 
         /* -------------------------------------------------------------------------- */
+        /*                                   SD Card                                  */
+        /* -------------------------------------------------------------------------- */
+
+        /**
+         * @brief Configure the SD card.
+         *
+         * @param mount_point The mount point for the filesystem (default = DEFAULT_MOUNT_POINT).
+         * @param max_files The maximum number of files that can be opened simultaneously (default = 10).
+         * @return esp_err_t ESP_OK on success, or an error code on failure.
+         */
+        virtual esp_err_t ConfigureSdCard(const std::string &mount_point = "/sdcard", const size_t max_files = 10)
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
+        /* -------------------------------------------------------------------------- */
         /*                                   Display                                  */
         /* -------------------------------------------------------------------------- */
 
