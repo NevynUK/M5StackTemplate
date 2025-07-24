@@ -18,6 +18,15 @@
 #include "HalTab5.hpp"
 
 /**
+ * @brief Construct a new Display object
+ * 
+ * @param halBase Pointer to the HalBase instance for hardware access.
+ */
+ Display::Display(HalBase *halBase) : _halBase(halBase)
+{
+}
+
+/**
  * @brief Lock LVGL.
  *
  * @param timeout Timeout for the lock operation.
