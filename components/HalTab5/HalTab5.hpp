@@ -252,7 +252,7 @@ namespace HAL
          *
          * @return esp_lcd_touch_handle_t Handle to the touch panel.
          */
-        esp_lcd_touch_handle_t GetTouchPanelHandle() const;
+        void *GetTouchPanelHandle() const override;
 
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
@@ -510,6 +510,6 @@ namespace HAL
          */
         esp_lcd_touch_handle_t _touchPanelHandle = nullptr;
 
-        void set_gpio_output_capability();
+        // void set_gpio_output_capability();
     };
 } // namespace HAL

@@ -256,6 +256,9 @@ private:
      */
     lv_obj_t *_screen = nullptr;
 
+    lv_indev_t* _touchpad = nullptr;
+    lv_indev_t *_inputDevice = nullptr;
+
     /**
      * @brief Default constructor is deleted to enforce dependency injection.
      */
@@ -275,4 +278,6 @@ private:
      * @brief Copy assignment operator is deleted to prevent assignment.
      */
     Display &operator=(const Display &) = delete;
+   
+    static void lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
 }; // class Display

@@ -27,9 +27,9 @@ using namespace HAL;
  *
  * @return esp_lcd_touch_handle_t Handle to the touch panel.
  */
-esp_lcd_touch_handle_t HalTab5::GetTouchPanelHandle() const
+void *HalTab5::GetTouchPanelHandle() const
 {
-    return _touchPanelHandle;
+    return static_cast<void *>(_touchPanelHandle);
 }
 
 /**

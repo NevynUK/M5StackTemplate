@@ -82,9 +82,7 @@ esp_err_t HalTab5::ConfigureDisplayBrightnessControl(void)
 esp_err_t HalTab5::SetDisplayBrightness(uint8_t brightness)
 {
     _current_lcd_brightness = std::clamp(brightness, (uint8_t) 0, (uint8_t) 100);
-    ESP_LOGI(COMPONENT_NAME, "Setting LCD backlight: %d%%", _current_lcd_brightness);
-    // uint32_t duty_cycle = (1023 * _current_lcd_brightness) / 100; // LEDC resolution set to 10bits, thus: 100% = 1023
-    uint32_t duty_cycle = (4095 * _current_lcd_brightness) / 100; // LEDC resolution set to 12bits, thus: 100% = 4095
+    uint32_t duty_cycle = (4095 * _current_lcd_brightness) / 100;
     ESP_RETURN_ON_ERROR(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, duty_cycle), COMPONENT_NAME, "Failed to set LEDC duty");
     ESP_RETURN_ON_ERROR(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1), COMPONENT_NAME, "Failed to update LEDC duty");
     return ESP_OK;
@@ -190,7 +188,7 @@ esp_err_t HalTab5::ConfigureDisplay()
     //
     //  TODO: Fix this.
     //
-    // ESP_GOTO_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), err, COMPONENT_NAME, "New panel IO failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), COMPONENT_NAME, "New panel IO failed");
     esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io);
 
     ESP_LOGI(COMPONENT_NAME, "Install LCD driver of ili9881c");

@@ -17,12 +17,37 @@
 #include "HalBase.hpp"
 #include "HalTab5.hpp"
 
+static esp_lcd_touch_handle_t _lcd_touch_handle;
+
+void Display::lvgl_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+{
+    uint16_t touch_x[1];
+    uint16_t touch_y[1];
+    uint16_t touch_strength[1];
+    uint8_t touch_cnt = 0;
+
+    ESP_ERROR_CHECK(esp_lcd_touch_read_data(_lcd_touch_handle));
+    bool touchpad_pressed = esp_lcd_touch_get_coordinates(_lcd_touch_handle, touch_x, touch_y, touch_strength, &touch_cnt, 1);
+
+    if (!touchpad_pressed)
+    {
+        data->state = LV_INDEV_STATE_REL;
+    }
+    else
+    {
+        data->state = LV_INDEV_STATE_PR;
+        data->point.x = touch_x[0];
+        data->point.y = touch_y[0];
+        ESP_LOGI("Touch", "Pressed: (%" PRIu32 ", %" PRIu32 ")", data->point.x, data->point.y);
+    }
+}
+
 /**
  * @brief Construct a new Display object
  * 
  * @param halBase Pointer to the HalBase instance for hardware access.
  */
- Display::Display(HalBase *halBase) : _halBase(halBase)
+Display::Display(HalBase *halBase) : _halBase(halBase)
 {
 }
 
@@ -395,11 +420,32 @@ void Display::Configure()
 
     _displayHandle = lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
     Rotate(_displayHandle, LV_DISPLAY_ROTATION_90);
-    _halBase->SetDisplayBrightness(100);
+    _halBase->SetDisplayBrightness(0);
 
     _screen = lv_scr_act();
 
     lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
+
+    if (_halBase->GetTouchPanelHandle())
+    {
+        ESP_LOGI(COMPONENT_NAME, "Configuring touch panel");
+        lvgl_port_touch_cfg_t touch_cfg = {};
+        touch_cfg.disp = _displayHandle;
+        touch_cfg.handle = static_cast<esp_lcd_touch_handle_t>(_halBase->GetTouchPanelHandle());
+
+        _lcd_touch_handle = touch_cfg.handle;
+
+        lv_indev_t* _inputDevice = lvgl_port_add_touch(&touch_cfg);
+        if (_inputDevice == nullptr)
+        {
+            ESP_LOGE(COMPONENT_NAME, "Failed to add touch input device");
+            return;
+        }
+        _touchpad = lv_indev_create();
+        lv_indev_set_type(_touchpad, LV_INDEV_TYPE_POINTER);
+        lv_indev_set_read_cb(_touchpad, lvgl_read_cb);
+        lv_indev_set_display(_touchpad, _displayHandle);
+    }
 
     Unlock();
 }

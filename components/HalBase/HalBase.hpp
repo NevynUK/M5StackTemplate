@@ -158,6 +158,14 @@ namespace HAL
             throw NotImplementedException(__FUNCTION__);
         }
 
+        /**
+         * @brief Get the handle to the touch panel.
+         */
+        virtual void *GetTouchPanelHandle() const
+        {
+            throw NotImplementedException(__FUNCTION__);
+        }
+
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
         /* -------------------------------------------------------------------------- */
