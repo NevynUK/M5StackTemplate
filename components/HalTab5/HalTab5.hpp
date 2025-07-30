@@ -261,6 +261,8 @@ namespace HAL
         void gpioSetLevel(uint8_t pin, bool level) override;
         void gpioReset(uint8_t pin) override;
 
+        void SetGpioOutputCapability();
+
 /* -------------------------------------------------------------------------- */
 /*                                   Audio                                    */
 /* -------------------------------------------------------------------------- */

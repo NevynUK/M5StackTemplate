@@ -48,6 +48,20 @@ static const gpio_num_t _driver_gpios[] = {
     GPIO_NUM_44,
 };
 
+void HalTab5::SetGpioOutputCapability()
+{
+    for (int i = 0; i < sizeof(_driver_gpios) / sizeof(_driver_gpios[0]); i++) {
+        gpio_num_t gpio = _driver_gpios[i];
+        esp_err_t ret   = gpio_set_drive_capability(gpio, GPIO_DRIVE_CAP_0);
+        if (ret == ESP_OK) {
+            printf("GPIO %d drive capability set to GPIO_DRIVE_CAP_0\n", gpio);
+        } else {
+            printf("Failed to set GPIO %d drive capability: %s\n", gpio, esp_err_to_name(ret));
+        }
+    }
+}
+
+
 void HalTab5::gpioInitOutput(uint8_t pin)
 {
     gpio_set_pull_mode((gpio_num_t) pin, GPIO_PULLUP_ONLY);
