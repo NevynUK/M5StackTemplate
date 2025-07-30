@@ -240,6 +240,13 @@ public:
      */
     void DeleteScreen(lv_obj_t *screen);
 
+    /**
+     * @brief Add a touch panel.
+     * 
+     * @param touchPanel Handle for the touch panel.
+     */
+    void AddTouchPanel(esp_lcd_touch_handle_t touchPanel);
+
 private:
     /**
      * @brief Pointer to the hardware abstraction layer for accessing display hardware.

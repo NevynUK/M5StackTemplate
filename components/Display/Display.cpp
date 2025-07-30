@@ -388,6 +388,42 @@ void Display::DeleteScreen(lv_obj_t *screen)
 }
 
 /**
+ * @brief Add a touch panel to the display.
+ *
+ * @param touchPanel Handle for the touch panel.
+ */
+void Display::AddTouchPanel(esp_lcd_touch_handle_t touchPanel)
+{
+    if (touchPanel)
+    {
+        // Lock(0);
+        
+
+        ESP_LOGI(COMPONENT_NAME, "Configuring touch panel: %p", touchPanel);
+        vTaskDelay(pdMS_TO_TICKS(200)); // Allow time for the display to initialise
+
+        lvgl_port_touch_cfg_t touch_cfg = {};
+        touch_cfg.disp = _displayHandle;
+        touch_cfg.handle = touchPanel;
+
+        _lcd_touch_handle = touchPanel;
+
+        lv_indev_t* _inputDevice = lvgl_port_add_touch(&touch_cfg);
+        if (_inputDevice == nullptr)
+        {
+            ESP_LOGE(COMPONENT_NAME, "Failed to add touch input device");
+            return;
+        }
+        _touchpad = lv_indev_create();
+        lv_indev_set_type(_touchpad, LV_INDEV_TYPE_POINTER);
+        lv_indev_set_read_cb(_touchpad, lvgl_read_cb);
+        lv_indev_set_display(_touchpad, _displayHandle);
+
+        // Unlock();
+    }
+}
+
+/**
  * @brief Configure the display and initialise all components.
  */
 void Display::Configure()
@@ -420,20 +456,19 @@ void Display::Configure()
 
     _displayHandle = lvgl_port_add_disp_dsi(&disp_cfg, &dpi_cfg);
     Rotate(_displayHandle, LV_DISPLAY_ROTATION_90);
-    _halBase->SetDisplayBrightness(0);
+    _halBase->SetDisplayBrightness(100);
 
-    _screen = lv_scr_act();
+    esp_lcd_touch_handle_t touchPanel = static_cast<esp_lcd_touch_handle_t>(_halBase->GetTouchPanelHandle());
+    // AddTouchPanel(touchPanel);
 
-    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
-
-    if (_halBase->GetTouchPanelHandle())
+    if (touchPanel)
     {
-        ESP_LOGI(COMPONENT_NAME, "Configuring touch panel");
+        ESP_LOGI(COMPONENT_NAME, "Configuring touch panel: %p", touchPanel);
         lvgl_port_touch_cfg_t touch_cfg = {};
         touch_cfg.disp = _displayHandle;
-        touch_cfg.handle = static_cast<esp_lcd_touch_handle_t>(_halBase->GetTouchPanelHandle());
+        touch_cfg.handle = touchPanel;
 
-        _lcd_touch_handle = touch_cfg.handle;
+        _lcd_touch_handle = touchPanel;
 
         lv_indev_t* _inputDevice = lvgl_port_add_touch(&touch_cfg);
         if (_inputDevice == nullptr)
@@ -441,11 +476,17 @@ void Display::Configure()
             ESP_LOGE(COMPONENT_NAME, "Failed to add touch input device");
             return;
         }
+        vTaskDelay(pdMS_TO_TICKS(500)); // Allow time for the display to initialise
         _touchpad = lv_indev_create();
         lv_indev_set_type(_touchpad, LV_INDEV_TYPE_POINTER);
         lv_indev_set_read_cb(_touchpad, lvgl_read_cb);
         lv_indev_set_display(_touchpad, _displayHandle);
+        vTaskDelay(pdMS_TO_TICKS(500)); // Allow time for the display to initialise
     }
+
+    _screen = lv_scr_act();
+
+    lv_obj_set_style_bg_color(_screen, lv_color_black(), LV_PART_MAIN);
 
     Unlock();
 }

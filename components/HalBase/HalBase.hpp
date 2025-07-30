@@ -169,17 +169,32 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
         /* -------------------------------------------------------------------------- */
-        virtual void gpioInitOutput(uint8_t pin)
+
+        /**
+         * @brief Initialize GPIO pin as output.
+         */
+        virtual void GpioConfiguresAsOutput(uint8_t pin)
         {
             throw NotImplementedException(__FUNCTION__);
         }
 
-        virtual void gpioSetLevel(uint8_t pin, bool level)
+        /**
+         * @brief Set GPIO level.
+         *
+         * @param pin Pin to set the level.
+         * @param level Level to set (true = high, false = low).
+         */
+        virtual void GpioSetLevel(uint8_t pin, bool level)
         {
             throw NotImplementedException(__FUNCTION__);
         }
 
-        virtual void gpioReset(uint8_t pin)
+        /**
+         * @brief Reset the GPIO pin to low.
+         *
+         * @param pin Pin to set as low.
+         */
+        virtual void GpioReset(uint8_t pin)
         {
             throw NotImplementedException(__FUNCTION__);
         }

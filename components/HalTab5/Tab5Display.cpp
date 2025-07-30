@@ -63,10 +63,22 @@ bool HalTab5::IsDisplayBigEndian() const
  */
 esp_err_t HalTab5::ConfigureDisplayBrightnessControl(void)
 {
-    const ledc_timer_config_t lcd_backlight_timer = {.speed_mode = LEDC_LOW_SPEED_MODE, .duty_resolution = LEDC_TIMER_12_BIT, .timer_num = LEDC_TIMER_0, .freq_hz = 5000, .clk_cfg = LEDC_AUTO_CLK};
+    ledc_timer_config_t lcd_backlight_timer = {};
+    lcd_backlight_timer.speed_mode = LEDC_LOW_SPEED_MODE;
+    lcd_backlight_timer.duty_resolution = LEDC_TIMER_12_BIT;
+    lcd_backlight_timer.timer_num = LEDC_TIMER_0;
+    lcd_backlight_timer.freq_hz = 5000;
+    lcd_backlight_timer.clk_cfg = LEDC_AUTO_CLK;
     ESP_ERROR_CHECK(ledc_timer_config(&lcd_backlight_timer));
 
-    const ledc_channel_config_t lcd_backlight_channel = {.gpio_num = BSP_LCD_BACKLIGHT, .speed_mode = LEDC_LOW_SPEED_MODE, .channel = LEDC_CHANNEL_1, .intr_type = LEDC_INTR_DISABLE, .timer_sel = LEDC_TIMER_0, .duty = 0, .hpoint = 0};
+    ledc_channel_config_t lcd_backlight_channel = {};
+    lcd_backlight_channel.gpio_num = BSP_LCD_BACKLIGHT;
+    lcd_backlight_channel.speed_mode = LEDC_LOW_SPEED_MODE;
+    lcd_backlight_channel.channel = LEDC_CHANNEL_1;
+    lcd_backlight_channel.intr_type = LEDC_INTR_DISABLE;
+    lcd_backlight_channel.timer_sel = LEDC_TIMER_0;
+    lcd_backlight_channel.duty = 0;
+    lcd_backlight_channel.hpoint = 0;
 
     ESP_ERROR_CHECK(ledc_channel_config(&lcd_backlight_channel));
 
@@ -146,10 +158,9 @@ esp_lcd_panel_handle_t HalTab5::GetControlHandle() const
 esp_err_t HalTab5::EnableDsiPhyPower(void)
 {
     static esp_ldo_channel_handle_t phy_pwr_chan = NULL;
-    esp_ldo_channel_config_t ldo_cfg = {
-        .chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN,
-        .voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
-    };
+    esp_ldo_channel_config_t ldo_cfg = {};
+    ldo_cfg.chan_id = BSP_MIPI_DSI_PHY_PWR_LDO_CHAN;
+    ldo_cfg.voltage_mv = BSP_MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV;
     ESP_RETURN_ON_ERROR(esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan), COMPONENT_NAME, "Acquire LDO channel for DPHY failed");
     ESP_LOGI(COMPONENT_NAME, "MIPI DSI PHY Powered on");
 
@@ -170,24 +181,20 @@ esp_err_t HalTab5::ConfigureDisplay()
 
     /* create MIPI DSI bus first, it will initialize the DSI PHY as well */
     esp_lcd_dsi_bus_handle_t mipi_dsi_bus = NULL;
-    esp_lcd_dsi_bus_config_t bus_config = {
-        .bus_id = 0,
-        .num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM,
-        .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
-        .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
-    };
+    esp_lcd_dsi_bus_config_t bus_config = {};
+    bus_config.bus_id = 0;
+    bus_config.num_data_lanes = BSP_LCD_MIPI_DSI_LANE_NUM;
+    bus_config.phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT;
+    bus_config.lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS;
     ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_config, &mipi_dsi_bus), COMPONENT_NAME, "New DSI bus init failed");
 
     ESP_LOGI(COMPONENT_NAME, "Install MIPI DSI LCD control panel");
     // we use DBI interface to send LCD commands and parameters
-    esp_lcd_dbi_io_config_t dbi_config = {
-        .virtual_channel = 0,
-        .lcd_cmd_bits = 8,   // according to the LCD spec
-        .lcd_param_bits = 8, // according to the LCD spec
-    };
-    //
-    //  TODO: Fix this.
-    //
+    esp_lcd_dbi_io_config_t dbi_config = {};
+    dbi_config.virtual_channel = 0;
+    dbi_config.lcd_cmd_bits = 8;   // according to the LCD spec
+    dbi_config.lcd_param_bits = 8; // according to the LCD spec
+
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io), COMPONENT_NAME, "New panel IO failed");
     esp_lcd_new_panel_io_dbi(mipi_dsi_bus, &dbi_config, &io);
 
@@ -210,16 +217,13 @@ esp_err_t HalTab5::ConfigureDisplay()
     dpi_config.flags = {};
     dpi_config.flags.use_dma2d = true;
 
-    ili9881c_vendor_config_t vendor_config = {
-        .init_cmds = tab5_lcd_ili9881c_specific_init_code_default,
-        .init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]),
-        .mipi_config =
-            {
-                .dsi_bus = mipi_dsi_bus,
-                .dpi_config = &dpi_config,
-                .lane_num = 2,
-            },
-    };
+    ili9881c_vendor_config_t vendor_config = {};
+    vendor_config.init_cmds = tab5_lcd_ili9881c_specific_init_code_default;
+    vendor_config.init_cmds_size = sizeof(tab5_lcd_ili9881c_specific_init_code_default) / sizeof(tab5_lcd_ili9881c_specific_init_code_default[0]);
+    vendor_config.mipi_config = {};
+    vendor_config.mipi_config.dsi_bus = mipi_dsi_bus;
+    vendor_config.mipi_config.dpi_config = &dpi_config;
+    vendor_config.mipi_config.lane_num = 2;
 
     esp_lcd_panel_dev_config_t lcd_dev_config = {};
     lcd_dev_config.bits_per_pixel = 16;
