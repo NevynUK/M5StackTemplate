@@ -257,9 +257,31 @@ namespace HAL
         /* -------------------------------------------------------------------------- */
         /*                                   GPIO                                     */
         /* -------------------------------------------------------------------------- */
-        void gpioInitOutput(uint8_t pin) override;
-        void gpioSetLevel(uint8_t pin, bool level) override;
-        void gpioReset(uint8_t pin) override;
+
+        /**
+         * @brief Initialize GPIO pin as output.
+         */
+        void GpioConfiguresAsOutput(uint8_t pin) override;
+
+        /**
+         * @brief Set GPIO level.
+         *
+         * @param pin Pin to set the level.
+         * @param level Level to set (true = high, false = low).
+         */
+        void GpioSetLevel(uint8_t pin, bool level) override;
+
+        /**
+         * @brief Reset the GPIO pin to low.
+         *
+         * @param pin Pin to set as low.
+         */
+        void GpioReset(uint8_t pin) override;
+
+        /**
+         * @brief Set the Gpio Output Capability object 
+         */
+        void SetGpioOutputCapability();
 
 /* -------------------------------------------------------------------------- */
 /*                                   Audio                                    */
